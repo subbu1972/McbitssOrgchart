@@ -1,0 +1,29 @@
+﻿@model REORGCHART.Models.MyModel
+
+<div id="mySettingsDiagramContainer" style="padding-top:0px;">
+    <div id="mySettingsDiagramDiv" style="background-color: #ffffff;border: solid 1px white;max-width:100%;"></div>
+    <div>
+        <div id="mySettingsInspector"></div>
+    </div>
+    <div style="max-width:100%;display:none;">
+        <textarea id="mySettingsSavedModel" style="max-width:100%;height:250px">{ "class": "go.TreeModel",
+                      "nodeDataArray": [
+                                {"key":1, "FULL_NAME":"Stella Payne Diaz", "POSITION_TITLE":"CEO", "LEVEL_NO":"1", "SOC_COUNT":"2", "parent":"999999"},
+                                {"key":2, "FULL_NAME":"Luke Warm", "POSITION_TITLE":"VP Marketing/Sales", "LEVEL_NO":"2", "SOC_COUNT":"0", "parent":1},
+                                {"key":3, "FULL_NAME":"Peggy Flaming", "POSITION_TITLE":"VP Engineering", "LEVEL_NO":"2", "SOC_COUNT":"0", "parent":1}
+                        ]
+                    }
+                </textarea>
+
+        <textarea id="myTempSettingsSavedModel" style="display:none;max-width:100%;height:250px">{ "class": "go.TreeModel",
+                      "nodeDataArray": [
+                                {"key":1, "FULL_NAME":"Stella Payne Diaz", "POSITION_TITLE":"CEO", "LEVEL_NO":"1", "SOC_COUNT":"2", "parent":"999999"},
+                                {"key":2, "FULL_NAME":"Luke Warm", "POSITION_TITLE":"VP Marketing/Sales", "LEVEL_NO":"2", "SOC_COUNT":"0", "parent":1},
+                                {"key":3, "FULL_NAME":"Peggy Flaming", "POSITION_TITLE":"VP Engineering", "LEVEL_NO":"2", "SOC_COUNT":"0", "parent":1}
+                        ]
+                    }
+                </textarea>
+    </div>
+</div>
+
+

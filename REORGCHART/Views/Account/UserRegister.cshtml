@@ -1,0 +1,205 @@
+﻿@model REORGCHART.Models.RegisterModel
+@{
+    ViewBag.Title = "UserRegister";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+
+<style>
+    .center {
+        position: absolute;
+        margin: auto;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 300px;
+        max-height: 530px;
+        background-color: #ffffff;
+        border-radius: 3px;
+        border: 3px solid lightblue;
+    }
+</style>
+
+@using (Html.BeginForm("UserRegister", "Account", FormMethod.Post, new { @enctype = "multipart/form-data", @id = "myForm", @role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="hdnBaseURL" id="hdnBaseURL" value='@System.Configuration.ConfigurationManager.AppSettings["BasePath"]' />
+    <input id="hdnInitialValues" name="hdnInitialValues" type="hidden" value="@ViewBag.InitialValues" />
+    <div class="row">
+        <div class="col-md-3 center">
+            <h3 class="m-b-20 text-center" style="font-family:Roboto"><a onclick="javascript:ShowUsers(this);" href="javascript:void(0);">Add User Account</a></h3>
+            <div class="form-group m-b-20">
+                <input id="cbxIndividual" type="radio" name="cbxRequestType" value="Individual" checked="checked" onclick="ShowRequestType(this)">
+                <label for="cbxIndividual" style="font: 14px 'Segoe UI', Helvetica, 'Droid Sans', Tahoma, Geneva, sans-serif;color: #666;margin-right:20px;">Individual</label>
+                <input id="cbxMass" type="radio" name="cbxRequestType" value="Mass" onclick="ShowRequestType(this)">
+                <label for="cbxMass" style="font: 14px 'Segoe UI', Helvetica, 'Droid Sans', Tahoma, Geneva, sans-serif;color: #666;margin-right:20px;">Mass</label>
+                <input class="form-control" id="RequestType" name="RequestType" placeholder="" type="hidden" value="@Model.RequestType" />
+            </div>
+            <p style="color:red">@ViewBag.ErrorMessage</p>
+            <div id="divAddUser">
+                <div id="divAddMassUser" style="display:none;">
+                    <div class="form-group m-b-20">
+                        <input type="hidden" id="hdnFileName" name="hdnFileName" value="@Model.Upload" />
+                        <input class="form-control" type="file" id="Upload" name="Upload" style="height: auto;margin-bottom:5px;">
+                        @Html.ValidationMessageFor(m => m.Upload, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group m-b-20">
+                        <input class="form-control" id="PasswordName" name="PasswordName" placeholder="Password" type="password" value="@Model.Password" />
+                        @Html.ValidationMessageFor(m => m.PasswordName, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group m-b-20">
+                        <input class="form-control" id="ConfirmPasswordName" name="ConfirmPasswordName" placeholder="Confirm Password" type="password" value="@Model.ConfirmPasswordName" />
+                        @Html.ValidationMessageFor(m => m.ConfirmPasswordName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div id="divAddIndividialUser">
+                    <div class="form-group m-b-20">
+                        <input class="form-control" id="UserName" name="UserName" placeholder="User Name" type="text" value="@Model.UserName" />
+                        @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group m-b-20">
+                        <input class="form-control" id="CompanyName" name="CompanyName" placeholder="Company Name" type="text" readonly="readonly" value="@ViewBag.CompanyName" />
+                        @Html.ValidationMessageFor(m => m.CompanyName, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group m-b-20">
+                        <input class="form-control" id="Email" name="Email" placeholder="Email" type="text" value="@Model.Email" />
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group m-b-20">
+                        <input class="form-control" id="Password" name="Password" placeholder="Password" type="password" value="@Model.Password" />
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group m-b-20">
+                        <input class="form-control" id="ConfirmPassword" name="ConfirmPassword" placeholder="Confirm Password" type="password" value="@Model.ConfirmPassword" />
+                        @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group m-b-20">
+                        <input id="cbxEndUser" type="checkbox" name="cbxRoles" value="EndUser">
+                        <label id="lblEndUser" for="cbxEndUser" style="font: 14px 'Segoe UI', Helvetica, 'Droid Sans', Tahoma, Geneva, sans-serif;color: #666;margin-right:20px;">End User</label>
+                        <input id="cbxUser" type="checkbox" name="cbxRoles" value="User">
+                        <label id="lblUser" for="cbxUser" style="font: 14px 'Segoe UI', Helvetica, 'Droid Sans', Tahoma, Geneva, sans-serif;color: #666;margin-right:20px;">User</label>
+                        <input id="cbxAnalyzer" type="checkbox" name="cbxRoles" value="Player">
+                        <label id="lblAnalyzer" for="cbxAnalyzer" style="font: 14px 'Segoe UI', Helvetica, 'Droid Sans', Tahoma, Geneva, sans-serif;color: #666;margin-right:20px;">Planner</label>
+                        <input id="cbxFinalyzer" type="checkbox" name="cbxRoles" value="Finalyzer">
+                        <label id="lblFinalyzer" for="cbxFinalyzer" style="font: 14px 'Segoe UI', Helvetica, 'Droid Sans', Tahoma, Geneva, sans-serif;color: #666;margin-right:20px;">Admin</label>
+                        <input class="form-control" id="Roles" name="Roles" placeholder="Roles" type="hidden" value="" /><br>
+                        @Html.ValidationMessageFor(m => m.Roles, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group m-b-20">
+                    <div>
+                        <button onclick="UserRoles()" type="submit" class="form-control form-submit btn btn-info">Register</button>
+                        <div style="height:10px;"></div>
+                        <button onclick="Back()" type="button" class="form-control form-submit btn btn-info">Back</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="divUsrList">
+                @{
+                    ViewBag.Title = "Users List";
+                    <div>
+                        @Html.Action("UserList", "Home")
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#divUsrList").hide();
+        $("#divAddUser").show();
+
+        if ($("#RequestType").val() == "Individual") {
+            $("#cbxIndividual").prop("checked", true);
+            $("#divAddIndividialUser").show();
+            $("#divAddMassUser").hide();
+        }
+        else {
+            $("#cbxMass").prop("checked", true);
+            $("#divAddIndividialUser").hide();
+            $("#divAddMassUser").show();
+        }
+
+        $("#cbxUser").hide(); $("#lblUser").hide();
+        $("#cbxEndUser").hide(); $("#lblEndUser").hide();
+        $("#cbxAnalyzer").hide(); $("#lblAnalyzer").hide();
+        $("#cbxFinalyzer").hide(); $("#lblFinalyzer").hide();
+        var InitialValues = JSON.parse($("#hdnInitialValues").val());
+        var ArrayCR = InitialValues.CompanyRoles.split(",");
+        if (ArrayCR.length >= 1) {
+            for (var Idx = 0; Idx <= ArrayCR.length - 1; Idx++) {
+                if (ArrayCR[Idx] == "EndUser") {
+                    $("#cbxEndUser").show(); $("#lblEndUser").show();
+                }
+                else if (ArrayCR[Idx] == "User") {
+                    $("#cbxUser").show(); $("#lblUser").show();
+                }
+                else if (ArrayCR[Idx] == "Player") {
+                    $("#cbxAnalyzer").show(); $("#lblAnalyzer").show();
+                }
+                else if (ArrayCR[Idx] == "Finalyzer") {
+                    $("#cbxFinalyzer").show(); $("#lblFinalyzer").show();
+                }
+            }
+        }
+    });
+
+    function Back() {
+        var BasePath_ENV = $("#hdnBaseURL").val();
+        var HOST_ENV = window.location.protocol + '//' + window.location.host;
+        if (BasePath_ENV != "") HOST_ENV+= "/" + BasePath_ENV;
+        window.location.href = HOST_ENV + "/Version/UploadData";
+    }
+
+    function ShowRequestType(Obj) {
+        if ($(Obj).prop("checked")) {
+            if ($(Obj).attr("value") == "Mass") {
+                $("#divAddIndividialUser").hide();
+                $("#divAddMassUser").show();
+            }
+            else {
+                $("#divAddIndividialUser").show();
+                $("#divAddMassUser").hide();
+            }
+        }
+    }
+
+    function Userslist() {
+        $("#divUsrList").hide();
+        $("#divAddUser").show();
+    }
+
+    function AddUser() {
+        $("#divUsrList").show();
+        $("#divAddUser").hide();
+    }
+
+    function ShowUsers(Obj) {
+        if ($(Obj).html() == "Add User Account") {
+            AddUser();
+            $(Obj).html("User List");
+        }
+        else if ($(Obj).html() == "User List") {
+            Userslist();
+            $(Obj).html("Add User Account");
+        }
+    }
+
+    function UserRoles() {
+        var Roles = "";
+        if ($("#cbxUser").prop("checked")) Roles += ",User";
+        if ($("#cbxAnalyzer").prop("checked")) Roles += ",Player";
+        if ($("#cbxFinalyzer").prop("checked")) Roles += ",Finalyzer";
+        if (Roles != "") Roles = Roles.substring(1);
+        $("#Roles").val(Roles);
+    }
+
+</script>
+
+
+
+
+

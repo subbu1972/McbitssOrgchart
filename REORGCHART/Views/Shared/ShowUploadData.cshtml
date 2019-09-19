@@ -1,0 +1,27 @@
+﻿@model REORGCHART.Models.MyModel
+@Html.DevExpress().GridView(
+    settings =>   {
+        settings.Name = "GridViewUploadData";
+        settings.CallbackRouteValues = new { Controller = "Version", Action = "GridViewPostUploadData" };
+        settings.Styles.Cell.Wrap = DefaultBoolean.False;
+        settings.SettingsPager.PageSize = 25;
+
+        settings.Settings.ShowHeaderFilterButton = true;
+
+        settings.Width = System.Web.UI.WebControls.Unit.Percentage(100);
+        settings.SettingsAdaptivity.AdaptivityMode = GridViewAdaptivityMode.HideDataCells;
+        settings.SettingsAdaptivity.AllowOnlyOneAdaptiveDetailExpanded = true;
+        settings.SettingsBehavior.AllowEllipsisInText = true;
+
+        foreach (System.Data.DataColumn column in Model.GridDataTable.Columns) {
+            settings.Columns.Add(c =>
+            {
+                c.FieldName = column.ColumnName;
+                c.Caption = column.ColumnName;
+            });
+         }
+    }).Bind(Model.GridDataTable).GetHtml()
+
+
+
+

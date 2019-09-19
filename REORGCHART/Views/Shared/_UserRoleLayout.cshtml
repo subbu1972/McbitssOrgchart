@@ -1,0 +1,336 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - OrgChart Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    <script src="~/assets/js/vendor/go.js?cid=@Model.UseDate"></script>
+    <script src="~/Scripts/OrgchartScript/OrgchartGOJS.js?cid=@Model.UseDate"></script>
+    <script src="~/Scripts/OrgchartScript/PartitionOrgchartGOJS.js?cid=@Model.UseDate"></script>
+    <script src="~/Scripts/OrgchartScript/SettingsOrgchartGOJS.js?cid=@Model.UseDate"></script>
+    <script src="~/Scripts/multiselectLeftRight/multiselect.min.js"></script>
+    <link href="~/Scripts/DataTables/jquery.dataTables.css" rel="stylesheet" />
+    <script src="~/Scripts/DataTables/jquery.dataTables.js"></script>
+    <link href="~/assets/css/font-awesome-4-menus/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Scripts/select2/select2.css" rel="stylesheet" />
+    <script src="~/Scripts/select2/select2.js"></script>
+
+    <style type="text/css">
+        @@media (min-width: 768px) {
+            .modal-dialog {
+                width: 700px !important;
+            }
+        }
+
+        body {
+            font-family: "Open Sans","Helvetica Neue","Helvetica",Arial,Verdana,sans-serif;
+            font-weight: normal;
+            font-style: normal;
+            font-size: 14px;
+        }
+
+        .radio {
+            font-family: "Open Sans","Helvetica Neue","Helvetica",Arial,Verdana,sans-serif;
+            font-weight: normal;
+            font-style: normal;
+            font-size: 14px;
+            padding: 2px;
+            display: inline-block;
+        }
+
+        .label {
+            font-family: "Open Sans","Helvetica Neue","Helvetica",Arial,Verdana,sans-serif;
+            font-weight: normal;
+            font-style: normal;
+            font-size: 14px;
+            display: inline-block;
+            color: #333;
+            text-align: left !important;
+        }
+
+        .select {
+            font-family: "Open Sans","Helvetica Neue","Helvetica",Arial,Verdana,sans-serif;
+            font-weight: normal;
+            font-style: normal;
+            font-size: 11px;
+        }
+
+        .hidePreview {
+            display: none;
+        }
+
+        .showPreview {
+            display: inline-block;
+        }
+
+        .back[class^="fa-"] {
+            border: 2px solid;
+            border-radius: 50% 50% 50% 50%;
+            margin: 0 1px;
+            padding: 7px 9px;
+            text-shadow: 0 0 0;
+            transition: all .25s ease;
+        }
+    </style>
+</head>
+<body style="padding-top:0px;">
+    <div class="navbar navbar-inverse navbar-fixed-top" style="background-color:#D3D3B5;margin-bottom:0px;position:relative;">
+        <div class="container" style="width:100%!important;">
+            <div class="navbar-header" style="width:100%;margin:5px 0px 10px 0px;">
+                <div class="navbar-collapse collapse">
+                    <div class="nav navbar-nav  navbar-left" style="width:100%">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <a class="showMenu" href="javascript:void(0);" onclick="window.location.href='/'" title="menu"><i class="fa-bars fa icon-x back"></i></a>
+                                ReOrgchart Modeling Tool
+                            </div>
+                            <div class="col-md-2">
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button type="button" class="btn btn-primary btn-sm" aria-pressed="true"><i class="fa-plus fa icon-x"></i>&nbsp;Operational</button>
+                                    <button type="button" class="btn btn-primary btn-sm" aria-pressed="true"><i class="fa-minus fa icon-x"></i>&nbsp;Legal</button>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" style="margin-left:30px;">
+                                    <span class="icon-bar" style="background-color:black;"></span>
+                                    <span class="icon-bar" style="background-color:black;"></span>
+                                    <span class="icon-bar" style="background-color:black;"></span>
+                                </button>
+                                <div class="dropdown" style="float:right;margin-left:10px">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                        @User.Identity.Name
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>@Html.ActionLink("About", "About", "Home")</li>
+                                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                                        <li class="divider"></li>
+                                        <li>@Html.ActionLink("Log Out", "LogOut", "Home")</li>
+                                    </ul>
+                                </div>
+                                <div style="float:right;">
+                                    <a class="showMenu" href="#" title="Search" style="cursor:pointer;"><i class="fa-search fa icon-x back"></i></a>
+                                    <a class="showMenu" href="#" onclick="DownloadDialogBox();" title="Download Version"><i class="fa-download fa icon-x back"></i></a>
+                                    <a class="showMenu" href="#" onclick="UpdateSettings();" title="Settings"><i class="fa-cog fa icon-x back"></i></a>
+                                    <a class="showMenu" href="#" onclick="SharePageURL(); return false;" title="Share"><i class="fa-share-square-o fa icon-x back"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content" style="width:100%!important;clear:both;">
+        @RenderBody()
+        <footer>
+            <p>&copy; @DateTime.Now.Year - McBitss</p>
+        </footer>
+    </div>
+
+    <!-- Modal Download -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DownloadModal" style="display:none;" id="btnDownloadPopup"></button>
+    <div id="DownloadModal" class="modal fade" role="dialog">
+        <div class="modal-dialog  modal-dialog-centered" role="document">
+
+            <!-- Modal content( Download )-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="width:80%;display:inline;">Download</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12" style="margin:5px 0px;">
+                            <button type="button" id="divDownloadExcel" class="btn btn-Primary" style="width:150px;">Download Excel</button>
+                            <button type="button" id="divDownloadPDF" class="btn btn-Primary" style="width:150px;">Download PDF</button>
+
+                            <div id="RespDownload">
+                                <table id="RespDownloadTable" style="width: 100%"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="javascript:unloadPopupBox('DownloadModal');">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Settings -->
+    <div id="SettingsModal" class="modal fade">
+        <div class="modal-dialog modal-dialog-centered">
+
+            <!-- Modal content( Settings )-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="width:80%;display:inline;">Settings</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4" style="margin:10px 0px">
+                            <div style="float: left; width: 250px;">
+                                <b>Select Shape : </b>
+                                <br />
+                                <br />
+                                <input type="radio" id="rectangle" class="radio" name="shape" style="vertical-align: text-top" checked value="RoundedRectangle" />
+                                <label class="label" for="rectangle">Rectangle</label><br />
+                                <input type="radio" id="circle" class="radio" name="shape" style="vertical-align: text-top" value="Circle" />
+                                <label class="label" for="circle">Circle</label><br />
+                                <input type="radio" id="ellipse" class="radio" name="shape" style="vertical-align: text-top" value="Ellipse" />
+                                <label class="label" for="ellipse">Ellipse</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4" style="margin:10px 0px">
+                            <div style="float: left; width: 250px;">
+                                <b>Select Skin : </b>
+                                <br />
+                                <br />
+                                <input type="radio" class="radio" name="skin" style="vertical-align: text-top" value="Brown" />
+                                <img src="/assets/images/SKIN-1.jpg" style="width: 150px;margin-bottom:10px;" /><br />
+                                <input type="radio" class="radio" name="skin" style="vertical-align: text-top" value="White" checked />
+                                <img src="/assets/images/SKIN-2.jpg" style="width: 155px;margin-bottom:10px;" />
+                            </div>
+                        </div>
+                        <div class="col-md-4" style="margin:10px 0px">
+                            <div>
+                                <b>Show Picture : </b>
+                                <br />
+                                <br />
+                                <input type="radio" class="radio" id="Yes" name="picture" style="vertical-align: text-top" value="Y" checked />
+                                <label class="label" for="Yes">Yes</label><br />
+                                <input type="radio" class="radio" id="No" name="picture" style="vertical-align: text-top" value="N" />
+                                <label class="label" for="No">No</label><br />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4" style="margin:10px 0px">
+                            <b>Select View : </b>
+                            <br />
+                            <br />
+                            <select id="selView" name="selView" style="color: black; width: 300px;" class="form-control">
+                                <option value="Normal" selected>Normal</option>
+                                <option value="Cost">Cost</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4" style="margin:10px 0px">
+                            <b>Preview :</b>
+                            <br />
+                            <br />
+                            <img id="Normal" src="/assets/images/simple.jpg" style="margin-bottom:10px;" class="showPreview" /><br />
+                            <img id="Cost" src="/assets/images/detailed.jpg" style="margin-bottom:10px;" class="hidePreview" />
+                        </div>
+                        <div class="col-md-4" style="margin:10px 0px">
+                            <b>Split Screen Direction : </b>
+                            <br />
+                            <br />
+                            <input type="radio" class="radio" id="Vetical" name="splitscreendirection" style="vertical-align: text-top" value="Vertical" checked />
+                            <label class="label" for="Vetical">Vetical</label><br />
+                            <input type="radio" class="radio" id="Horizontal" name="splitscreendirection" style="vertical-align: text-top" value="Horizontal" />
+                            <label class="label" for="Horizontal">Horizontal</label><br />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="return SaveScreenSettings();">Save</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+           if ("@ViewBag.Title" == "UserVersion") {
+                var h = 0, w = 0;
+                document.getElementById("mySavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + $("#hdnOrgChartData").val() + " }";
+
+                // Org chart in Canvas
+                h = parseInt($("#divRightOrgChart").css("height").substr(0, $("#divRightOrgChart").css("height").indexOf("px")));
+                w = parseInt($("#divRightOrgChart").css("width").substr(0, $("#divRightOrgChart").css("width").indexOf("px")));
+                init(w, h);
+            }
+
+            // Setting current position of Org Chart
+            $("#spnOrgRole").html($("#hdnOrgRole").val());
+
+            var sValue = $("#hdnOrgType").val();
+            if (sValue == "OV") $("#spnOrgType").html("Operational View");
+            else if (sValue == "LV") $("#spnOrgType").html("Legal View");
+
+            sValue = $("#hdnOrgLevel").val();
+            if (sValue == "One") $("#spnOrgLevel").html("Level One");
+            else if (sValue == "Two") $("#spnOrgLevel").html("Level Two");
+
+            sValue = $("#hdnOrgView").val();
+            if (sValue == "Sample") $("#spnOrgView").html("Sample View");
+            else if (sValue == "Normal") $("#spnOrgView").html("Normal View");
+            else if (sValue == "Cost") $("#spnOrgView").html("Position Cost View");
+
+            if ("@ViewBag.Title" == "UploadVersion" || "@ViewBag.Title" == "UploadData") {
+                SelectedInitiativeDDL($("#hdnOrgDDL").val(), "SelectInitiative");
+            }
+        });
+
+        function SaveScreenSettings() {
+            Settings.SelectShape = $("input[name='shape']:checked").val();
+            Settings.Skin = $("input[name='skin']:checked").val();
+            Settings.ShowPicture = $("input[name='picture']:checked").val();
+            Settings.SelectView = $("#selView").val();
+            $("#hdnOrgView").val(Settings.SelectView);
+            Settings.SplitScreenDirection = $("input[name='splitscreendirection']:checked").val();
+
+            CancelOperation();
+        }
+
+        function CancelOperation() {
+            $("#divRightOrgChart").removeClass("col-md-12");
+            $("#divRightOrgChart").removeClass("col-md-8");
+            $("#divRightOrgChart").removeClass("col-md-6");
+            $("#divRightOrgChart").addClass("col-md-12");
+
+            $("#divAddInitiative").hide();
+            $("#divAddVersion").hide();
+            $("#divRightOrgChart").show();
+            $("#divLeftOrgChart").hide();
+            $("#divUploadVersion").hide();
+
+            $("#myDiagramDiv").detach();
+            var iDiv = document.createElement('div');
+            iDiv.id = 'myDiagramDiv';
+            document.getElementById('myDiagramContainer').appendChild(iDiv);
+
+            // Org chart in Canvas
+            h = parseInt($("#divRightOrgChart").css("height").substr(0, $("#divRightOrgChart").css("height").indexOf("px")));
+            w = parseInt($("#divRightOrgChart").css("width").substr(0, $("#divRightOrgChart").css("width").indexOf("px")));
+            init(w, h);
+
+            SplitScreen = "Y";
+        }
+
+        function UpdateSettings() {
+            $("#SettingsModal").modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+        }
+
+    </script>
+</body>
+</html>

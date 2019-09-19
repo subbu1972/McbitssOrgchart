@@ -1,0 +1,125 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Nov 9, 2015, 1:42:10 PM
+    Author     : Alhazs
+*/
+.errorMsg {display:none;color:red;font-size:20px;text-align: center;}
+
+.zoomImageCss{width: 960px; height: 460px;}
+
+.errorMsgField {display:none;color:red;font-size:10px;}
+
+
+/*img {
+    max-width: 100%;
+    display: block;
+}
+
+.thumbnail {
+        position: absolute;
+    top: 50%;
+    left: 50%;
+    
+    width: 320px;
+    height: 240px;
+    
+    -webkit-transform: translate(-50%,-50%); /* Safari and Chrome */
+/*    -moz-transform: translate(-50%,-50%);  Firefox 
+    -ms-transform: translate(-50%,-50%);  IE 9 
+    -o-transform: translate(-50%,-50%);  Opera 
+    transform: translate(-50%,-50%);*/
+/*}
+
+.image {
+    width: 100%;
+    height: 100%;    
+}*/
+
+/*.image img {
+    -webkit-transition: all 1s ease;  Safari and Chrome 
+        -moz-transition: all 1s ease;  Firefox 
+        -o-transition: all 1s ease;  IE 9 
+        -ms-transition: all 1s ease;  Opera 
+        transition: all 1s ease;
+}
+
+.image:hover img {
+    -webkit-transform:scale(5.25);  Safari and Chrome 
+    -moz-transform:scale(5.25);  Firefox 
+    -ms-transform:scale(5.25);  IE 9 
+    -o-transform:scale(5.25);  Opera 
+     transform:scale(5.25);
+     z-index: 15;
+}*/
+
+.atm_total {
+    background-image:url(images/btn_indicator.png);
+    background-position:0px 78px;
+    background-size: 103%;
+    height: 77px; width: 77px; 
+    font-size: 25px; padding-top: 30px; 
+    text-align: center;    
+}
+
+.atm_danger {
+    background-image:url(images/btn_indicator.png);
+    background-position:0px 0px;
+    background-size: 103%; 
+    height: 77px; width: 77px; 
+    font-size: 25px; padding-top: 30px; 
+    text-align: center;
+}
+
+.atm_warning {
+    background-image:url(images/btn_indicator.png);
+    background-position:0px 394px; 
+    background-size: 103%;
+    height: 77px; width: 77px; 
+    font-size: 25px; padding-top: 34px; 
+    text-align: center
+}
+
+.atm_success{
+    background-image:url(images/btn_indicator.png); 
+    background-position:0px 236px; 
+    background-size: 103%; 
+    height: 77px; width: 77px; 
+    font-size: 25px; padding-top: 34px;
+    text-align: center
+}
+
+.atm_dowm{
+    background-image:url(images/down.png);
+    background-position:-2px 7px;
+    background-size: 250px; 
+}
+
+.atm_ok{
+    background-image:url(images/success.png);
+    background-position:-5px 5px;
+    background-size: 250px; 
+}
+
+.atm_warnsmall{
+    background-image:url(images/warning.png);
+    background-position:-1px 7px;
+    background-size: 250px; 
+}
+
+.loadingMessage{display:none;width:200px;height:89px;position:absolute;top:50%;left:50%;padding:2px;z-index:1}
+
+
+span.stars, span.stars span {
+    display: block;
+    background: url(images/combo_arrow.png) 0 -16px repeat-x;
+    width: 80px;
+    height: 16px;
+}
+
+span.stars span {
+    background-position: 0 0;
+}

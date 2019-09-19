@@ -1,0 +1,712 @@
+﻿@model REORGCHART.Models.MyModel
+@{
+    ViewBag.Title = "AdminVersion";
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+}
+<link rel="stylesheet" href="~/Content/font-awesome/css/font-awesome.css" />
+
+<div class="overlay" style="z-index:5000">
+    <div id="loading-img" class="center-div"></div>
+</div>
+
+<div id="divShowMap" style="display:none;width:100%;height:100%;">
+    <div style="background-image: url('~/assets/images/pattern/custom/background.jpg');">
+        <div id="mapdiv" style="width: 100%; height: 700px;"></div>
+    </div>
+</div>
+
+<div id="divAddInitiative" style="display:none;width:100%;height:100%;">
+    <div class="row">
+        <div class="addNewVersion">
+            <div class="row">
+                <div class="col-md-12" style="margin:5px 0px;font-weight:bold;font-style:italic;font-size:20px;">
+                    Add New Initiative
+                </div>
+            </div>
+            <form id="tooltipAddNewInitiative" name="tooltipAddNewInitiative" method="post">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group" style="margin:5px 0px;width:100%">
+                            <input type="text" name="InitiativeTitle" id="InitiativeTitle" placeholder="Initiative Title" class="form-control" />
+                        </div>
+                        <div class="form-group" style="margin:5px 0px;width:100%">
+                            <textarea name="InitiativeDescription" id="InitiativeDescription" placeholder="Initiative Description" class="form-control"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="row">
+                <div class="col-md-12" style="margin:5px 0px;">
+                    <div id="RespInitiative" style="margin:5px 0px;">
+                        <div id="divRepInitiativeHeader" style="font-style:italic;color:green;"></div>
+                        <div id="divRepInitiativeError"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12" style="margin:5px 0px;">
+                    <button type="button" class="btn btn-primary" onclick="return SaveInitiative();" style="width:100%">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="divAddPopulation">
+    <div class="row">
+        <div id="divUploadVersion" class="col-md-4" style="padding-left:15px;display:none;">
+            <div style="background-color:lightblue;padding:5px;margin-top:0px;height:35px;">
+                <span style="float:left;">Population Upload</span>
+                <i data-cm="Chart" class="fa fa-bar-chart contextmenu" style="padding:5px;float:right;cursor:pointer;" id="iconChart" onclick="ShowTableChart(this)"></i>
+                <i data-cm="Table" class="fa fa-table contextmenu" style="padding:5px;float:right;cursor:pointer;" id="iconTable" onclick="ShowTableChart(this)"></i>
+            </div>
+            <div style="margin:0px 20px">
+                <center>
+                    <div style="padding-left:0px;padding-top:10px">
+                        <table cellspacing="0" cellpadding="0" id="topNavigation">
+                            <tr>
+                                <td>
+                                    <div>
+                                        <img id="img_1" src="~/Content/Images/number1.svg" style="width:40px;height:40px;" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div id="dvNav_B_2" style="width: 100px; height: 3px; margin-top: -1px; margin-left: -4px;"
+                                         class="navIndexWhite">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <img id="img_2" src="~/Content/Images/number2.svg" style="width:40px;height:40px;" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div id="dvNav_B_3" style="width: 100px; height: 3px; margin-top: -1px; margin-left: -4px;"
+                                         class="navIndexWhite">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <img id="img_3" src="~/Content/Images/number3.svg" style="width:40px;height:40px;" />
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </center>
+                <div id="div1" style="height:350px;padding-top:10px;">
+                    <form id="tooltipPopulationDataFormStage1" method="post" enctype="multipart/form-data">
+                        <input type="hidden" value="" id="hdnUseFields" name="hdnUseFields" />
+                        <input type="hidden" value="" id="hdnXlsxFields" name="hdnXlsxFields" />
+                        <input type="hidden" value="N" id="hdnSkipWarningData" name="hdnSkipWarningData" />
+
+                        <center>
+                            <div class="form-group">
+                                <div style="height:50px">
+                                    <input style="padding-left:5px" id="rdoXLSX" name="FileType" type="radio" value="Excel" />
+                                    <label style="padding-left:5px">Excel</label>
+                                </div>
+                            </div>
+                        </center>
+                        <div style="width:100%" class="form-group">
+                            <input type="hidden" id="hdnFileName" name="hdnFileName" value="" />
+                            <input class="form-control" type="file" id="upload" name="upload" onchange="SetDivIds();" style="height: auto;margin-bottom:5px;">
+                        </div>
+                        <div style="width:100%" class="form-group">
+                            <input data-toggle="tooltip" class="form-control" style="margin-bottom:5px;" type="text" value="" id="txtPopulationName" name="txtPopulationName" placeholder="Upload Data Name" />
+                        </div>
+                        <div style="width:100%" class="form-group">
+                            <textarea class="form-control" style="margin-bottom:5px;" type="text" value="" id="txtDescription" name="txtDescription" rows="3" cols="20" placeholder="Description"></textarea>
+                        </div>
+                        <div style="width:100%" class="form-group">
+                            <select id="selFV" name="selFV" class="form-control"></select>
+                        </div>
+                        <div id="divErrorMissingFields" style="color:red;display:none;max-height:40px;margin-top:30px;"></div>
+                    </form>
+                </div>
+                <div id="div2" style="display:none;height:350px;padding-top:10px;">
+                    <div style="width:100%;text-align:left;font-weight:bold;margin-top:5px;color:blue;">Following Fields will be used to design the Boxes</div>
+                    <div id="divShowFields" style="max-height:300px;overflow-y:auto;margin-bottom:5px; font-size:12px;"></div>
+                </div>
+                <div id="div3" style="display:none;height:300px;padding-top:10px;" class="form-group">
+                    <div style="width:100%;text-align:left;font-weight:bold;margin-top:5px;margin-bottom:10px;color:blue;">
+                        First Position information
+                        ( <input type="checkbox" value="" id="chkSerialNo" /><label for="chkSerialNo">Serial No. Flag</label> )
+                    </div>
+                    <select id="selFP" name="selFP" class="form-control"></select>
+                    <input id="txtFirstPosition" name="txtFirstPosition" type="text" value="" placeholder="First Position" class="form-control" />
+                    <div style="width:100%;text-align:left;font-weight:bold;margin-top:7px;margin-bottom:10px;color:blue;">Parent Child Relationship</div>
+                    <select id="selNL" name="selNL" class="form-control"></select>
+                    <select id="selPL" name="selPL" class="form-control"></select>
+                    <div style="width:100%;text-align:left;font-weight:bold;margin-top:7px;margin-bottom:10px;color:blue;">
+                        <a href="javascript:void(0);" data-toggle="modal" data-target="#MultiSelectModal">Full Name information with comma separated</a>
+                        <i data-cm="Remove" class="fa fa-remove contextmenu" style="padding:5px;float:right;cursor:pointer;" onclick="ClearTextBox('txtFullName')"></i>
+                    </div>
+                    <input id="txtFullName" name="txtFullName" type="text" value="" placeholder="Full Name fields with comma" class="form-control" readonly="readonly" />
+                </div>
+                <div class="col-md-12" style="margin:5px 0px;">
+                    <div id="RespPopulation" style="margin:5px 0px;">
+                        <div id="divRepPopulationHeader" style="font-style:italic;color:green;"></div>
+                        <div id="divRepPopulationError"></div>
+                    </div>
+                </div>
+                <div style="clear:both;"></div>
+                <center>
+                    <div style="padding-bottom:20px;padding-left:10px;padding-top:30px;">
+                        <button id="btnBack" class="btn btn-primary" disabled style="width:70px;" onclick="BackQ()">Back</button>
+                        <button id="btnNext" class="btn btn-primary" style="width:70px" onclick="NextQ()">Next</button>
+                        <button id="btnFinish" class="btn btn-primary" disabled style="width:70px" onclick="Finish()">Finish</button>
+                        <button class="btn btn-primary" style="width:70px" onclick="CancelOperation();">Cancel</button>
+                    </div>
+                </center>
+            </div>
+        </div>
+        <div id="divLeftOrgChart" class="col-md-6 left-split split-overflow" style="margin:0px 0px!important;padding:0px 0px!important;display:none;">
+            @Html.Partial("ShowPartitionOrgchart")
+        </div>
+        <div id="divRightOrgChart" class="col-md-12 right-split split-overflow" style="margin:0px 0px!important;padding:0px 0px!important;">
+            <div id="div_OA_ShowChart" style="display:inline-block;width:100%">
+                @Html.Partial("ShowOrgchart")
+            </div>
+            <div id="div_OA_ShowUploadData" style="display:none;width:100%">
+                @Html.Partial("ShowUploadData")
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="divAddVersion" style="display:none;width:100%;height:100%;">
+    <div class="row">
+        <div class="addNewVersion">
+            <div class="row">
+                <div class="col-md-12" style="margin:5px 0px;font-weight:bold;font-style:italic;font-size:20px;">
+                    Add New Version
+                </div>
+            </div>
+            <form id="tooltipAddNewVersion" name="tooltipAddNewVersion" method="post">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group" style="margin:5px 0px;width:100%">
+                            <input type="text" name="VersionTitleNew" id="VersionTitleNew" placeholder="Version Title" class="form-control" />
+                        </div>
+                        <div class="form-group" style="margin:5px 0px;width:100%">
+                            <textarea name="VersionDescriptionNew" id="VersionDescriptionNew" placeholder="Version Description" class="form-control"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="row">
+                <div class="col-md-12" style="margin:5px 0px;">
+                    <div id="RespVersion" style="margin:5px 0px;">
+                        <div id="divRepVersionHeader" style="font-style:italic;color:green;"></div>
+                        <div id="divRepVersionError"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12" style="margin:5px 0px;">
+                    <button type="button" class="btn btn-primary" onclick="return SaveVersionTitle();" style="width:100%">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var Data = 0;
+
+    function ShowTableChart(Obj) {
+        if ($(Obj).attr("data-cm") == "Chart") {
+            $("#div_OA_ShowUploadData").hide();
+            $("#div_OA_ShowChart").fadeIn("slow", function () {
+            });
+        }
+        else if ($(Obj).attr("data-cm") == "Table") {
+            $("#div_OA_ShowChart").hide();
+            $("#div_OA_ShowUploadData").fadeIn("slow", function () {
+            });
+        }
+    }
+
+    function onMapClick(mapObject, event) {
+        $("#selCountry").select2("val", mapObject.id);
+        if (!($("#selCountry").select2("val"))) $("#selCountry").select2("val", "SelectCountry");
+    }
+
+    var map = AmCharts.ready(function () {
+
+        if ($("#hdnOrgType").val() == "LV") {
+            $("#divShowMap").show();
+            $("#divAddInitiative").hide();
+            $("#divAddPopulation").hide();
+            $("#divAddVersion").hide();
+        }
+
+        var map;
+
+        map = new AmCharts.AmMap();
+
+        map.dragMap = false;
+        map.color = "#FFFFFF";
+        //map.click = onMapClick;
+
+        map.clickMapObject = onMapClick;
+
+        var icon = "M21.25,8.375V28h6.5V8.375H21.25zM12.25,28h6.5V4.125h-6.5V28zM3.25,28h6.5V12.625h-6.5V28z";
+
+        map.areasSettings = {
+            autoZoom: false,
+            rollOverOutlineColor: "#AAAAAA",
+            outlineAlpha: 1,
+            outlineColor: "#FFFFFF",
+            outlineThickness: 1,
+            color: "#000000"
+        };
+
+        map.dataProvider = {
+            mapVar: AmCharts.maps.worldLow,
+            // images: [{ latitude: 47.1662, longitude: 8.5155, svgPath: icon, color: "#CC0000", scale: 0.5, label: "Zug, Switzerland", labelShiftY: 2, zoomLevel: 5, title: "Headquarters", description: "USA is one of the most important country for novartis." }],
+            areas: AmCharts.maps.worldLow.svg.g.path
+        };
+        var zoomControl = map.zoomControl;
+        zoomControl.panControlEnabled = false;
+        zoomControl.zoomControlEnabled = false;
+
+        map.write("mapdiv");
+    });
+
+    $(document).ready(function () {
+
+        if ($("#hdnOrgType").val() == "LV")
+            $("#divPartitionCountry").show();
+        if ($("#hdnOrgType").val() == "OV")
+            $("#divPartitionCountry").hide();
+
+        $("#iconTable").hide();
+        $("#div_OA_ShowChart").show();
+        $("#div_OA_ShowUploadData").hide();
+        $(".addinitiative").show();
+        $(".deleteinitiative").show();
+        $(".saveversion").show();
+        $(".splitscreen").show();
+
+        ValidateAddNewInitiative()             // Add new Initiative
+        UploadDataStage1();                    // Stage 1 Validation
+        ValidatetooltipAddNewVersion()         // Add new Version
+
+        // Finalyzer Version alone in select
+        var SelectFV = "<option value=\"\">Finalyser Version</option>";
+        var JsonFV = JSON.parse($("#hdnFinalyzerVerion").val());
+        if (JsonFV.length >= 1) {
+            for (var Idx = 0; Idx <= JsonFV.length - 1; Idx++) {
+                if (JsonFV[Idx].Version != "") {
+                    SelectFV += "<option value=\"" + JsonFV[Idx].VersionNo + "\">" + JsonFV[Idx].VersionName + "</option>";
+                }
+            }
+        }
+        $("#selFV").html(SelectFV);
+
+        // Country DDL
+        var SelectC = "<option value=\"SelectCountry\">SELECT COUNTRY</option>";
+        var JsonCL = JSON.parse($("#hdnOrgCountries").val());
+        if (JsonCL.length >= 1) {
+            for (var Idx = 0; Idx <= JsonCL.length - 1; Idx++) {
+                if (JsonCL[Idx].CountryCode != "") {
+                    SelectC += "<option value=\"" + JsonCL[Idx].CountryCode + "\">" + JsonCL[Idx].CountryName + "</option>";
+                }
+            }
+        }
+        $('#selCountry')
+            .find('option')
+            .remove()
+            .end()
+            .append(SelectC)
+            .val('SelectCountry')
+        $('#selPartitionCountry')
+            .find('option')
+            .remove()
+            .end()
+            .append(SelectC)
+            .val('SelectCountry')
+
+        $("#img_1").attr("src", HOST_ENV + "/Content/Images/SelectedOne.svg");
+    });
+
+    function UploadAllTypeOfData(ObjForm) {
+
+        if ($("#hdnFileName").val() == "") {
+            var formData = new FormData(ObjForm);
+
+            $.ajax({
+                url: HOST_ENV + "/Version/UploadFile",
+                type: 'POST',
+                data: formData,
+                async: false,
+                success: function (data) {
+                    if (data.Success == "Yes") {
+                        GridViewUploadData.PerformCallback();
+                        $("#div_OA_ShowChart").hide();
+                        $("#div_OA_ShowUploadData").show();
+
+                        Data++;
+
+                        $("#hdnUseFields").val(data.SF);
+                        $("#hdnXlsxFields").val(data.SF);
+                        $("#hdnFileName").val(data.FN);
+                        var ShowFields = data.SF.split(",");
+                        var SF = "", FL = "<option value=\"FULL_NAME\">FULL_NAME</option>";
+                        for (Idx = 0; Idx < ShowFields.length; Idx++) {
+                            SF += "<div style=\"width:100%;text-align:left;color:black;\">" +
+                                "    <input id='" + Idx + "' name='ShowFields' type='checkbox' checked='checked' disabled='disabled'/>" +
+                                "    <label style='padding-left: 5px; font-weight: normal;' for='" + Idx + "'>" + ShowFields[Idx] + "</label>" +
+                                "</div>";
+                            FL += "<option value=\"" + ShowFields[Idx] + "\">" + ShowFields[Idx] + "</option>"
+                        }
+                        $("#divShowFields").html(SF);
+                        $("#selFP").html(FL);
+                        $("#multiselect").html(FL);
+                        $("#selNL").html("<option value=\"\">SELECT CHILD</option>" + FL);
+                        $("#selPL").html("<option value=\"\">SELECT PARENT</option>" + FL);
+                        $("#iconTable").show();
+
+                        // 2nd Stage
+                        $("#dvNav_2").removeClass('navIndexWhite');
+                        $("#dvNav_2").addClass('navIndexGreen');
+                        $("#dvNav_B_2").removeClass('navIndexWhite');
+                        $("#dvNav_B_2").addClass('navIndexGreen');
+                        $("#div1").hide();
+                        $("#div2").show();
+                        $("#div3").hide();
+                        $('#btnBack').prop('disabled', false);
+                        $("#img_2").attr("src", HOST_ENV + "/Content/Images/SelectedTwo.svg");
+
+                        if (data.SerialNoFlag == "Y")
+                            $("#chkSerialNo").prop("checked", true);
+                        else
+                            $("#chkSerialNo").prop("checked", false);
+                        $("#selFP").val(data.FirstPositionField);
+                        $("#txtFirstPosition").val(data.FirstPosition);
+                        $("#selNL").val(data.ChildField);
+                        $("#selPL").val(data.ParentField);
+                        $("#txtFullName").val(data.FullNameFields);
+                    }
+                    else {
+                        if (data.Success == "No") {
+                            $("#divErrorMissingFields").html("Error File: <a href='/Version/DownloadErrorFile/?FN=" + data.EF + "' target='_blank'>" + data.EF + "</a>");
+                            $("#divErrorMissingFields").show();
+                        }
+                    }
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        }
+        else Data++;
+    }
+
+    function ValidatetooltipAddNewVersion() {
+        try {
+            $('#tooltipAddNewVersion').bootstrapValidator('destroy');
+        }
+        catch (ex) {
+        }
+        try {
+            $('#tooltipAddNewVersion').data('bootstrapValidator', null);
+        }
+        catch (ex) {
+        }
+        $('#tooltipAddNewVersion')
+            .bootstrapValidator({
+                container: 'tooltip',
+                feedbackIcons: {
+                    valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                live: 'enabled',
+                fields: {
+                    VersionTitleNew: {
+                        validators: {
+                            trigger: "mouseclick",
+                            notEmpty: {
+                                message: 'Version Title is required'
+                            }
+                        }
+                    },
+                    VersionDescriptionNew: {
+                        validators: {
+                            notEmpty: {
+                                message: 'Version Description is required'
+                            }
+                        }
+                    }
+                }
+            })
+            .on('success.form.bv', function (e) {
+
+                // Prevent submit form
+                e.preventDefault();
+
+                SaveVersionTitle();
+            });
+    }
+
+    function ValidateAddNewInitiative() {
+        try {
+            $('#tooltipAddNewInitiative').bootstrapValidator('destroy');
+        }
+        catch (ex) {
+        }
+        try {
+            $('#tooltipAddNewInitiative').data('bootstrapValidator', null);
+        }
+        catch (ex) {
+        }
+        $('#tooltipAddNewInitiative')
+            .bootstrapValidator({
+                container: 'tooltip',
+                feedbackIcons: {
+                    valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                live: 'enabled',
+                fields: {
+                    InitiativeTitle: {
+                        validators: {
+                            trigger: "mouseclick",
+                            notEmpty: {
+                                message: 'Initiative Title is required'
+                            }
+                        }
+                    },
+                    InitiativeDescription: {
+                        validators: {
+                            notEmpty: {
+                                message: 'Initiative Description is required'
+                            }
+                        }
+                    }
+                }
+            })
+            .on('success.form.bv', function (e) {
+
+                // Prevent submit form
+                e.preventDefault();
+
+                SaveInitiative();
+            });
+    }
+
+    function UploadDataStage1() {
+        try {
+            $('#tooltipPopulationDataFormStage1').bootstrapValidator('destroy');
+        }
+        catch (ex) {
+        }
+        try {
+            $('#tooltipPopulationDataFormStage1').data('bootstrapValidator', null);
+        }
+        catch (ex) {
+        }
+
+        $('#tooltipPopulationDataFormStage1')
+            .bootstrapValidator({
+                container: 'tooltip',
+                feedbackIcons: {
+                    valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                live: 'enabled',
+                fields: {
+                    FileType: {
+                        validators: {
+                            notEmpty: {
+                                message: 'Please choose an option'
+                            }
+                        }
+                    },
+                    upload: {
+                        validators: {
+                            notEmpty: {
+                                message: 'Please select a valid file to upload'
+                            },
+                            file: {
+                                extension: 'xlsx',
+                                message: 'The selected file is not valid'
+                            }
+                        }
+                    },
+                    txtPopulationName: {
+                        validators: {
+                            trigger: "mouseclick",
+                            notEmpty: {
+                                message: 'The Population name is required'
+                            }
+                        }
+                    },
+                    txtDescription: {
+                        validators: {
+                            notEmpty: {
+                                message: 'The Population Description is required'
+                            }
+                        }
+                    },
+                    selFV: {
+                        validators: {
+                            notEmpty: {
+                                message: 'Base version is required'
+                            }
+                        }
+                    }
+                }
+            })
+            .on('success.form.bv', function (e) {
+
+                // Prevent submit form
+                e.preventDefault();
+
+                if (Data == 0) {
+                    UploadAllTypeOfData(this);
+                }
+            });
+    }
+
+    function SetDivIds() {
+        $("#divErrorMissingFields").hide();
+        $("#hdnFileName").val("");
+    }
+
+    function ErrorString() {
+        var sError = "N";
+
+        $("#divErrorMissingFields").hide();
+        return sError;
+    }
+
+    function Finish() {
+        $("#divRepPopulationError").empty();
+        $("#divRepPopulationHeader").empty();
+
+        $("#img_3").attr("src", HOST_ENV + "/Content/Images/SelectedThree.svg");
+
+        if (ErrorString() == "N") {
+            $(".overlay").show();
+
+            var JsonData = {
+                selVFP: $("#selFP").val(),
+                txtVFP: $("#txtFirstPosition").val(),
+                chkVSN: ($("#chkSerialNo").prop("checked") == true) ? "Y" : "N",
+                selVNL: $("#selNL").val(),
+                selVPL: $("#selPL").val(),
+                txtVUN: $("#txtFullName").val(),
+                chkVFT: $("#rdoXLSX").prop("checked") ? "XLSX" : "JSON",
+                txtVFN: $("#hdnFileName").val(),
+                UseFields: "USER_ID,LEVEL_ID,PARENT_LEVEL_ID,COUNTRY,VERSION,DATE_UPDATED,FULL_NAME,VERIFY_FLAG,LEVEL_NO,BREAD_GRAM,BREAD_GRAM_NAME,NOR_COUNT,SOC_COUNT,POSITION_CALCULATED_COST,NEXT_LEVEL_FLAG,GRAY_COLORED_FLAG,DOTTED_LINE_FLAG,SHOW_FULL_BOX,LANGUAGE_SELECTED,SORTNO,POSITIONFLAG,FLAG," + $("#hdnUseFields").val(),
+                ExcelDownLoadFields: $("#hdnXlsxFields").val(),
+                selINI: $("#selInitiative").select2("val"),
+                VersionName: $("#txtPopulationName").val(),
+                VersionDesc: $("#txtDescription").val(),
+                BaseVersion: $("#selFV").val()
+            };
+
+            $.ajax({
+                url: HOST_ENV + "/Version/SaveVersionInfo",
+                type: 'POST',
+                data: JsonData,
+                dateType: "json",
+                async: true,
+                success: function (Json) {
+                    $("#divRepPopulationHeader").html("Message");
+                    if (Json.Success == "Yes") {
+                        $("#div_OA_ShowChart").show();
+                        $("#div_OA_ShowUploadData").hide();
+
+                        $("#divRepPopulationError").html(Json.ShowMessage);
+                        SelectedPopulationDDL(Json.DDL, $("#txtPopulationName").val(), $("#selInitiative").val(), "N");
+                        $("#hdnOrgDDL").val(Json.DDL);
+                        loadJSON("{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + Json.Data + " }");
+                    }
+                    else if (Json.Success == "No") $("#divRepPopulationError").html(Json.ShowMessage);
+
+                    $(".overlay").hide();
+                },
+                cache: false
+            });
+        }
+    }
+
+    function NextQ() {
+        $("#divRepPopulationError").empty();
+        $("#divRepPopulationHeader").empty();
+
+        if (ErrorString() == "N") {
+            $("#img_1").attr("src", HOST_ENV + "/Content/Images/number1.svg");
+            $("#img_2").attr("src", HOST_ENV + "/Content/Images/number2.svg");
+            $("#img_3").attr("src", HOST_ENV + "/Content/Images/number3.svg");
+
+            if (Data == 0) {
+                $('#tooltipPopulationDataFormStage1').submit();
+            }
+            else if (Data == 1) {
+                $("#dvNav_3").removeClass('navIndexWhite');
+                $("#dvNav_3").addClass('navIndexGreen');
+                $("#dvNav_B_3").removeClass('navIndexWhite');
+                $("#dvNav_B_3").addClass('navIndexGreen');
+                $("#div1").hide();
+                $("#div2").hide();
+                $("#div3").show();
+                $('#btnNext').prop('disabled', true);
+                $('#btnFinish').prop('disabled', false);
+                $("#img_3").attr("src", HOST_ENV + "/Content/Images/SelectedThree.svg");
+
+                Data++;
+            }
+            else $("#img_1").attr("src", HOST_ENV + "/Content/Images/SelectedOne.svg");
+        }
+    }
+
+    function BackQ() {
+        $("#divRepPopulationError").empty();
+        $("#divRepPopulationHeader").empty();
+
+        if (ErrorString() == "N") {
+            Data--;
+
+            $("#img_1").attr("src", HOST_ENV + "/Content/Images/number1.svg");
+            $("#img_2").attr("src", HOST_ENV + "/Content/Images/number2.svg");
+            $("#img_3").attr("src", HOST_ENV + "/Content/Images/number3.svg");
+
+            if (Data == 0) {
+                $('#btnBack').prop('disabled', true);
+                $('#btnFinish').prop('disabled', true);
+                $("#dvNav_2").removeClass('navIndexWhite');
+                $("#dvNav_2").addClass('navIndexGreen');
+                $("#dvNav_B_2").removeClass('navIndexWhite');
+                $("#dvNav_B_2").addClass('navIndexGreen');
+                $("#div1").show();
+                $("#div2").hide();
+                $("#div3").hide();
+                $("#img_1").attr("src", HOST_ENV + "/Content/Images/SelectedOne.svg");
+            }
+            else if (Data == 1) {
+                $('#btnNext').prop('disabled', false);
+                $('#btnFinish').prop('disabled', true);
+                $("#dvNav_3").removeClass('navIndexWhite');
+                $("#dvNav_3").addClass('navIndexGreen');
+                $("#dvNav_B_3").removeClass('navIndexWhite');
+                $("#dvNav_B_3").addClass('navIndexGreen');
+                $("#div1").hide();
+                $("#div2").show();
+                $("#div3").hide();
+                $("#img_2").attr("src", HOST_ENV + "/Content/Images/SelectedTwo.svg");
+            }
+        }
+    }
+</script>
+
+
+
+

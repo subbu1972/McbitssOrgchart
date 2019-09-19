@@ -1,0 +1,1429 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge;chrome=1" />
+    @*<title>ReOrgchart Modeling Tool</title>*@
+    <title>@ViewBag.Title - OrgChart Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    @Scripts.Render("~/bundles/jquery")
+    @*@Scripts.Render("~/bundles/bootstrap")*@
+    @RenderSection("scripts", required: false)
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    @*<link href="~/Scripts/Validators/bootstrap.min.css" rel="stylesheet" media="screen">*@
+    <link href="~/Scripts/Validators/bootstrap-datepicker.css" rel="stylesheet" type="text/css">
+    <link href="~/Scripts/Validators/default.time.css" rel="stylesheet" type="text/css">
+    <link href="~/Scripts/Validators/default.css" rel="stylesheet" type="text/css">
+    <link href="~/Scripts/Validators/font-awesome.css" rel="stylesheet" type="text/css">
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
+    @*<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>*@
+    <script src="~/assets/js/vendor/go.js"></script>
+
+    <link href="~/Scripts/zTree/zTreeStyle/zTreeStyle.css" rel="stylesheet" />
+    <script src="~/Scripts/zTree/js/jquery.ztree.core-3.5.min.js" type="text/javascript"></script>
+
+    <script src="~/Scripts/Validators/bootstrap.min.js"></script>
+    <script src="~/Scripts/Validators/bootstrapValidator.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/Validators/bootstrap-datepicker.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/Validators/picker.js" type="text/javascript"></script>
+    <script src="~/Scripts/Validators/picker.time.js" type="text/javascript"></script>
+    <script src="~/Scripts/Validators/legacy.js" type="text/javascript"></script>
+    <script src="~/Scripts/Validators/bootstrap-dialog.js" type="text/javascript"></script>
+
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Scripts/select2/select2.css" rel="stylesheet" />
+    <script src="~/Scripts/select2/select2.js"></script>
+    <link href="~/Content/app-style.css" rel="stylesheet" />
+    <link href="~/Content/Map/ammap.css" rel="stylesheet" />
+    <script src="~/Content/Map/ammap.js"></script>
+    <script src="~/Content/Map/worldLow.js"></script>
+
+    <link href="~/Scripts/ColorPicker/css/evol-colorpicker.css" rel="stylesheet" />
+    <script src="~/Scripts/ColorPicker/js/evol-colorpicker.js" type="text/javascript"></script>
+
+    <script src="~/Scripts/OrgchartScript/OrgchartGOJS.js?cd=1217"></script>
+    <script src="~/Scripts/OrgchartScript/OrgchartStaticGOJS.js?cd=1217"></script>
+    <script src="~/Scripts/OrgchartScript/OrgchartCustomGOJS.js?cd=1217"></script>
+    <script src="~/Scripts/OrgchartScript/PartitionOrgchartGOJS.js?cd=1217"></script>
+    <script src="~/Scripts/OrgchartScript/DragAndDropGOJS.js?cd=1056"></script>
+
+    <script src="~/Scripts/multiselectLeftRight/multiselect.min.js"></script>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+    <link href="~/Content/NewTemplateUI/CSS/style.css?cd=1213" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#sortable").sortable();
+            $("#sortable").disableSelection();
+
+            $('#nav li').first().addClass("active").find('ul').show();
+            $('#nav > li > a').click(function () {
+                if ($(this).attr('class') != 'active') {
+                    $('#nav li ul').slideUp();
+                    $(this).next().slideToggle();
+                    $('#nav li a').removeClass('active');
+                    $(this).addClass('active');
+                }
+            });
+        });
+
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "250px";
+            document.getElementById("mySidenav").classList.add("open");
+            document.getElementById("mySidenav").classList.remove("closed");
+            try {
+                if (MenuSelected == "Hierarchy") {
+                    $("#treeDemo").show();
+                }
+            }
+            catch (ex) {
+
+            }
+
+        }
+    </script>
+
+    @Html.DevExpress().GetStyleSheets(
+          new StyleSheet { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+          new StyleSheet { ExtensionSuite = ExtensionSuite.Editors },
+          new StyleSheet { ExtensionSuite = ExtensionSuite.GridView }
+      )
+    @Html.DevExpress().GetScripts(
+            new Script { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+            new Script { ExtensionSuite = ExtensionSuite.Editors },
+            new Script { ExtensionSuite = ExtensionSuite.GridView }
+        )
+
+    <style>
+
+        html {
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+
+        body {
+            margin: 0px;
+            background: url(../images/body.gif) repeat;
+            overflow-x: hidden;
+        }
+
+        div {
+            outline: none;
+        }
+
+        a img {
+            border: 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        div, h1, h2, h3, h4, p, form, label, input, textarea, img, span {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+            line-height: 0;
+        }
+
+        i:hover {
+            background-color: yellow !important;
+        }
+
+        i:active {
+            background-color: white !important;
+        }
+
+        i:focus {
+            background-color: white !important;
+        }
+
+        .border-left {
+            border-left: 1px solid rgba(0, 0, 0, 0.12);
+        }
+
+        .border-right {
+            border-right: 1px solid rgba(0, 0, 0, 0.12);
+        }
+
+        .border-top {
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .border-bottom {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .margin {
+            margin: 15px;
+        }
+
+        .padding {
+            padding: 15px;
+        }
+
+        .no-margin {
+            margin: 0px;
+        }
+
+        .margin-right {
+            margin-right: 15px;
+        }
+
+        .margin-left {
+            margin-left: 15px;
+        }
+
+        .margin-top {
+            margin-top: 15px;
+        }
+
+        .margin-bottom {
+            margin-bottom: 15px;
+        }
+
+        .margin-bottom10 {
+            margin-bottom: 10px !important;
+        }
+
+        .margin-top10 {
+            margin-top: 10px;
+        }
+
+        .margin-horizontal {
+            margin: 0px 15px;
+        }
+
+        .margin-vertical {
+            margin: 15px 0px;
+        }
+
+        .no-padding {
+            padding: 0px !important;
+        }
+
+        .padding-right {
+            padding-right: 15px;
+        }
+
+        .padding-left {
+            padding-left: 15px;
+        }
+
+        .padding-top {
+            padding-top: 15px;
+        }
+
+        .padding-top5 {
+            padding-top: 5px;
+        }
+
+        .padding-bottom5 {
+            padding-bottom: 5px;
+        }
+
+        .padding-bottom {
+            padding-bottom: 15px;
+        }
+
+        .padding-vertical {
+            padding: 15px 0;
+        }
+
+        .padding-horizontal {
+            padding: 0 15px;
+        }
+
+        .padding-right30 {
+            padding-right: 30px;
+        }
+
+        .padding-left30 {
+            padding-left: 30px;
+        }
+
+        .np-left {
+            padding-left: 0px;
+        }
+
+        .np-right {
+            padding-right: 0px;
+        }
+
+        .np-top {
+            padding-top: 0px !important;
+        }
+
+        .np-bottom {
+            padding-bottom: 0px;
+        }
+
+        .float-right {
+            float: right !important;
+        }
+
+        .full-width {
+            width: 100%;
+        }
+
+        .showMenu {
+            /*width:100px!important;*/
+        }
+
+        .showtopmenu {
+            position: relative;
+            top: -15px;
+        }
+
+        .menuitemwidth {
+            width: 70px;
+        }
+
+        .nav-right {
+            padding: 0px;
+            margin: 0px;
+        }
+
+            .nav-right li {
+                display: inline-block;
+            }
+
+        .breadcrumbs {
+            padding: 10px 0px 0px 10px;
+            height: 20px;
+        }
+
+        .breadcrumbsbig {
+            padding: 10px 0px 0px 10px;
+            height: 34px;
+        }
+
+        .location-text {
+            font-size: 12px;
+            font-weight: normal;
+            font-style: italic;
+            font-family: Tahoma, Geneva, sans-serif
+        }
+
+        .action-buttons {
+            padding: 0px;
+            margin: 0px;
+            text-align: right;
+        }
+
+            .action-buttons li {
+                list-style: none;
+                display: inline-block;
+            }
+
+                .action-buttons li a {
+                    padding: 3px 5px;
+                    color: #2a4a6d;
+                    font-size: 20px;
+                }
+
+        .select2-results li {
+            font-size: 12px;
+            line-height: normal;
+        }
+
+        .select2-container .select2-choice > .select2-chosen {
+            font-size: 12px;
+        }
+
+        .overlay {
+            background: #e9e9e9;
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            opacity: 0.2;
+        }
+
+        .centererror-div {
+            position: fixed;
+            width: 600px;
+            min-height: 25px;
+            margin: -80px auto; /* Will not center vertically and won't work in IE6/7. */
+            left: 0;
+            right: 0;
+            color: red;
+            text-align: center;
+            vertical-align: middle;
+            z-index: 1000;
+            background-color: lightcyan;
+            border-radius: 10px;
+            word-wrap: break-word;
+        }
+
+        .centermessage-div {
+            position: fixed;
+            width: 600px;
+            min-height: 25px;
+            margin: -80px auto; /* Will not center vertically and won't work in IE6/7. */
+            left: 0;
+            right: 0;
+            color: green;
+            text-align: center;
+            vertical-align: middle;
+            z-index: 1000;
+            background-color: lightcyan;
+            border-radius: 10px;
+            word-wrap: break-word;
+        }
+
+        .center-div {
+            width: 390px;
+            height: 80px;
+            text-align: left;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            margin-left: -170px;
+            margin-top: -20px;
+            border: 1px solid lightgray;
+            border-radius: 5px;
+            font-size: 22px;
+            font-weight: bold;
+            background-color: white;
+            padding: 10px;
+        }
+
+        #loading-img {
+            background: url(../../assets/images/Velocity.gif) center center no-repeat;
+            height: 100%;
+            z-index: 2000;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            margin-left: -170px;
+            margin-top: -320px;
+        }
+
+        i.fa {
+            display: inline-block;
+            border-radius: 60px;
+            box-shadow: 0px 0px 2px #888;
+            padding: 0.5em 0.6em;
+        }
+
+        .ddlselect {
+            width: 225px;
+            float: left;
+        }
+
+        .showoverviewdiv {
+            width: 200px;
+            height: 100px;
+            position: absolute;
+            left: 0px;
+            top: 20px;
+            z-index: 10;
+        }
+
+        #sortable {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 60%;
+        }
+
+            #sortable li {
+                margin: 0 3px 5px 3px;
+                padding: 0.8em;
+                padding-left: 1.5em;
+                font-size: 1.4em;
+                height: 25px;
+            }
+
+                #sortable li span {
+                    position: absolute;
+                    margin-left: -1.3em;
+                }
+    </style>
+</head>
+<body>
+
+    <input type="hidden" name="hdnBaseURL" id="hdnBaseURL" value='@System.Configuration.ConfigurationManager.AppSettings["BasePath"]' />
+    <section>
+        <header style="z-index:1000">
+            <div class="row" style="height:50px;">
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                    <div class="row">
+                        <div class="col-lg-11 col-md-11 col-sm-11 col-xs-11 np-left padding-top5">
+                            <img src="~/Content/NewTemplateUI/Images/reOrgchat-logo.svg" class="logo" alt="logo" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 text-right user-profile">
+                    <ul class="nav-right" style="height:50px;">
+                        <li class="location-text showtopmenu">
+                            <ul>
+                                <li>
+                                    <a style="font-size:10px;margin-left:0px;">(</a>
+                                    <a id="spnOrgType" style="font-size:10px;margin-left:0px;display:none;font-weight:600;">Operational View</a>
+                                    <a id="spnOrgLevel" style="font-size:10px;margin-left:0px;display:none;font-weight:600;">Level One</a>
+                                    <a id="spnOrgView" style="font-size:10px;margin-left:0px;font-weight:600;">Normal View</a>
+                                    <a style="font-size:10px;margin-left:0px;">&nbsp;:&nbsp;</a>
+                                    <a id="spnOrgRole" style="font-size:10px;margin-left:0px;font-weight:600;">User</a>
+                                    <a style="font-size:10px;margin-left:0px;">)</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li style="margin:8px 0px 0px 20px">
+                            <ul>
+                                <li><a class="showMenu showhidemenu" href="#" onclick="ShowHideDropDownBar(this);" title="Show/Hide" style="cursor:pointer;padding-left:5px;"><center><i class="fa fa-sliders-h"></i><div style="font-size: 10px;margin-top:8px;">&nbsp;Show/Hide</div></center></a></li>
+                                <li><a class="showMenu splitscreen" href="#" onclick="ToggleSplitScreen(this); return false;" title="Split Screen" style="cursor:pointer;padding-left:5px;"><center><i class="fa fa-columns"></i><div style="font-size: 10px;margin-top:8px;">&nbsp;Split Screen</div></center></a></li>
+                                <li><a class="showMenu" href="#" onclick="UpdateSettings();" title="Settings" style="cursor:pointer;padding-left:5px;"><center><i class="fa fa-gear"></i><div style="font-size: 10px;margin-top:8px;">&nbsp;Settings</div></center></a></li>
+                                <li><a class="showMenu saveversion" href="#" onclick="SaveVersion(); return false;" title="Finilyze Version" style="cursor:pointer;padding-left:5px;"><center><i class="fa fa-save"></i><div style="font-size: 10px;margin-top:8px;">&nbsp;Save Version</div></center></a></li>
+                                <li><a class="showMenu" href="#" onclick="DownloadDialogBox();" title="Download Version" style="cursor:pointer;padding-left:5px;x;"><center><i class="fa fa-download"></i><div style="font-size: 10px;margin-top:8px;">&nbsp;Download</div></center></a></li>
+                                <li><a class="showMenu" href="#" title="Search" id="ancOpenTreeView" style="cursor:pointer;padding-left:5px;width:100px;"><center><i class="fa fa-search"></i><div style="font-size: 10px;margin-top:8px;">&nbsp;Search</div></center></a></li>
+                            </ul>
+                        </li>
+                        <li class="showtopmenu">
+                            <ul>
+                                <li>
+                                    <div class="dropdown">
+                                        <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+                                            <img src="~/Content/NewTemplateUI/Images/user-placeholder.svg" class="user-pic" style="width:25px" alt="logo" />
+                                            <span id="spnUserName">@User.Identity.Name</span>
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu showdropdown-menu" role="menu" aria-labelledby="menu1">
+                                            <li role="presentation"><a role="menuitem" tabindex="-1">@Html.ActionLink("About", "About", "Home")</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1">@Html.ActionLink("Contact", "Contact", "Home")</a></li>
+                                            <li id="liAddUsr" role="presentation"><a role="menuitem" tabindex="-1">@Html.ActionLink("Add User", "UserRegister", "Account")</a></li>
+                                            <li role="presentation" class="divider"></li>
+                                            <li id="liUpdateSettings" role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="UpdateSettings();">Settings</a></li>
+                                            <li id="liSearch" role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="SearchDialogBox();">Search</a></li>
+                                            <li id="liDownloadDialogBox" role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="DownloadDialogBox();">Download Version</a></li>
+                                            <li id="liEndUserDivider" class="divider"></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1">@Html.ActionLink("Log Out", "LogOut", "Home")</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div id="mySidenav" class="sidenav">
+                <div class="row" style="min-height:50px;">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-left no-padding">
+                        <span style="font-size:30px;cursor:pointer" class="menu-open" onclick="openNav()">
+                            <img src="~/Content/NewTemplateUI/Images/menu-button.svg" width="25px" alt="logo" />
+                        </span>
+                        <img src="~/Content/NewTemplateUI/Images/reOrgchat-logo.svg" class="logo" alt="logo" />
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right no-padding">
+                        <span href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="cursor:pointer;font-size: 30px;">&times;</span>
+                    </div>
+                </div>
+                <div id="DivRolesViews"></div>
+            </div>
+        </header>
+
+        <div class="content-wrpper">
+            <div class="row border-bottom" style="padding:3px 0px;" id="divReOrgUsers">
+                <div class="left-menu-wrap">
+                    <div id="demo" class="">
+                        <div class="navbar-collapse no-padding">
+                            <div class="nav navbar-nav navbar-left row" style="width:100%">
+                                <div id="divCountry" class="select-width" style="display:none;">
+                                    <div class="row">
+                                        <div class="col-lg-11 col-md-11 col-sm-11 np-left pr-5">
+                                            <select class="select" id="selCountry" onclick="ShowPopupDialog(this)">
+                                                <option value="SelectCountry">SELECT COUNTRY</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-1 col-md-1 col-sm-1 no-padding">
+                                            <img src="~/Content/NewTemplateUI/Images/remove-icon.png" width="12px" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="ddlselect">
+                                        <select class="select" id="selInitiative" onclick="ShowPopupDialog(this)">
+                                            <option value="SelectInitiative">SELECT INITIATIVE</option>
+                                        </select>
+                                        <img id="imgInitiative" src="~/Content/NewTemplateUI/Images/remove-icon.png" style="width:12px;cursor:pointer;" class="deleteinitiative" data-id="deleteinitiative" onclick="RemoveVersion(this, $('#selInitiative').val());" />
+                                    </div>
+                                    <div class="ddlselect">
+                                        <select class="select" id="selPopulation" onclick="ShowPopupDialog(this)">
+                                            <option value="SelectPopulation">SELECT POPULATION</option>
+                                        </select>
+                                        <img id="imgPopulation" src="~/Content/NewTemplateUI/Images/remove-icon.png" style="width:12px;cursor:pointer;" class="deleteinitiative" data-id="deletepopulation" onclick="RemoveVersion(this, $('#selPopulation').val());" />
+                                    </div>
+                                    <div class="ddlselect">
+                                        <select class="select" id="selUser">
+                                            <option value="SelectUser">SELECT USER</option>
+                                        </select>
+                                    </div>
+                                    <div class="ddlselect">
+                                        <select class="select" id="selVersion" onclick="ShowPopupDialog(this)">
+                                            <option value="SelectVersion">SELECT VERSION</option>
+                                        </select>
+                                        <img src="~/Content/NewTemplateUI/Images/add-icon.png" class="addinitiative" style="width:12px;cursor:pointer;" onclick="AddNewVersion();" />
+                                        <img id="imgVersion" src="~/Content/NewTemplateUI/Images/remove-icon.png" style="width:12px;cursor:pointer;" class="deleteinitiative" data-id="deleteversion" onclick="RemoveVersion(this, $('#selVersion').val());" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>@RenderBody()</div>
+        </div>
+
+
+        <!-- Modal Download -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DownloadModal" style="display:none;" id="btnDownloadPopup"></button>
+        <div id="DownloadModal" class="modal fade" role="dialog">
+            <div class="modal-dialog  modal-dialog-centered" style="width:70%;">
+                <!-- Modal content( Download )-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" style="width:80%;display:inline;">Download/Upload</h4>
+                        <button type="button" class="close" onclick="PPTXUploadClose()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="nav nav-tabs">
+                            <li class="active" data-id="Download"><a data-toggle="tab" href="#DownloadU">Download</a></li>
+                            <li id="tabUploadTemplate" data-id="UploadTemplate"><a data-toggle="tab" href="#UploadTemplate">Upload Template</a></li>
+                            <li id="tabRevokeTemplate" data-id="RevokeTemplate"><a data-toggle="tab" href="#DRTemplate">Delete/Revoke Template</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="DownloadU" class="tab-pane fade in active">
+                                <div class="row">
+                                    <div class="col-md-12" style="margin:5px 0px;">
+                                        <input type="hidden" id="hdnPPTXinfo" name="hdnPPTXinfo" value="" />
+                                        <span id="spnVersionDetailsBG" style="font-style:italic;"></span>
+                                        <div style="margin-bottom:5px;"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="margin:0px 0px;">
+                                    <button type="button" id="divDownloadInitiate" class="btn btn-primary" style="width:210px;margin:5px;" onclick="DownloadInitiative();"><i class="fa fa-file-excel-o"></i><span style="font-size: 12px;">&nbsp;Download Initiative Excel</span></button>
+                                    <button type="button" id="divDownloadVersion" class="btn btn-primary" style="width:210px;margin:5px;" onclick="DownloadVersion();"><i class="fa fa-file-excel-o"></i><span style="font-size: 12px;">&nbsp;Download Version Excel</span></button>
+                                    <button type="button" id="divDownloadAllPDF" class="btn btn-primary" style="width:210px;margin:5px;" onclick="ShowSelectFields(this);"><i class="fa fa-file-pdf-o"></i><span style="font-size: 12px;">&nbsp;Download PDF</span></button>
+                                    <button type="button" id="divDownloadPDF" class="btn btn-primary" style="width:210px;margin:5px;" onclick="ShowSelectFields(this);"><i class="fa fa-file-pdf-o"></i><span style="font-size: 12px;">&nbsp;Download All PDF(One Level)</span></button>
+                                    <button type="button" id="divDownloadMLPDF" class="btn btn-primary" style="width:210px;margin:5px;" onclick="ShowSelectFields(this);"><i class="fa fa-file-pdf-o"></i><span style="font-size: 12px;">&nbsp;Download PDF(Multiple Level)</span></button>
+                                    <button type="button" id="divDownloadPPT" class="btn btn-primary" style="width:210px;margin:5px;" onclick="ShowSelectFields(this);"><i class="fa fa-file-powerpoint-o"></i><span style="font-size: 12px;">&nbsp;Download PPT</span></button>
+                                    <div class="row" id="divFieldSelection" style="display:none;margin-top:10px;border-top:1px solid #e5e5e5">
+                                        <div class="col-md-12" id="divFields">
+                                        </div>
+                                    </div>
+                                    <div class="row" id="divTemplateSelection" style="display:none;margin-top:10px;border-top:1px solid #e5e5e5">
+                                        <div class="col-md-12" id="divTemplateData">
+                                        </div>
+                                    </div>
+                                    <div id="RespDownload">
+                                        <table id="RespDownloadTable" style="width: 100%"></table>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button id="btnDownLoadSave" type="button" class="btn btn-primary" data-dismiss="modal" style="display:none;" onclick="SaveSelectedFields()">Save</button>
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                            <div id="UploadTemplate" class="tab-pane fade">
+                                <div class="row">
+                                    <div class="col-md-12" style="margin:10px 0px">
+                                        <div id="divAddPPTX">
+                                            <div class="row">
+                                                <div id="divUploadPPTX" class="col-md-12" style="padding-left:15px;">
+                                                    <div style="margin:0px 20px">
+                                                        <center>
+                                                            <div style="padding-left:0px;padding-top:10px">
+                                                                <table cellspacing="0" cellpadding="0" id="topNavigation">
+                                                                    <tr>
+                                                                        <td>
+                                                                            <div>
+                                                                                <img id="img_PPTX1" src="~/Content/Images/number1.svg" style="width:40px;height:40px;" />
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div id="dvNav_B_PPTX2" style="width: 100px; height: 3px; margin-top: -1px; margin-left: -4px;"
+                                                                                 class="navIndexWhite">
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div>
+                                                                                <img id="img_PPTX2" src="~/Content/Images/number2.svg" style="width:40px;height:40px;" />
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div id="dvNav_B_PPTX3" style="width: 100px; height: 3px; margin-top: -1px; margin-left: -4px;"
+                                                                                 class="navIndexWhite">
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div>
+                                                                                <img id="img_PPTX3" src="~/Content/Images/number3.svg" style="width:40px;height:40px;" />
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                        </center>
+                                                        <center>
+                                                            <div id="divPPTX1" style="height:250px;padding-top:10px; width:50%;margin:0 auto;">
+                                                                <div class="row">
+                                                                    <input type="hidden" value="" id="hdnPPTXUseFields" name="hdnPPTXUseFields" />
+                                                                    <input type="hidden" value="" id="hdnPPTXFields" name="hdnPPTXFields" />
+                                                                    <input type="hidden" value="" id="hdnPPTXSelectedFields" name="hdnPPTXSelectedFields" />
+                                                                    <div class="col-md-12">
+                                                                        <form id="dataPPTX" method="post" enctype="multipart/form-data">
+                                                                            <input type="hidden" id="hdnPPTXFileName" name="hdnPPTXFileName" value="" />
+                                                                            <input type="file" class="form-control" id="uploadPPTX" name="upload" onchange="SetPPTXDivIds();" style="height: auto;max-width:100%!important;margin-bottom:5px;">
+                                                                        </form>
+                                                                        <div id="divErrorPPTXUploadFile" style="color:red;display:none;width:100%;text-align:left;">Please select PPTX  file .</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <input class="form-control" type="text" value="" id="txtTemplateNamePPTX" name="txtTemplateNamePPTX" placeholder="Template Name" style="max-width:100%;margin-bottom:5px;" />
+                                                                        <div id="divErrorTemplateNamePPTX" style="color:red;display:none;width:100%;text-align:left;">Template is empty.</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <textarea class="form-control" type="text" value="" id="txtTemplateDescriptionPPTX" name="txtTemplateDescriptionPPTX" rows="3" cols="20" placeholder="Description" style="max-width:100%;margin-bottom:5px;"></textarea>
+                                                                        <div id="divErrorTemplateDescriptionPPTX" style="color:red;display:none;width:100%;text-align:left;">Description is empty.</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <select id="selNC" name="selNC" class="form-control" style="max-width:100%;margin-bottom:5px;">
+                                                                            <option value="8">8</option>
+                                                                            <option value="12">12</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </center>
+                                                        <div id="divPPTX2" style="display:none;height:300px;padding-top:10px;">
+                                                        </div>
+                                                        <div id="divPPTX3" style="display:none;height: 300px;padding: 10px;width: 50%;margin: 5% auto 0;border: 1px solid #ededed;" class="form-group">
+                                                            <div style="width:100%;text-align:left;font-weight:bold;margin-top:5px;color:blue;">Following Fields will be used for PPTX template</div>
+                                                            <div id="divPPTXShowFields" style="max-height:260px;overflow-y:auto;margin-bottom:5px;"></div>
+                                                        </div>
+                                                        <div class="col-md-12" style="margin:5px 0px;">
+                                                            <div id="divRespPPTX" style="margin:5px 0px;">
+                                                                <div id="divPTX" style="font-style:italic;color:green;"></div>
+                                                                <div id="divPPTXError" style="font-style:italic;color:red;"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div style="clear:both;"></div>
+                                                        <div id="divErrorSelectionFields" style="color:red;display:none;max-height:40px;margin-top:30px;">Please select field(s) to show.</div>
+                                                        <center>
+                                                            <div style="padding-bottom:20px;padding-left:10px;padding-top:30px;">
+                                                                <button id="btnPPTXBack" class="btn btn-primary" disabled style="width:70px;" onclick="BackPQ()">Back</button>
+                                                                <button id="btnPPTXNext" class="btn btn-primary" style="width:70px" onclick="NextPQ()">Next</button>
+                                                                <button id="btnPPTXFinish" class="btn btn-primary" disabled style="width:70px" onclick="FinishPPTX()">Finish</button>
+                                                            </div>
+                                                        </center>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" onclick="PPTXUploadClose()">Close</button>
+                                </div>
+                            </div>
+                            <div id="DRTemplate" class="tab-pane fade">
+                                <div class="row">
+                                    <div class="col-md-12" style="margin:10px 0px">
+                                        <span style="font-style:italic;">PLUS symbol in action column indicate that we can revoke PPT template and INTO mark indicate that we can delete the PPT template</span>
+                                        <div class="row" id="divTemplateList" style="margin:0px;border-top:1px solid #e5e5e5">
+                                            <div class="col-md-12" id="divDRTemplateData">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Version Details -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#VersionDetailsModal" style="display:none;" id="btnVersionDetailsPopup"></button>
+        <div id="VersionDetailsModal" class="modal fade" role="dialog">
+            <div class="modal-dialog  modal-dialog-centered" role="document" style="width:80%">
+
+                <!-- Modal content( Download )-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" style="width:80%;display:inline;">Add Initiative</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12" style="margin:5px 0px;border-bottom: 1px solid #e5e5e5">
+                                <span id="spnVersionDetailsBG1" style="font-style:italic;"></span>
+                                <div style="margin-bottom:5px;"></div>
+                            </div>
+                            <div class="col-md-12">
+                                <div style="width:100%;margin:5px 0px;">
+                                    <input class="form-control" type="text" value="" id="txtName" name="txtName" placeholder="Name" />
+                                    <div id="divErrorVersionName" style="color:red;display:none;">Version is empty.</div>
+                                </div>
+                                <div style="width:100%;margin:5px 0px;">
+                                    <textarea class="form-control" type="text" value="" id="txtDescription" name="txtDescription" rows="3" cols="20" placeholder="Description"></textarea>
+                                    <div id="divErrorDescription" style="color:red;display:none;">Description is empty.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="javascript:SaveVersion();">Add</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="javascript:FinalyzeVersion();">Finalize Version</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Image -->
+        <div id="AddNewImage" class="modal fade">
+            <div class="modal-dialog modal-dialog-centered modal-sm col-xl-">
+
+                <!-- Modal content( Add New Picture )-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" style="width:80%;display:inline;">Add New Picture</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="tab-content">
+                            <div id="divNewPosition" class="tab-pane fade in active">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <form id="ImageContent" name="ImageContent" method="post" enctype="multipart/form-data">
+                                            <input type="hidden" id="hdnImageFileName" name="hdnImageFileName" value="" />
+                                            <input type="file" class="form-control" id="uploadImageContent" name="upload" style="height: auto;max-width:100%!important;margin-bottom:5px;">
+                                            <div id="divImageError" style="font-style:italic;color:red;"></div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-primary" onclick="$('#ImageContent').submit();">Save</button>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12" style="margin:5px 0px;color:red" id="divAddImageError"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Functional Manager -->
+        <div id="AddFunctionalManager" class="modal fade">
+            <div class="modal-dialog modal-lg">
+
+                <!-- Modal content( Add Functional Manager )-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" style="width:80%;display:inline;">Add Functional Manager</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" style="width:100%">
+                        <div class="tab-content">
+                            <div id="divNewFunctionalManager" class="tab-pane fade in active">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input type="hidden" id="hdnLevelIdFM" name="hdnLevelIdFM" value="" />
+                                        <input type="hidden" id="hdnParentLevelIdFM" name="hdnParentLevelIdFM" value="" />
+                                        <input type="hidden" id="hdnParentNameFM" name="hdnParentNameFM" value="" />
+                                        <input placeholder="Functional Manager" type="text" class="form-control" id="txtFunctionalManager" name="txtFunctionalManager" style="height: auto;max-width:50%!important;margin-bottom:5px;">
+                                        <div id="divFuctionalManagerTable"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="margin:5px 0px;color:red" id="divFunctionalManagerError"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="ShowFunctionalManager();">Save</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add New Position -->
+        <div id="AddNewPositionModal" class="modal fade">
+            <div class="modal-dialog modal-dialog-centered modal-sm" style="width:80%">
+
+                <!-- Modal content( Add New Position )-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" style="width:80%;display:inline;">Add New Position</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="nav nav-tabs">
+                            <li class="active" data-id="divNewPosition"><a data-toggle="tab" href="#divNewPosition">New Position</a></li>
+                            <li data-id="divAssignEmployee" onclick="AddEmployeeAssign()"><a data-toggle="tab" href="#divAssignEmployee">Assign Employee</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="divNewPosition" class="tab-pane fade in active">
+                                <div class="row">
+                                    <div class="col-md-12" style="margin:5px 0px;">
+                                        <input id="txtPositionId" name="txtPositionId" type="text" value="" readonly="readonly" placeholder="Position ID" class="form-control" />
+                                    </div>
+                                    <div class="col-md-12" style="margin:5px 0px;">
+                                        <input id="txtNextPositionId" name="txtNextPositionId" type="text" value="" readonly="readonly" placeholder="Parent Position ID" class="form-control" />
+                                    </div>
+                                    <div class="col-md-12" style="margin:5px 0px;">
+                                        <input id="txtFirstName" name="txtFirstName" type="text" value="(Vacant)" readonly="readonly" placeholder="First Name" class="form-control" />
+                                    </div>
+                                    <div class="col-md-12" style="margin:5px 0px;">
+                                        <input id="txtLastName" name="txtLastName" type="text" value="" readonly="readonly" placeholder="Last Name" class="form-control" />
+                                    </div>
+                                    <div class="col-md-12" style="margin:5px 0px;">
+                                        <input id="txtPositionCost" name="txtPositionCost" type="text" value="0.00" placeholder="Position Cost" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="divAssignEmployee" class="tab-pane fade">
+                                <div class="row" id="divAssignEmployeeFields">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12" style="margin:5px 0px;" id="divAssignEmployeeInfo">
+                                        @*@Html.Action("ShowEmployeeView")*@
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12" style="margin:5px 0px;color:red" id="divAddPositionError"></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" onclick="return SaveNewPosition(this);">Save</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Sorting -->
+        <div id="AddSortingModal" class="modal fade">
+            <div class="modal-dialog modal-dialog-centered modal-sm" style="width:50%">
+
+                <!-- Modal content( Add Sorting )-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" style="width:80%;display:inline;">Sorting Associates</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12" style="margin:5px 0px;">
+                                <center>
+                                    <ul id="sortable" style="text-align:left;">
+                                        <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 1</li>
+                                        <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 2</li>
+                                        <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 3</li>
+                                        <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 4</li>
+                                        <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 5</li>
+                                        <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 6</li>
+                                        <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 7</li>
+                                    </ul>
+                                </center>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="return SaveSorting();">Sort</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employee Information -->
+        <div id="ShowEmployeeInformationModal" class="modal fade">
+            <div class="modal-dialog modal-dialog-centered modal-sm" style="width:50%">
+
+                <!-- Modal content( Employee Information )-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <input type="hidden" name="hdnEmployeeInf" id="hdnEmployeeInf" value="" />
+                        <input type="hidden" name="hdnEmployeeInfEditFlag" id="hdnEmployeeInfEditFlag" value="" />
+                        <input type="hidden" name="hdnEmployeeLevelID" id="hdnEmployeeLevelID" value="" />
+                        <div style="width:80%;display:inline;">
+                            <h4 class="modal-title" style="display:inline;">Employee Information</h4>&nbsp;
+                            <img id="imgEditEmployee" src="" alt="View/Edit Employee" onclick="ViewEditEmployeeInformation();" style="display:inline;width:32px;height:32px" />
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div style="width:100%" id="divEmployeeInformation"></div>
+                        <div style="width:100%;color:red;margin:5px 5px;" id="divEmployeeInformationError"></div>
+                        <div class="modal-footer">
+                            <button id="btnSaveEmployeeInformation" type="button" class="btn btn-primary" onclick="return SaveEmployeeInformation();">Save</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Initiative -->
+        <div id="InitiativeModal" class="modal fade">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+
+                <!-- Modal content( Initiative )-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" style="width:80%;display:inline;">Add a New Initiative</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="return SaveInitiative();">Add</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Version -->
+        <div id="VersionModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Select Version</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="divProcessedList">
+                            <table id="tblVersionList" class="cell-border" cellspacing="0" style="width:100%;text-align:left;"></table>
+                            <div id="divVersionList" style="width:100%;text-align:left;"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Full Name selection -->
+        <div id="MultiSelectModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Select Full Name</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-xs-5">
+                                <select name="from" id="multiselect" class="form-control" size="8" multiple="multiple">
+                                    <option value="1">Item 1</option>
+                                    <option value="2">Item 5</option>
+                                    <option value="2">Item 2</option>
+                                    <option value="2">Item 4</option>
+                                    <option value="3">Item 3</option>
+                                </select>
+                            </div>
+
+                            <div class="col-xs-2">
+                                <button type="button" id="multiselect_rightAll" class="btn btn-block"><i class="glyphicon glyphicon-forward"></i></button>
+                                <button type="button" id="multiselect_rightSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
+                                <button type="button" id="multiselect_leftSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
+                                <button type="button" id="multiselect_leftAll" class="btn btn-block"><i class="glyphicon glyphicon-backward"></i></button>
+                            </div>
+
+                            <div class="col-xs-5">
+                                <select name="to" id="multiselect_to" class="form-control" size="8" multiple="multiple"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" onclick="SelectFullName()">Select</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Upload PPT Template  -->
+        <div id="UploadTemplatePPTModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">
+                            Upload Template PPT
+                        </h4>
+                    </div>
+                    <div id="divAddPPTX">
+                        <div class="row">
+                            <div id="divUploadPPTX" class="col-md-12" style="padding-left:15px;">
+                                <div style="margin:0px 20px">
+                                    <center>
+                                        <div style="padding-left:0px;padding-top:10px">
+                                            <table cellspacing="0" cellpadding="0" id="topNavigation">
+                                                <tr>
+                                                    <td>
+                                                        <div>
+                                                            <img id="img_PPTX1" src="~/Content/Images/number1.svg" style="width:40px;height:40px;" />
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div id="dvNav_B_PPTX2" style="width: 100px; height: 3px; margin-top: -1px; margin-left: -4px;"
+                                                             class="navIndexWhite">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div>
+                                                            <img id="img_PPTX2" src="~/Content/Images/number2.svg" style="width:40px;height:40px;" />
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div id="dvNav_B_PPTX3" style="width: 100px; height: 3px; margin-top: -1px; margin-left: -4px;"
+                                                             class="navIndexWhite">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div>
+                                                            <img id="img_PPTX3" src="~/Content/Images/number3.svg" style="width:40px;height:40px;" />
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </center>
+                                    <center>
+                                        <div id="divPPTX1" style="height:250px;padding-top:10px; width:50%;margin:0 auto;">
+                                            <div class="row">
+                                                <input type="hidden" value="" id="hdnPPTXUseFields" name="hdnPPTXUseFields" />
+                                                <input type="hidden" value="" id="hdnPPTXFields" name="hdnPPTXFields" />
+                                                <input type="hidden" value="" id="hdnPPTXSelectedFields" name="hdnPPTXSelectedFields" />
+                                                <div class="col-md-12">
+                                                    <form id="dataPPTX" method="post" enctype="multipart/form-data">
+                                                        <input type="hidden" id="hdnPPTXFileName" name="hdnPPTXFileName" value="" />
+                                                        <input type="file" class="form-control" id="uploadPPTX" name="upload" onchange="SetPPTXDivIds();" style="height: auto;max-width:100%!important;margin-bottom:5px;">
+                                                    </form>
+                                                    <div id="divErrorPPTXUploadFile" style="color:red;display:none;width:100%;text-align:left;">Please select PPTX  file .</div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <input class="form-control" type="text" value="" id="txtTemplateNamePPTX" name="txtTemplateNamePPTX" placeholder="Template Name" style="max-width:100%" />
+                                                    <div id="divErrorTemplateNamePPTX" style="color:red;display:none;width:100%;text-align:left;">Template is empty.</div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <textarea class="form-control" type="text" value="" id="txtTemplateDescriptionPPTX" name="txtTemplateDescriptionPPTX" rows="3" cols="20" placeholder="Description" style="max-width:100%"></textarea>
+                                                    <div id="divErrorTemplateDescriptionPPTX" style="color:red;display:none;width:100%;text-align:left;">Description is empty.</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </center>
+                                    <div id="divPPTX2" style="display:none;height:300px;padding-top:10px;">
+                                    </div>
+                                    <div id="divPPTX3" style="display:none;height: 300px;padding: 10px;width: 50%;margin: 5% auto 0;border: 1px solid #ededed;" class="form-group">
+                                        <div style="width:100%;text-align:left;font-weight:bold;margin-top:5px;color:blue;">Following Fields will be used for PPTX template</div>
+                                        <div id="divPPTXShowFields" style="max-height:260px;overflow-y:auto;margin-bottom:5px;"></div>
+                                    </div>
+                                    <div class="col-md-12" style="margin:5px 0px;">
+                                        <div id="divRespPPTX" style="margin:5px 0px;">
+                                            <div id="divPTX" style="font-style:italic;color:green;"></div>
+                                            <div id="divPPTXError" style="font-style:italic;color:red;"></div>
+                                        </div>
+                                    </div>
+                                    <div style="clear:both;"></div>
+                                    <div id="divErrorSelectionFields" style="color:red;display:none;max-height:40px;margin-top:30px;">Please select field(s) to show.</div>
+                                    <center>
+                                        <div style="padding-bottom:20px;padding-left:10px;padding-top:30px;">
+                                            <button id="btnPPTXBack" class="btn btn-primary" disabled style="width:70px;" onclick="BackPQ()">Back</button>
+                                            <button id="btnPPTXNext" class="btn btn-primary" style="width:70px" onclick="NextPQ()">Next</button>
+                                            <button id="btnPPTXFinish" class="btn btn-primary" disabled style="width:70px" onclick="FinishPPTX()">Finish</button>
+                                        </div>
+                                    </center>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Full Name selection -->
+        <div id="SearchModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-lg">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">
+                            Search by Entities
+                            <i class="fa fa-filter" title="Filter" onclick="SelectFilters();" aria-hidden="true" style="cursor:pointer;"></i>
+                        </h4>
+                    </div>
+                    <div class="row">
+                        <div id="divShowSearchMenuResult">
+                            <div class="modal-body" style="width:100%">
+                                <center>
+                                    <div class="myFilterFields" id="myFilterFields"></div>
+                                    <div class="mysearchmenu" id="mySearchMenu"></div>
+                                </center>
+                                <div style="width:100%;border-bottom:1px solid #e0e0e0;padding:5px;font-weight:bold;">Search Result</div>
+                                <div id="divSearchTable" style="padding:0px 30px;display:none;">
+                                    @*@Html.Action("ShowSearchMenu")*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="return ShowSearchInformation();">Search</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Settings -->
+        <div id="SettingsModal" class="modal fade">
+            <div class="modal-dialog modal-dialog-centered modal-lg" style="width:70%">
+
+                <!-- Modal content( Settings )-->
+                <!-- Modal content( Settings )-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" style="width:80%;display:inline;">Settings</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#home">Initial Settings</a></li>
+                            <li><a data-toggle="tab" href="#SkinMenu">Node Settings</a></li>
+                            <li><a data-toggle="tab" href="#TemplateMenu" style="display:none;">Template Creation</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div id="home" class="tab-pane fade in active">
+                                <div class="row">
+                                    <div class="col-md-4" style="margin:10px 0px;height:130px;">
+                                        <b>Select Shape : </b>
+                                        <br />
+                                        <br />
+                                        <input type="radio" id="rectangle" class="radio" name="shape" style="vertical-align: text-top" checked value="RoundedRectangle" />
+                                        <label class="label" for="rectangle">Rectangle</label><br />
+                                        <input type="radio" id="circle" class="radio" name="shape" style="vertical-align: text-top" value="Circle" />
+                                        <label class="label" for="circle">Circle</label><br />
+                                        <input type="radio" id="ellipse" class="radio" name="shape" style="vertical-align: text-top" value="Ellipse" />
+                                        <label class="label" for="ellipse">Ellipse</label>
+                                    </div>
+                                    <div class="col-md-4" style="margin:10px 0px;height:130px;display:none;">
+                                        <b>Show Picture : </b>
+                                        <br />
+                                        <br />
+                                        <input type="radio" class="radio" id="Yes" name="picture" style="vertical-align: text-top" value="Y" checked />
+                                        <label class="label" for="Yes">Yes</label><br />
+                                        <input type="radio" class="radio" id="No" name="picture" style="vertical-align: text-top" value="N" />
+                                        <label class="label" for="No">No</label><br />
+                                    </div>
+                                    <div class="col-md-4" style="margin:10px 0px;height:130px;">
+                                        <b>Select View : </b>
+                                        <br />
+                                        <br />
+                                        <select id="selView" name="selView" style="color: black; width: 300px;" class="form-control"></select>
+                                    </div>
+                                    <div class="col-md-4 slidecontainer" style="margin:10px 0px;height:130px;">
+                                        <b>Level : </b>
+                                        <br />
+                                        <br />
+                                        <div><input type="range" id="myRange" min="1" max="6" value="1" style="float:left;margin-right:5px;display:block;line-height:20px"></div>
+                                        <center><div><span>Level:&nbsp;</span><input type="text" id="myLevel" readonly="readonly" value="" style="width:25px;height:20px;text-align:center;line-height:20px" /></div></center>
+                                    </div>
+                                    <div class="col-md-4" style="margin:10px 0px;height:130px;">
+                                        <b>Split Screen Direction : </b>
+                                        <br />
+                                        <br />
+                                        <input type="radio" class="radio" id="Vetical" name="splitscreendirection" style="vertical-align: text-top" value="Vertical" checked />
+                                        <label class="label" for="Vetical">Vertical</label><br />
+                                        <input type="radio" class="radio" id="Horizontal" name="splitscreendirection" style="vertical-align: text-top" value="Horizontal" />
+                                        <label class="label" for="Horizontal">Horizontal</label><br />
+                                    </div>
+                                    <div class="btn-group col-md-4" role="group" aria-label="Basic example" style="margin:10px 0px;height:130px;display:none;">
+                                        <b>Toggle View : </b>
+                                        <br />
+                                        <br />
+                                        <div id="viewToggle">
+                                            <button type="button" class="btn btn-primary btn-sm active-class" id="operational" aria-pressed="true" data-url="~/Version/UploadVersion" onclick="CreateOrgChart(this, 'Type', 'OV')"><i class="fa-plus fa icon-x"></i>&nbsp;Operational</button>
+                                            <button type="button" class="btn btn-primary btn-sm" id="Legal" aria-pressed="true" data-url="~/Version/UploadVersion" onclick="CreateOrgChart(this, 'Type', 'LV')"><i class="fa-minus fa icon-x"></i>&nbsp;Legal</button>
+                                        </div>
+                                    </div>
+                                    <div class="btn-group col-md-4" role="group" aria-label="Basic example" style="margin:10px 0px;height:130px;">
+                                        <b>Org Chart Type: </b>
+                                        <br />
+                                        <br />
+                                        <div id="OrgChartTypeToggle">
+                                            <select id="selOrgChartType" class="form-control">
+                                                <option value="OD">Portrait</option>
+                                                <option value="OS">Landscape</option>
+                                                <option value="OC">Custom</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="btn-group col-md-4" role="group" aria-label="Basic example" style="margin:10px 0px;height:130px;">
+                                        <b>Portrait Mode Multiple Level: </b>
+                                        <br />
+                                        <br />
+                                        <div id="PortraitModeMultipleLevel">
+                                            <select id="selPortraitModeMultipleLevel" class="form-control">
+                                                <option value="Yes">Yes</option>
+                                                <option value="No">No</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4" style="margin:10px 0px;height:130px;">
+                                        <b>Functional Manager : </b>
+                                        <br />
+                                        <br />
+                                        <input type="radio" class="radio" id="ShowFM" name="functionalmanagertype" style="vertical-align: text-top" value="ShowFM" checked />
+                                        <label class="label" for="ShowFM">Show</label><br />
+                                        <input type="radio" class="radio" id="HideFM" name="functionalmanagertype" style="vertical-align: text-top" value="HideFM" />
+                                        <label class="label" for="HideFM">Hide</label><br />
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="SkinMenu" class="tab-pane fade">
+                                <div class="row">
+                                    <div class="col-md-4" style="margin:10px 0px;">
+                                        <div class="col-md-12">
+                                            <b>Skin Selection : </b>
+                                            <br />
+                                            <br />
+                                        </div>
+                                        <div class="col-md-12">
+                                            <input type="radio" class="radio" name="skin" style="vertical-align: text-top" value="Brown" />
+                                            <img src="~/assets/images/SKIN-1.jpg" style="width: 150px;margin-bottom:10px;" />
+                                        </div>
+                                        <div class="col-md-12">
+                                            <input type="radio" class="radio" name="skin" style="vertical-align: text-top" value="White" checked />
+                                            <img src="~/assets/images/SKIN-2.jpg" style="width: 155px;margin-bottom:10px;" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4" style="margin:10px 0px;">
+                                        <b>Node Box Border Color : </b>
+                                        <br />
+                                        <br />
+                                        <div id="cpInline2"></div>
+                                    </div>
+                                    <div class="col-md-4" style="margin:10px 0px;">
+                                        <b>Node Line Color : </b>
+                                        <br />
+                                        <br />
+                                        <div id="cpInline3"></div>
+                                    </div>
+                                    <div class="btn-group col-md-4" role="group" aria-label="Basic example" style="margin:10px 0px;height:130px;">
+                                        <b>Node Size: </b>
+                                        <br />
+                                        <br />
+                                        <div id="NodeSize">
+                                            <select id="selNodeSize" class="form-control" onclick="SmallBoxWidth = $(this).val();">
+                                                <option value="0">Big</option>
+                                                <option value="100">Small</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="TemplateMenu" class="tab-pane fade">
+                                <div id="sample">
+                                    <div style="width: 100%; display: flex; justify-content: space-between">
+                                        <div id="paletteZone" style="width: 160px; height: 400px; margin-right: 2px; background-color: lightblue; padding: 10px;">
+                                        </div>
+                                        <div id="myDiagramDragAndDrop" style="flex-grow: 1; height: 400px; border: solid 1px black"></div>
+                                    </div>
+                                    <input id="remove" type="checkbox"><label for="remove">Remove item after drag</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="return SaveScreenSettings();">Save</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script type="text/javascript">
+        var NewLayout_ViewBagTitle = "@ViewBag.Title";
+        function ReadConfigurationSettings() {
+            var BaseURL = window.location.protocol + '//' + window.location.host + "/" + '@System.Configuration.ConfigurationManager.AppSettings["BasePath"]';
+            if ('@System.Configuration.ConfigurationManager.AppSettings["BasePath"]' == "") BaseURL = window.location.protocol + '//' + window.location.host;
+
+            return BaseURL;
+        }
+    </script>
+    <script src="~/Scripts/OrgchartScript/NewLayout.js?cd=1219"></script>
+</body>
+</html>

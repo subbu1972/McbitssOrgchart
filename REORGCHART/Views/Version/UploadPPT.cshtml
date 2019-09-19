@@ -1,0 +1,484 @@
+﻿@model REORGCHART.Models.MyModel
+@{
+    ViewBag.Title = "Upload PPTX";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="~/Content/font-awesome/css/font-awesome.css" />
+<style>
+    .center {
+        position: absolute;
+        margin: auto;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 350px;
+        max-height: 450px;
+        background-color: #ffffff;
+        border-radius: 3px;
+        border: 3px solid lightblue;
+    }
+
+    .navIndexGreen {
+        border: 5px solid #337ab7;
+        width: 25px;
+        height: 25px;
+        background-color: Green;
+        text-align: center;
+        vertical-align: middle;
+        font-weight: bold;
+        font-family: Arial;
+        color: white;
+    }
+
+    .navIndexWhite {
+        border: 5px solid #caddef;
+        width: 25px;
+        height: 25px;
+        background-color: White;
+        text-align: center;
+        vertical-align: middle;
+        font-weight: bold;
+        font-family: Arial;
+        color: black;
+    }
+
+    input, button, select, textarea {
+        max-width: 100% !important;
+        margin-top: 5px;
+    }
+</style>
+
+<div class="overlay" style="z-index:3000">
+    <div id="loading-img" class="center-div"></div>
+</div>
+
+<div id="divAddPPTX">
+    <div class="row">
+        <div id="divUploadPPTX" class="col-md-12" style="padding-left:15px;">
+            <div style="background-color:lightblue;padding:5px;margin-top:0px;height:35px;">
+                <span style="float:left;">Upload PPTX File</span>
+                <i data-cm="Edit" class="fa fa-edit contextmenu" style="padding:5px;float:right;cursor:pointer;"></i>
+                <i data-cm="Remove" class="fa fa-remove contextmenu" style="padding:5px;float:right;cursor:pointer;"></i>
+            </div>
+            <div style="margin:0px 20px">
+                <center>
+                    <div style="padding-left:0px;padding-top:10px">
+                        <table cellspacing="0" cellpadding="0" id="topNavigation">
+                            <tr>
+                                <td>
+                                    <div>
+                                        <img id="img_PPTX1" src="~/Content/Images/number1.svg" style="width:40px;height:40px;" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div id="dvNav_B_PPTX2" style="width: 100px; height: 3px; margin-top: -1px; margin-left: -4px;"
+                                         class="navIndexWhite">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <img id="img_PPTX2" src="~/Content/Images/number2.svg" style="width:40px;height:40px;" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div id="dvNav_B_PPTX3" style="width: 100px; height: 3px; margin-top: -1px; margin-left: -4px;"
+                                         class="navIndexWhite">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <img id="img_PPTX3" src="~/Content/Images/number3.svg" style="width:40px;height:40px;" />
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </center>
+                <center>
+                    <div id="div1" style="height:350px;padding-top:10px; width:50%;margin:0 auto;">
+                        <div class="row">
+                            <input type="hidden" value="" id="hdnUseFields" name="hdnUseFields" />
+                            <input type="hidden" value="" id="hdnPPTXFields" name="hdnPPTXFields" />
+                            <input type="hidden" id="hdnProposedDataType" name="hdnProposedDataType" value="" />
+                            <input type="hidden" id="hdnClientDataType" name="hdnClientDataType" value="" />
+                            <input type="hidden" id="hdnBaseDataType" name="hdnBaseDataType" value="" />
+                            <input type="hidden" id="hdnSelectedFields" name="hdnSelectedFields" value="" />
+                            <input type="hidden" id="hdnMappedFields" name="hdnMappedFields" value="" />
+                            <input type="hidden" id="hdnPPTXfields" name="hdnMappedFields" value="" />
+                            <div style="width:100%">
+                                <form id="data" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" id="hdnFileName" name="hdnFileName" value="" />
+                                    <input type="file" class="form-control" id="uploadPPTX" name="upload" onchange="SetPPTXDivIds();" style="height: auto;max-width:100%!important;margin-bottom:5px;">
+                                </form>
+                                <div id="divErrorPPTXUploadFile" style="color:red;display:none;">Please select PPTX  file .</div>
+                            </div>
+                            <div style="width:100%">
+                                <input class="form-control" type="text" value="" id="txtTemplateName" name="txtTemplateName" placeholder="Template Name" />
+                                <div id="divErrorTemplateName" style="color:red;display:none;">Template is empty.</div>
+                            </div>
+                            <div style="width:100%">
+                                <textarea class="form-control" type="text" value="" id="txtTemplateDescription" name="txtTemplateDescription" rows="3" cols="20" placeholder="Description"></textarea>
+                                <div id="divErrorTemplateDescription" style="color:red;display:none;">Description is empty.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </center>
+                <div id="div2" style="display:none;height:350px;padding-top:10px;">
+
+                </div>
+                <div id="div3" style="display:none;height: 300px;padding: 10px;width: 50%;margin: 5% auto 0;border: 1px solid #ededed;" class="form-group">
+                    <div style="width:100%;text-align:left;font-weight:bold;margin-top:5px;color:blue;">Following Fields will be used for PPTX template</div>
+                    <div id="divPPTXShowFields" style="max-height:260px;overflow-y:auto;margin-bottom:5px;"></div>
+                </div>
+                <div class="col-md-12" style="margin:5px 0px;">
+                    <div id="RespPopulation" style="margin:5px 0px;">
+                        <div id="divPTX" style="font-style:italic;color:green;"></div>
+                        <div id="divPPTXError"></div>
+                    </div>
+                </div>
+                <div style="clear:both;"></div>
+                <center>
+                    <div id="divErrorSelectionFields" style="color:red;display:none;max-height:40px;margin-top:30px;">Please Select Cheaked Fields.</div>
+                    <div style="padding-bottom:20px;padding-left:10px;padding-top:30px;">
+                        <button id="btnPPTXBack" class="btn btn-primary" disabled style="width:70px;" onclick="BackPQ()">Back</button>
+                        <button id="btnPPTXNext" class="btn btn-primary" style="width:70px" onclick="NextPQ()">Next</button>
+                        <button id="btnPPTXFinish" class="btn btn-primary" disabled style="width:70px" onclick="FinishPPTX()">Finish</button>
+                        <button class="btn btn-primary" style="width:70px" onclick="CancelOperation();">Cancel</button>
+                    </div>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    var DataPPTX = 0;
+
+    $(document).ready(function () {
+        $("#divAddPPTX").show();
+        $("#img_PPTX1").attr("src", "/Content/Images/SelectedOne.svg");
+        $("form#data").submit(function (e) {
+            if ($("#hdnFileName").val() == "") {
+                e.preventDefault();
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: "/Version/UploadPPTXFile",
+                    type: 'POST',
+                    data: formData,
+                    async: false,
+                    success: function (data) {
+                        if (data.Success == "Yes") {
+                            DataPPTX++;
+                            $("#hdnUseFields").val(data.SF);
+                            $("#hdnPPTXFields").val(data.MF);
+                            $("#hdnFileName").val(data.FN);
+                            var ShowFields = data.SF.split(",");
+                            var MappingFields = $("#hdnPPTXFields").val().split(",");
+                            var MF = "<option value=\"\">Select Mapping Field</option>";
+                            for (Idx = 0; Idx < MappingFields.length; Idx++) {
+                                MF += "<option value=\"" + MappingFields[Idx] + "\">" + MappingFields[Idx] + "</option>"
+                            }
+                            var SelDataType = "";
+                            var Index = 0;
+                            for (Idx = 0; Idx < ShowFields.length; Idx++) {
+                                SelDataType += "<div class=\"col-md-4\" style=\"margin-bottom:10px;float:left;\">";
+                                SelDataType += "         <input type=\"checkbox\" onchange=\"SetFieldsInfo()\" value=\"" + ShowFields[Idx] + "\" id=\"chk" + Index.toString() + "\" name=\"chkFields\" />";
+
+                                SelDataType += "    <lable id=\"sel" + Index.toString() + "\" value=" + ShowFields[Idx] + " style=\"width:100%;text-align:left;\">" + ShowFields[Idx] + "</lable>";
+                                SelDataType += "    <div style=\"width:100%\">";
+                                SelDataType += "       <select class=\"form-control\" onclick=\"SetMappedFieldsInfo(this)\" id=\"sel" + Index.toString() + "\" data-id=\"" + Index.toString() + "\" name=\"sel" + Index.toString() + "\"> ";
+                                SelDataType += MF;
+                                SelDataType += "       </select> ";
+                                SelDataType += "    </div> ";
+                                SelDataType += "    <div style=\"width:100%\">";
+                                SelDataType += "       <select class=\"form-control\" onclick=\"SetDataType(this)\" id=\"sel" + Index.toString() + "\" data-id=\"" + Index.toString() + "\" name=\"sel" + Index.toString() + "\"> ";
+                                SelDataType += "            <option value=\"String\"" + (this.FieldType == "String" ? " selected=\'selected\'" : "") + ">String</option>";
+                                SelDataType += "            <option value=\"Float\"" + (this.FieldType == "Number" ? " selected=\'selected\'" : "") + ">Float</option>";
+                                SelDataType += "            <option value=\"Int\"" + (this.FieldType == "Int" ? " selected=\'selected\'" : "") + ">Int</option>";
+                                SelDataType += "            <option value=\"DateTime\"" + (this.FieldType == "DateTime" ? " selected=\'selected\'" : "") + ">DateTime</option>";
+                                SelDataType += "       </select> ";
+                                SelDataType += "    </div> ";
+                                SelDataType += "</div>";
+                                Index++;
+                            }
+
+                            SelDataType += "<div class=\"col-md-12\" style=\"clear: both;\">&nbsp;</div>";
+                            $("#div2").html(SelDataType);
+
+                        }
+                        else {
+                            if (data.Success == "No") {
+                            }
+                        }
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            }
+            else DataPPTX++;
+        });
+
+        var JsonData = {
+        };
+        $.ajax({
+            url: "/Version/UploadedPPTXFiles",
+            type: 'POST',
+            data: JsonData,
+            async: false,
+            success: function (data) {
+                if (data.Success == "Yes") {
+                }
+                else {
+                    if (data.Success == "No") {
+                    }
+                }
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+
+    var URO = {
+        ProposedTableDataType: "",
+        ClientDataType: "",
+        BaseDataType: "",
+        ShowRecordCount: 0,
+        ShowTotalRecordCount: 0,
+        TaskCompleted: "N",
+        MappedFields: "",
+        SelectedFields: ""
+    }
+
+    function SetDataType(Obj) {
+
+        var ClientDT = JSON.parse(URO.ClientDataType);
+        ClientDT[parseInt($(Obj).attr("data-id"))].FieldType = $(Obj).val();
+        URO.ClientDataType = JSON.stringify(ClientDT);
+        $("#hdnProposedDataType").val(URO.ProposedTableDataType);
+        $("#hdnClientDataType").val(URO.ClientDataType);
+        $("#hdnBaseDataType").val(URO.BaseDataType);
+    }
+
+    function SetMapField(Obj) {
+
+        var ClientDT = JSON.parse(URO.ClientDataType);
+        ClientDT[parseInt($(Obj).attr("data-id"))].AliasName = $(Obj).val();
+        URO.ClientDataType = JSON.stringify(ClientDT);
+        $("#hdnProposedDataType").val(URO.ProposedTableDataType);
+        $("#hdnClientDataType").val(URO.ClientDataType);
+        $("#hdnBaseDataType").val(URO.BaseDataType);
+    }
+
+    function SetFieldsInfoPPTX() {
+        URO.SelectedFields = "";
+        $('input[name="chkFields"]:checked').each(function () {
+            URO.SelectedFields += "," + this.value;
+        });
+        URO.SelectedFields = (URO.SelectedFields == "" ? "" : URO.SelectedFields.substring(1));
+        $("#hdnSelectedFields").val(URO.SelectedFields);
+
+    }
+    function SetMappedFieldsInfo() {
+        URO.hdnMappedFields = "";
+        $('input[name="chkFields"]:checked').each(function () {
+            URO.hdnMappedFields += "," + this.value;
+        });
+        URO.SelectedFields = (URO.hdnMappedFields == "" ? "" : URO.hdnMappedFields.substring(1));
+        $("#hdnMappedFields").val(URO.hdnMappedFields);
+    }
+
+    function SetPPTXDivIds() {
+        $("#divErrorPPTXUploadFile").hide();
+        $("#hdnFileName").val("");
+    }
+
+    function ErrorPPTXString() {
+        var sError = "N";
+        $("#divErrorPPTXUploadFile").hide();
+        $("#divErrorTemplateName").hide();
+        $("#divErrorTemplateDescription").hide();
+        if (DataPPTX == 0) {
+            if ($("#uploadPPTX").val().trim() == "") {
+                $("#divErrorPPTXUploadFile").show();
+                sError = "Y";
+            }
+            else {
+                var ext = $('#uploadPPTX').val().split('.').pop().toLowerCase();
+                if ($.inArray(ext, ['pptx']) == -1) {
+                    $("#divErrorPPTXUploadFile").show();
+                    sError = "Y";
+                }
+            }
+
+            if ($("#txtTemplateName").val().trim() == "") {
+                $("#divErrorTemplateName").show();
+                sError = "Y";
+            }
+            if ($("#txtTemplateDescription").val().trim() == "") {
+                $("#divErrorTemplateDescription").show();
+                sError = "Y";
+            }
+        }
+        else if (DataPPTX == 2) {
+        }
+
+        return sError;
+    }
+
+    function FinishPPTX() {
+
+        $("#divRepPopulationError").empty();
+        $("#divRepPopulationHeader").empty();
+
+        $("#img_PPTX3").attr("src", "/Content/Images/SelectedThree.svg");
+
+        $(".overlay").show();
+        var displayFieldsInfo = $("#hdnPPTXfields").val();
+
+        var JsonData = {
+            txtPFN: $("#hdnFileName").val(),
+            PPTXFields: displayFieldsInfo,
+            PPTXTemplateName: $("#txtTemplateName").val(),
+            PPTXTemplateDesc: $("#txtTemplateDescription").val()
+        };
+
+        $.ajax({
+            url: "/Version/SavePPTXInfo",
+            type: 'POST',
+            data: JsonData,
+            dateType: "json",
+            async: true,
+            success: function (Json) {
+                if (Json.Success == "Yes") {
+                    $("#divPPTXError").html(Json.ShowMessage);
+                }
+                else if (Json.Success == "No") $("#divPPTXError").html(Json.ShowMessage);
+            },
+            cache: false
+        });
+        $(".overlay").hide();
+        $("#divPPTX3").hide();
+    }
+
+    function NextPQ() {
+        $("#divRepPopulationError").empty();
+        $("#divRepPopulationHeader").empty();
+
+        if (ErrorPPTXString() == "N") {
+            if (DataPPTX == 0) $("#data").submit(); else DataPPTX++;
+
+            $("#img_PPTX1").attr("src", "/Content/Images/number1.svg");
+            $("#img_PPTX2").attr("src", "/Content/Images/number2.svg");
+            $("#img_PPTX3").attr("src", "/Content/Images/number3.svg");
+
+            if (DataPPTX == 1) {
+
+                $("#dvNav_B_PPTX2").removeClass('navIndexWhite');
+                $("#dvNav_B_PPTX2").addClass('navIndexGreen');
+                $("#divPPTX1").hide();
+                $("#divPPTX2").show();
+                $("#divPPTX3").hide();
+                $('#btnPPTXBack').prop('disabled', false);
+                $("#img_PPTX2").attr("src", "/Content/Images/SelectedTwo.svg");
+            }
+            else if (DataPPTX == 2) {
+                var errorinselection = "";
+                var id;
+                var selectedFields = $("#hdnSelectedFields").val().split(",");
+
+                var idx = 0;
+                var parametrs = "";
+                $.each(selectedFields, function (key, value) {
+                    parametrs += "|" + value;
+                    $("#divPPTX2 :input").each(function (e) {
+                        var idd = this.id;
+                        if (value == $("#" + idd).text()) {
+                            if (this.value == "") {
+                                errorinselection = "Select all fields";
+                            }
+                            parametrs += "|1|" + this.value + "|"
+                        }
+                        else {
+                            parametrs += "|0|" + this.value + "|"
+                        }
+
+                    });
+                    parametrs += ";";
+                });
+                if (errorinselection == "Select all fields") {
+                    DataPPTX--;
+                    $("#divPPTX2").show();
+                    $('#btnPPTXNext').prop('disabled', false);
+                    $('#btnPPTXFinish').prop('disabled', true);
+                    $("#divPPTX3").hide();
+                    $("#divErrorSelectionFields").show();
+                } else {
+                    $("#divErrorSelectionFields").hide();
+                    var SelDataType = "";
+
+                    var Index = 0;
+                    for (Idx = 0; Idx < selectedFields.length; Idx++) {
+                        SelDataType += "<div style=\"width:100%;text-align:left;color:black;\">" +
+                            "    <label style='padding-left: 5px' for='" + Idx + "'>" + selectedFields[Idx] + "</label>" +
+                            "</div>";
+                        Index++;
+                    }
+                    SelDataType += "<div class=\"col-md-12\" style=\"clear: both;\">&nbsp;</div>";
+                    $("#divPPTXShowFields").html(SelDataType);
+                    $("#hdnPPTXfields").val(parametrs);
+                    $("#dvNav_B_PPTX3").removeClass('navIndexWhite');
+                    $("#dvNav_B_PPTX3").addClass('navIndexGreen');
+                    $("#divPPTX1").hide();
+                    $("#divPPTX2").hide();
+                    $("#divPPTX3").show();
+                    $('#btnPPTXNext').prop('disabled', true);
+                    $('#btnPPTXFinish').prop('disabled', false);
+                    $("#img_PPTX3").attr("src", "/Content/Images/SelectedThree.svg");
+                }
+            }
+            else $("#img_PPTX1").attr("src", "/Content/Images/SelectedOne.svg");
+        }
+    }
+
+    function BackPQ() {
+        $("#divRepPopulationError").empty();
+        $("#divRepPopulationHeader").empty();
+
+        if (ErrorPPTXString() == "N") {
+            DataPPTX--;
+
+            $("#img_PPTX1").attr("src", "/Content/Images/number1.svg");
+            $("#img_PPTX2").attr("src", "/Content/Images/number2.svg");
+            $("#img_PPTX3").attr("src", "/Content/Images/number3.svg");
+
+            if (DataPPTX == 0) {
+                $('#btnPPTXBack').prop('disabled', true);
+                $('#btnPPTXFinish').prop('disabled', true);
+                $("#dvNav_B_PPTX2").removeClass('navIndexWhite');
+                $("#dvNav_B_PPTX2").addClass('navIndexGreen');
+                $("#divPPTX1").show();
+                $("#divPPTX2").hide();
+                $("#divPPTX3").hide();
+                $("#img_PPTX1").attr("src", "/Content/Images/SelectedOne.svg");
+            }
+            else if (DataPPTX == 1) {
+                $('#btnPPTXNext').prop('disabled', false);
+                $('#btnPPTXFinish').prop('disabled', true);
+                $("#dvNav_B_PPTX3").removeClass('navIndexWhite');
+                $("#dvNav_B_PPTX3").addClass('navIndexGreen');
+                $("#divPPTX1").hide();
+                $("#divPPTX2").show();
+                $("#divPPTX3").hide();
+                $("#img_PPTX2").attr("src", "/Content/Images/SelectedTwo.svg");
+            }
+        }
+    }
+</script>
+
+

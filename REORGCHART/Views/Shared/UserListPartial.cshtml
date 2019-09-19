@@ -1,0 +1,57 @@
+﻿@model List<REORGCHART.Models.UserListDetails>
+@{
+    <div id="table-scroll">
+        <div id="search-results">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width:300px">UserName</th>
+                        <th style="width:50px">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.UserName</td>
+                            <td>
+                                <h6 style="cursor:pointer;margin:0px!important;" onclick="DeleteUser('@item.UserName','@item.Id')">
+                                    <img style="width:20px;height:20px;" src="~/Content/assets/images/Delete.png" />
+                                </h6>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    using (Ajax.BeginForm("DeleteUser", "Home",
+    new AjaxOptions
+    {
+        InsertionMode = InsertionMode.Replace,
+        HttpMethod = "POST",
+        UpdateTargetId = "search-results"
+    },
+    new { id = "FormDelUsr" }))
+    {
+        <input type="hidden" value="" id="hdnUsrName" name="hdnUsrName" />
+        <button type="submit" style="display:none" id="btnCount" value="Search"></button>
+    }
+}
+<script type="text/javascript">
+        function DeleteUser(name, id) {
+
+            if (confirm("Remove user " + "?")) {
+                $("#hdnUsrName").val(name);
+                $("#FormDelUsr").submit();
+            };
+        }
+</script>
+<style>
+    #table-scroll {
+        height: 250px;
+        overflow: auto;
+        margin-top: 20px;
+    }
+</style>
+

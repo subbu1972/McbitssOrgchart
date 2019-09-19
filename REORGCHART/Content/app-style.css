@@ -1,0 +1,54 @@
+﻿.header-style {
+    background-color: #343135;
+    margin-bottom: 0px;
+    position: relative;
+}
+.fa-sliders:before {
+    content: "\f1de";
+}
+.collapse {
+    background: #ededed;
+    padding-top:10px;
+}
+.dropdown-toggle {
+    background-color:transparent;
+    color:#ffffff;
+    border:none;
+    margin:0px;
+}
+    .dropdown-toggle:hover,
+    .dropdown-toggle:focus {
+        background-color: transparent !important;
+        color: #ffffff !important;
+        border: none;
+    }
+.right-icon-wrap a {
+    color: #cccccc;
+    text-decoration: none;
+}
+    .right-icon-wrap a:hover {
+        color: #ededed;
+    }
+.deleteinitiative {
+    /*background: red;*/
+    cursor: pointer;
+    /*width: 20px;
+    height: 20px;
+    color: #fff;
+    border-radius: 100%;
+    text-align: center;
+    line-height: 20px !important;
+    cursor: pointer;*/
+}
+
+.addinitiative {
+    /*background: #337ab7;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    color: #fff;
+    border-radius: 100%;
+    text-align: center;
+    line-height: 20px !important;*/
+    cursor: pointer;
+}

@@ -1,0 +1,32 @@
+﻿@model REORGCHART.Models.MyModel
+@{
+    ViewBag.Title = "UpdateSettings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<input type="hidden" value="@Model.Role" id="hdnOrgRole" name="hdnOrgRole" />
+<input type="hidden" value="@Model.Oper" id="hdnOrgType" name="hdnOrgType" />
+<input type="hidden" value="@Model.Country" id="hdnOrgCountry" name="hdnOrgCountry" />
+<input type="hidden" value="@Model.KeyDate" id="hdnOrgKeyDate" name="hdnOrgKeyDate" />
+<input type="hidden" value="@Model.Levels" id="hdnOrgLevel" name="hdnOrgLevel" />
+<input type="hidden" value="@Model.View" id="hdnOrgView" name="hdnOrgView" />
+<input type="hidden" value="@Model.ShowLevel" id="hdnOrgShowLevel" name="hdnOrgShowLevel" />
+<input type="hidden" value="@Model.Version" id="hdnOrgVersion" name="hdnOrgVersion" />
+<input type="hidden" value="@Model.ChartData" id="hdnOrgChartData" name="hdnOrgChartData" />
+<input type="hidden" value="@Model.DDL" id="hdnOrgDDL" name="hdnOrgDDL" />
+
+<div class="row">
+    <div id="divColMd04" class="col-md-4" style="padding:0px;">
+        @Html.Partial("ShowSettingsOrgchart")
+    </div>
+    <div id="divColMd04" class="col-md-8" style="padding:0px;">
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Org chart in Canvas
+        h = parseInt($(".col-md-4").css("height").substr(0, $(".col-md-4").css("height").indexOf("px")));
+        w = parseInt($(".col-md-4").css("width").substr(0, $(".col-md-4").css("width").indexOf("px")));
+        initSettings(w, h);
+    });
+</script>

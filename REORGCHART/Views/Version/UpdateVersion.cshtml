@@ -1,0 +1,30 @@
+﻿@model REORGCHART.Models.MyModel
+
+@{
+    ViewBag.Title = "UpdateVersion";
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+}
+
+
+<input type="hidden" value="@Model.Role" id="hdnOrgRole" name="hdnOrgRole" />
+<input type="hidden" value="@Model.Oper" id="hdnOrgType" name="hdnOrgType" />
+<input type="hidden" value="@Model.Country" id="hdnOrgCountry" name="hdnOrgCountry" />
+<input type="hidden" value="@Model.KeyDate" id="hdnOrgKeyDate" name="hdnOrgKeyDate" />
+<input type="hidden" value="@Model.Levels" id="hdnOrgLevel" name="hdnOrgLevel" />
+<input type="hidden" value="@Model.View" id="hdnOrgView" name="hdnOrgView" />
+<input type="hidden" value="@Model.ShowLevel" id="hdnOrgShowLevel" name="hdnOrgShowLevel" />
+<input type="hidden" value="@Model.Version" id="hdnOrgVersion" name="hdnOrgVersion" />
+<input type="hidden" value="@Model.ChartData" id="hdnOrgChartData" name="hdnOrgChartData" />
+<input type="hidden" value="@Model.DDL" id="hdnOrgDDL" name="hdnOrgDDL" />
+
+<div id="divColMd08" class="col-md-12" style="padding:0px;">
+    @Html.Partial("ShowOrgchart")
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnPartitionChart").hide();
+        $("#btnSaveChart").hide();
+    });
+</script>
+

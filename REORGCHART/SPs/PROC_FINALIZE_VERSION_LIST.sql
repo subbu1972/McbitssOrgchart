@@ -1,0 +1,52 @@
+﻿USE [ORG_CHART_DEV]
+GO
+/****** Object:  StoredProcedure [dbo].[PROC_FINALIZE_VERSION_LIST]    Script Date: 26/10/2018 08:27:27 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Subramanian.C>
+-- =============================================
+ALTER PROCEDURE [dbo].[PROC_FINALIZE_VERSION_LIST] 
+    @COMPANYNAME AS VARCHAR(500),
+	@USERID AS VARCHAR(500),
+	@PVERSIONNO AS VARCHAR(50)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	DECLARE @COMPANYTB AS VARCHAR(500);
+	SET @COMPANYTB = @COMPANYNAME + '_LEVELINFOS'
+
+	DECLARE @FVERSIONNO AS VARCHAR(50);
+	SELECT @FVERSIONNO=CAST(VERSIONNO AS VARCHAR(50)) FROM UPLOADFILESHEADERS WHERE ROLE='Finalyzer'
+
+	DECLARE @SQLQUERY AS VARCHAR(MAX);
+	SET @SQLQUERY = 'IF OBJECT_ID(''dbo.TEMP_'+@COMPANYTB+''', ''U'') IS NOT NULL  
+	                       DROP TABLE TEMP_'+@COMPANYTB+';
+	                 SELECT TOP 0 a.* INTO TEMP_'+@COMPANYTB+' FROM '+@COMPANYTB+' a;
+					 INSERT INTO TEMP_'+@COMPANYTB+' 
+	                 SELECT b.* FROM '+@COMPANYTB+' b 
+					    WHERE USER_ID='''+@USERID+''' AND VERSION='''+@PVERSIONNO+''' AND VERIFY_FLAG=''N'';
+					 UPDATE TEMP_'+@COMPANYTB+' SET VERIFY_FLAG=''Y'';'
+	PRINT @SQLQUERY;
+	EXEC(@SQLQUERY);
+
+	SET @SQLQUERY = 'DELETE FROM '+@COMPANYTB+' 
+	                        WHERE LEVEL_ID IN (SELECT LEVEL_ID 
+	                                               FROM '+@COMPANYTB+' 
+	                                               WHERE USER_ID='''+@USERID+''' AND VERSION='''+@PVERSIONNO+''' AND VERIFY_FLAG=''N'')
+							      AND VERSION='''+@FVERSIONNO+''';
+					 UPDATE '+@COMPANYTB+' SET VERSION='''+@FVERSIONNO+''',  USER_ID='''+@COMPANYNAME+''', VERIFY_FLAG=''Y''
+					      WHERE USER_ID='''+@USERID+''' AND VERSION='''+@PVERSIONNO+''' AND VERIFY_FLAG=''N'';
+                     INSERT INTO '+@COMPANYTB+' SELECT * FROM TEMP_'+@COMPANYTB+';'
+	PRINT @SQLQUERY;
+	EXEC(@SQLQUERY);
+
+END
+
+
+--EXEC PROC_FINALIZE_VERSION_LIST 'Mcbitss', 'SUBBUCITTIBABU', '65'

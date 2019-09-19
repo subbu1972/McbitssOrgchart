@@ -1,0 +1,136 @@
+﻿@model REORGCHART.Models.MyModel
+
+<input type="hidden" value="@Model.UserId" id="hdnUserId" name="hdnUserId" />
+<input type="hidden" value="@Model.Role" id="hdnOrgRole" name="hdnOrgRole" />
+<input type="hidden" value="@Model.CompanyName" id="hdnCompanyName" name="hdnCompanyName" />
+<input type="hidden" value="@Model.AssignedRole" id="hdnOrgAssignedRole" name="hdnOrgAssignedRole" />
+<input type="hidden" value="@Model.Oper" id="hdnOrgType" name="hdnOrgType" />
+<input type="hidden" value="@Model.Country" id="hdnOrgCountry" name="hdnOrgCountry" />
+<input type="hidden" value="@Model.Countries" id="hdnOrgCountries" name="hdnOrgCountries" />
+<input type="hidden" value="@Model.KeyDate" id="hdnOrgKeyDate" name="hdnOrgKeyDate" />
+<input type="hidden" value="@Model.Levels" id="hdnOrgLevel" name="hdnOrgLevel" />
+<input type="hidden" value="@Model.View" id="hdnOrgView" name="hdnOrgView" />
+<input type="hidden" value="@Model.ShowLevel" id="hdnOrgShowLevel" name="hdnOrgShowLevel" />
+<input type="hidden" value="@Model.ShowLevel" id="hdnOrgPartitionShowLevel" name="hdnOrgPartitionShowLevel" />
+<input type="hidden" value="@Model.Version" id="hdnOrgVersion" name="hdnOrgVersion" />
+<input type="hidden" value="@Model.Version" id="hdnOrgPartitionVersion" name="hdnOrgPartitionVersion" />
+<input type="hidden" value="@Model.ChartData" id="hdnOrgChartData" name="hdnOrgChartData" />
+<input type="hidden" value="@Model.ChartData" id="hdnOrgChartHRCoreData" name="hdnOrgChartHRCoreData" />
+<input type="hidden" value="@Model.DDL" id="hdnOrgDDL" name="hdnOrgDDL" />
+<input type="hidden" value="@Model.HRCoreVersion" id="hdnHRCoreVersion" name="hdnHRCoreVersion" />
+<input type="hidden" value="@Model.Menu" id="hdnOrgMenu" name="hdnOrgMenu" />
+<input type="hidden" value="@Model.SelectFields" id="hdnOrgSelectFields" name="hdnOrgSelectFields" />
+<input type="hidden" value="@Model.SearchFields" id="hdnSearchMenu" name="hdnSearchMenu" />
+<input type="hidden" value="@Model.InitialValues" id="hdnInitialValues" name="hdnInitialValues" />
+<input type="hidden" value="@Model.FinalyzerVerion" id="hdnFinalyzerVerion" name="hdnFinalyzerVerion" />
+<input type="hidden" value="@Model.SelectedInitiative" id="hdnSelectedInitiative" name="hdnSelectedInitiative" />
+<input type="hidden" value="@Model.SelectedPopulation" id="hdnSelectedPopulation" name="hdnSelectedPopulation" />
+<input type="hidden" value="@Model.SelectedUser" id="hdnSelectedUser" name="hdnSelectedUser" />
+<input type="hidden" value="@Model.SelectedVersion" id="hdnSelectedVersion" name="hdnSelectedVersion" />
+<input type="hidden" value="@Model.SelectedShape" id="hdnSelectedShape" name="hdnSelectedShape" />
+<input type="hidden" value="@Model.SelectedSkin" id="hdnSelectedSkin" name="hdnSelectedSkin" />
+<input type="hidden" value="@Model.SelectedShowPicture" id="hdnSelectedShowPicture" name="hdnSelectedShowPicture" />
+<input type="hidden" value="@Model.SelectedSplitScreen" id="hdnSelectedSplitScreen" name="hdnSelectedSplitScreen" />
+<input type="hidden" value="@Model.SelectedSplitScreenDirection" id="hdnSelectedSplitScreenDirection" name="hdnSelectedSplitScreenDirection" />
+<input type="hidden" value="@Model.SelectedTextColor" id="hdnSelectedTextColor" name="hdnSelectedTextColor" />
+<input type="hidden" value="@Model.SelectedBorderColor" id="hdnSelectedBorderColor" name="hdnSelectedBorderColor" />
+<input type="hidden" value="@Model.SelectedBorderWidth" id="hdnSelectedBorderWidth" name="hdnSelectedBorderWidth" />
+<input type="hidden" value="@Model.SelectedLineColor" id="hdnSelectedLineColor" name="hdnSelectedLineColor" />
+<input type="hidden" value="@Model.OrgChartType" id="hdnOrgChartType" name="hdnOrgChartType" />
+<input type="hidden" value="@Model.CopyPaste" id="hdnCopyPaste" name="hdnCopyPaste" />
+<input type="hidden" value="@Model.SerialNoFlag" id="hdnSerialNoFlag" name="hdnSerialNoFlag" />
+<input type="hidden" value="@Model.FinalyzerVersionFlag" id="hdnFinalyzerVersionFlag" name="hdnFinalyzerVersionFlag" />
+<input type="hidden" value="@Model.ValidateSecurity" id="hdnValidateSecurity" name="hdnValidateSecurity" />
+<input type="hidden" value="" id="hdnTemplatePPT" name="hdnTemplatePPT" />
+<input type="hidden" value="" id="hdnQueryStringSearchValue" name="hdnQueryStringSearchValue" />
+
+<div style="clear:both;width:100%;background-color:#D3D3D3;position: relative;height: 35px;" id="divBreadGram">
+    <div class="breadcrumbs" style="margin: 0px;color:black;font-size:12px;" id="divBreadCrumbs"></div>
+    <div style="width:280px;height:25px;">
+        <input type="search" id="mySearch" onkeypress="if (event.keyCode === 13) searchDiagram()">
+        <button onclick="searchDiagram()">Search</button>
+    </div>
+</div>
+<div id="myDiagramContainer" style="padding-top:0px; position: relative;">
+    <div id="myDiagramDiv" style="background-color: #ffffff;border: solid 1px white;max-width:100%;height:600px;margin-bottom:70px;"></div>
+    <div id="myOverviewDiv" style="width:200px;height:200px;display:none;"></div> <!-- Styled in a <style> tag at the top of the html page -->
+    <div id="myImages"></div>
+    <div>
+        <div id="myInspector"></div>
+    </div>
+    <div style="max-width:100%;display:none;">
+        <textarea id="mySavedModel" style="max-width:100%;height:250px">{ "class": "go.TreeModel",
+                      "nodeDataArray": [
+                                {"key":1, "FULL_NAME":"Stella Payne Diaz", "POSITION_TITLE":"CEO"},
+                                {"key":2, "FULL_NAME":"Luke Warm", "POSITION_TITLE":"VP Marketing/Sales", "parent":1},
+                                {"key":3, "FULL_NAME":"Meg Meehan Hoffa", "POSITION_TITLE":"Sales", "parent":2},
+                                {"key":4, "FULL_NAME":"Peggy Flaming", "POSITION_TITLE":"VP Engineering", "parent":1},
+                                {"key":5, "FULL_NAME":"Saul Wellingood", "POSITION_TITLE":"Manufacturing", "parent":4},
+                                {"key":6, "FULL_NAME":"Al Ligori", "POSITION_TITLE":"Marketing", "parent":2},
+                                {"key":7, "FULL_NAME":"Dot Stubadd", "POSITION_TITLE":"Sales Rep", "parent":3},
+                                {"key":8, "FULL_NAME":"Les Ismore", "POSITION_TITLE":"Project Mgr", "parent":5},
+                                {"key":9, "FULL_NAME":"April Lynn POSITION_TITLE", "title":"Events Mgr", "parent":6},
+                                {"key":10, "FULL_NAME":"Xavier POSITION_TITLE", "title":"Engineering", "parent":4},
+                                {"key":11, "FULL_NAME":"Anita Hammer", "POSITION_TITLE":"Process", "parent":5},
+                                {"key":12, "FULL_NAME":"Billy Aiken", "POSITION_TITLE":"Software", "parent":10},
+                                {"key":13, "FULL_NAME":"Stan Wellback", "POSITION_TITLE":"Testing", "parent":10},
+                                {"key":14, "FULL_NAME":"Marge Innovera", "POSITION_TITLE":"Hardware", "parent":10},
+                                {"key":15, "FULL_NAME":"Evan Elpus", "POSITION_TITLE":"Quality", "parent":5},
+                                {"key":16, "FULL_NAME":"Lotta B. Essen", "POSITION_TITLE":"Sales Rep", "parent":3}
+                        ]
+                    }
+                </textarea>
+
+        <textarea id="myTempSavedModel" style="display:none;max-width:100%;height:250px">{ "class": "go.TreeModel",
+                      "nodeDataArray": [
+                                {"key":1, "FULL_NAME":"Stella Payne Diaz", "POSITION_TITLE":"CEO"},
+                                {"key":2, "FULL_NAME":"Luke Warm", "POSITION_TITLE":"VP Marketing/Sales", "parent":1},
+                                {"key":3, "FULL_NAME":"Meg Meehan Hoffa", "POSITION_TITLE":"Sales", "parent":2},
+                                {"key":4, "FULL_NAME":"Peggy Flaming", "POSITION_TITLE":"VP Engineering", "parent":1},
+                                {"key":5, "FULL_NAME":"Saul Wellingood", "POSITION_TITLE":"Manufacturing", "parent":4},
+                                {"key":6, "FULL_NAME":"Al Ligori", "POSITION_TITLE":"Marketing", "parent":2},
+                                {"key":7, "FULL_NAME":"Dot Stubadd", "POSITION_TITLE":"Sales Rep", "parent":3},
+                                {"key":8, "FULL_NAME":"Les Ismore", "POSITION_TITLE":"Project Mgr", "parent":5},
+                                {"key":9, "FULL_NAME":"April Lynn POSITION_TITLE", "title":"Events Mgr", "parent":6},
+                                {"key":10, "FULL_NAME":"Xavier POSITION_TITLE", "title":"Engineering", "parent":4},
+                                {"key":11, "FULL_NAME":"Anita Hammer", "POSITION_TITLE":"Process", "parent":5},
+                                {"key":12, "FULL_NAME":"Billy Aiken", "POSITION_TITLE":"Software", "parent":10},
+                                {"key":13, "FULL_NAME":"Stan Wellback", "POSITION_TITLE":"Testing", "parent":10},
+                                {"key":14, "FULL_NAME":"Marge Innovera", "POSITION_TITLE":"Hardware", "parent":10},
+                                {"key":15, "FULL_NAME":"Evan Elpus", "POSITION_TITLE":"Quality", "parent":5},
+                                {"key":16, "FULL_NAME":"Lotta B. Essen", "POSITION_TITLE":"Sales Rep", "parent":3}
+                        ]
+                    }
+                </textarea>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        BreadGram();
+    });
+
+    function BreadGram() {
+        // Bread Gram
+        var OrgData = JSON.parse($("#hdnOrgChartData").val());
+        $.each(OrgData, function (key, item) {
+            if (item.LEVEL_ID == $("#hdnOrgShowLevel").val()) {
+                var BREAD_GRAM = item.BREAD_GRAM.split("-->");
+                var BREAD_GRAM_NAME = item.BREAD_GRAM_NAME.split("-->");
+                var BREAD_GRAM_INFO = "";
+                for (var Idx = 0; Idx <= BREAD_GRAM_NAME.length - 1; Idx++) {
+                    if (SetSplitScreen=="Y")
+                        BREAD_GRAM_INFO += " >> <a href=\"javascript:void(0);\" onclick=\"ShowRightOrgChartPosition('" + BREAD_GRAM[Idx] + "','" + BREAD_GRAM[Idx] + "')\">" + BREAD_GRAM_NAME[Idx] + "</a>";
+                    else
+                        BREAD_GRAM_INFO += " >> <a href=\"javascript:void(0);\" onclick=\"ShowOrgChartPosition('" + BREAD_GRAM[Idx] + "','" + BREAD_GRAM[Idx] + "')\">" + BREAD_GRAM_NAME[Idx] + "</a>";
+                }
+                BREAD_GRAM_INFO = BREAD_GRAM_INFO.substring(4);
+                $("#divBreadCrumbs").html("Location: <span style='font-style:italic;'>" + BREAD_GRAM_INFO + "</span>");
+            }
+        });
+    }
+</script>
+
+
+
+

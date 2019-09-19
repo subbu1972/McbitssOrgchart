@@ -1,0 +1,20 @@
+﻿@model REORGCHART.Models.MyModel
+
+@{
+    ViewBag.Title = "UserVersion";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="overlay" style="z-index:3000">
+    <div id="loading-img" class="center-div"></div>
+</div>
+
+<div id="divRightOrgChart" class="col-md-12" style="margin:0px 0px;">
+    @Html.Partial("ShowOrgchart")
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+    });
+</script>
+

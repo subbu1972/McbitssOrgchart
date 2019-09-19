@@ -1,0 +1,316 @@
+﻿@model REORGCHART.Models.MyModel
+
+<div style="width:100%;background-color:#D3D3D3;" id="divPartitionHeader">
+    <div class="row">
+        <div class="showMenu" onclick="TogglePartitionSelectioncreen(); return false;" title="Select Version" style="margin-left:5px;">
+            <i class="fa fa-object-group" style="float:left;margin: 3px 10px!important;cursor:pointer;"></i>
+            <div style="margin: 0px;padding: 10px 0px 0px 10px;color:black;font-size:12px;height:20px;" id="divPartitionBreadCrumbs"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div style="margin: 0px;padding: 0px 0px 0px 10px;color:black;min-height:80px;display:none;" id="divPartitionSelection">
+            <div id="divPartitionCountry" style="float:left;height:40px;margin:5px 5px;display:none;">
+                <select class="select" id="selPartitionCountry" onclick="PartitionSelection(this)">
+                    <option value="SelectCountry">SELECT COUNTRY</option>
+                </select>
+            </div>
+            <div style="float:left;height:30px;margin:5px 5px;">
+                <select class="select" id="selPartitionInitiative" onclick="PartitionSelection(this)">
+                    <option value="SelectInitiative">SELECT INITIATIVE</option>
+                </select>
+            </div>
+            <div style="float:left;height:30px;margin:5px 5px;">
+                <select class="select" id="selPartitionPopulation" onclick="PartitionSelection(this)">
+                    <option value="SelectPopulation">SELECT POPULATION</option>
+                </select>
+            </div>
+            <div style="float:left;height:30px;margin:5px 5px;">
+                <select class="select" id="selPartitionUser">
+                    <option value="SelectUser">SELECT USER</option>
+                </select>
+            </div>
+            <div style="float:left;height:30px;margin:5px 5px;">
+                <select class="select" id="selPartitionVersion" onclick="PartitionSelection(this)">
+                    <option value="SelectVersion">SELECT VERSION</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myPartitionDiagramContainer" style="padding-top:5px; position:relative;">
+    <div id="myPartitionDiagramDiv" style="background-color: #ffffff;border: solid 1px white;max-width:100%;"></div>
+    <div>
+        <div id="myPartitionInspector"></div>
+    </div>
+    <div style="max-width:100%;display:none;">
+        <textarea id="myPartitionSavedModel" style="max-width:100%;height:250px">{ "class": "go.TreeModel",
+                    "nodeDataArray": [
+                            {"key":1, "FULL_NAME":"Stella Payne Diaz", "POSITION_TITLE":"CEO"},
+                            {"key":2, "FULL_NAME":"Luke Warm", "POSITION_TITLE":"VP Marketing/Sales", "parent":1},
+                            {"key":3, "FULL_NAME":"Meg Meehan Hoffa", "POSITION_TITLE":"Sales", "parent":2},
+                            {"key":4, "FULL_NAME":"Peggy Flaming", "POSITION_TITLE":"VP Engineering", "parent":1},
+                            {"key":5, "FULL_NAME":"Saul Wellingood", "POSITION_TITLE":"Manufacturing", "parent":4},
+                            {"key":6, "FULL_NAME":"Al Ligori", "POSITION_TITLE":"Marketing", "parent":2},
+                            {"key":7, "FULL_NAME":"Dot Stubadd", "POSITION_TITLE":"Sales Rep", "parent":3},
+                            {"key":8, "FULL_NAME":"Les Ismore", "POSITION_TITLE":"Project Mgr", "parent":5},
+                            {"key":9, "FULL_NAME":"April Lynn POSITION_TITLE", "title":"Events Mgr", "parent":6},
+                            {"key":10, "FULL_NAME":"Xavier POSITION_TITLE", "title":"Engineering", "parent":4},
+                            {"key":11, "FULL_NAME":"Anita Hammer", "POSITION_TITLE":"Process", "parent":5},
+                            {"key":12, "FULL_NAME":"Billy Aiken", "POSITION_TITLE":"Software", "parent":10},
+                            {"key":13, "FULL_NAME":"Stan Wellback", "POSITION_TITLE":"Testing", "parent":10},
+                            {"key":14, "FULL_NAME":"Marge Innovera", "POSITION_TITLE":"Hardware", "parent":10},
+                            {"key":15, "FULL_NAME":"Evan Elpus", "POSITION_TITLE":"Quality", "parent":5},
+                            {"key":16, "FULL_NAME":"Lotta B. Essen", "POSITION_TITLE":"Sales Rep", "parent":3}
+                    ]
+                }
+            </textarea>
+
+        <textarea id="myPartitionTempSavedModel" style="display:none;max-width:100%;height:250px">{ "class": "go.TreeModel",
+                    "nodeDataArray": [
+                            {"key":1, "FULL_NAME":"Stella Payne Diaz", "POSITION_TITLE":"CEO"},
+                            {"key":2, "FULL_NAME":"Luke Warm", "POSITION_TITLE":"VP Marketing/Sales", "parent":1},
+                            {"key":3, "FULL_NAME":"Meg Meehan Hoffa", "POSITION_TITLE":"Sales", "parent":2},
+                            {"key":4, "FULL_NAME":"Peggy Flaming", "POSITION_TITLE":"VP Engineering", "parent":1},
+                            {"key":5, "FULL_NAME":"Saul Wellingood", "POSITION_TITLE":"Manufacturing", "parent":4},
+                            {"key":6, "FULL_NAME":"Al Ligori", "POSITION_TITLE":"Marketing", "parent":2},
+                            {"key":7, "FULL_NAME":"Dot Stubadd", "POSITION_TITLE":"Sales Rep", "parent":3},
+                            {"key":8, "FULL_NAME":"Les Ismore", "POSITION_TITLE":"Project Mgr", "parent":5},
+                            {"key":9, "FULL_NAME":"April Lynn POSITION_TITLE", "title":"Events Mgr", "parent":6},
+                            {"key":10, "FULL_NAME":"Xavier POSITION_TITLE", "title":"Engineering", "parent":4},
+                            {"key":11, "FULL_NAME":"Anita Hammer", "POSITION_TITLE":"Process", "parent":5},
+                            {"key":12, "FULL_NAME":"Billy Aiken", "POSITION_TITLE":"Software", "parent":10},
+                            {"key":13, "FULL_NAME":"Stan Wellback", "POSITION_TITLE":"Testing", "parent":10},
+                            {"key":14, "FULL_NAME":"Marge Innovera", "POSITION_TITLE":"Hardware", "parent":10},
+                            {"key":15, "FULL_NAME":"Evan Elpus", "POSITION_TITLE":"Quality", "parent":5},
+                            {"key":16, "FULL_NAME":"Lotta B. Essen", "POSITION_TITLE":"Sales Rep", "parent":3}
+                    ]
+                }
+            </textarea>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+//$(function () {
+//    $('#myPartitionDiagramContainer, #myDiagramContainer').css({ height: $(window).innerHeight() });
+//    $(window).resize(function () {
+//        $('#myPartitionDiagramContainer, #myDiagramContainer').css({ height: $(window).innerHeight() });
+//    });
+//});
+
+$(document).ready(function () {
+    PartitionBreadGram();
+});
+
+function PartitionBreadGram() {
+    // Bread Gram
+    var OrgData = JSON.parse($("#hdnOrgChartHRCoreData").val());
+    $.each(OrgData, function (key, item) {
+        if (item.LEVEL_ID == $("#hdnOrgPartitionShowLevel").val()) {
+            var BREAD_GRAM = item.BREAD_GRAM.split("-->");
+            var BREAD_GRAM_NAME = item.BREAD_GRAM_NAME.split("-->");
+            var BREAD_GRAM_INFO = "";
+            for (var Idx = 0; Idx <= BREAD_GRAM_NAME.length - 1; Idx++) {
+                BREAD_GRAM_INFO += " >> <a href=\"javascript:void(0);\" onclick=\"ShowOrgChartPartitionPosition('" + BREAD_GRAM[Idx] + "','" + BREAD_GRAM[Idx] + "')\">" + BREAD_GRAM_NAME[Idx] + "</a>";
+            }
+            BREAD_GRAM_INFO = BREAD_GRAM_INFO.substring(4);
+            $("#divPartitionBreadCrumbs").html("Partition Location: <span style='font-style:italic;'>" + BREAD_GRAM_INFO + "</span>");
+        }
+    });
+}
+
+function TogglePartitionSelectioncreen() {
+    if ($('#divPartitionSelection').is(':visible')) {
+        $("#divPartitionSelection").fadeOut("slow", function () {
+        });
+    }
+    else {
+        $('#divPartitionSelection').fadeIn("slow", function () {
+        });
+    }
+}
+
+function PartitionSelection(Obj) {
+    if ($(Obj).attr("id") == "selPartitionCountry") {
+        if ($("#selPartitionCountry").select2("val") == "SelectCountry") {
+            $(".overlay").show();
+            $("#selPartitionInitiative").select2("val", "SelectInitiative");
+            $("#selPartitionPopulation").select2("val", "SelectPopulation");
+            $("#selPartitionUser").select2("val", "SelectUser");
+            $("#selPartitionVersion").select2("val", "SelectVersion");
+            ShowDDL(AEI, [], [], [], "Y");
+            $(".overlay").hide();
+        }
+        else {
+            ChangeFinalyzerVersion($("#selPartitionCountry").select2("val"));
+            SelectedCountryDDL($("#hdnOrgDDL").val(), $("#selPartitionCountry").select2("val"), "Y");
+            $("#selPartitionInitiative").select2("val", "SelectInitiative");
+            $("#selPartitionPopulation").select2("val", "SelectPopulation");
+            $("#selPartitionUser").select2("val", "@User.Identity.Name");
+            $("#selPartitionVersion").select2("val", "SelectVersion");
+        }
+    }
+    else if ($(Obj).attr("id") == "selPartitionInitiative") {
+        if ($("#selPartitionInitiative").select2("val") == "SelectInitiative") {
+            $(".overlay").show();
+            $("#selPartitionPopulation").select2("val", "SelectPopulation");
+            $("#selPartitionUser").select2("val", "SelectUser");
+            $("#selPartitionVersion").select2("val", "SelectVersion");
+            ShowDDL(AEI, [], [], [], "Y");
+            $(".overlay").hide();
+        }
+        else {
+            SelectedInitiativeDDL($("#hdnOrgDDL").val(), $("#selPartitionInitiative").select2("val"), "Y");
+            $("#selPartitionPopulation").select2("val", "SelectPopulation");
+            $("#selPartitionUser").select2("val", "@User.Identity.Name");
+            $("#selPartitionVersion").select2("val", "SelectVersion");
+        }
+    }
+    else if ($(Obj).attr("id") == "selPartitionPopulation") {
+        if ($("#selPartitionPopulation").select2("val") == "SelectPopulation") {
+            $(".overlay").show();
+            $("#selPartitionUser").select2("val", "@User.Identity.Name");
+            $("#selPartitionVersion").select2("val", "SelectVersion");
+            ShowDDL(AEI, AEP, [], [], "Y");
+            $(".overlay").hide();
+        }
+        else {
+            SelectedPopulationDDL($("#hdnOrgDDL").val(), $("#selPartitionPopulation").select2("val"), $("#selPartitionInitiative").select2("val"), "Y");
+            $("#selPartitionUser").select2("val", "@User.Identity.Name");
+            $("#selPartitionVersion").select2("val", "SelectVersion");
+        }
+    }
+    else if ($(Obj).attr("id") == "selPartitionUser") {
+            if ($("#selPartitionUser").select2("val") == "SelectUser") {
+            $(".overlay").show();
+            $("#selPartitionVersion").select2("val", "SelectVersion");
+                ShowDDL(AEI, AEP, AEU, [], "Y");
+            $(".overlay").hide();
+        }
+        else {
+                SelectedUserDDL($("#hdnOrgDDL").val(), $("#selPartitionUser").select2("val"), $("#selPartitionPopulation").select2("val"), $("#selPartitionInitiative").select2("val"), "Y");
+            $("#selPartitionVersion").select2("val", "SelectVersion");
+        }
+    }
+    else if ($(Obj).attr("id") == "selPartitionVersion") {
+        if ($("#selPartitionVersion").select2("val") != "SelectVersion" &&
+            $("#selPartitionVersion").select2("val") != "AddVersion") {
+            LoadSelectedPartitionVersion();
+        }
+    }
+}
+
+function ChangeFinalyzerVersion(SelectedCountry) {
+    var OrgDDL = JSON.parse($("#hdnOrgDDL").val());
+
+    if (OrgDDL.length >= 1) {
+        for (Idx = 0; Idx <= OrgDDL.length - 1; Idx++) {
+            if (OrgDDL[Idx].UserRole == "Finalyzer" && OrgDDL[Idx].UserName == "@User.Identity.Name" && OrgDDL[Idx].OperType == "LV") {
+                OrgDDL[Idx].Country = SelectedCountry;
+                OrgDDL[Idx].ShowLevel = GetSelectedCountryLevel(SelectedCountry);
+            }
+        }
+        $("#hdnOrgDDL").val(JSON.stringify(OrgDDL));
+    }
+}
+
+function LoadSelectedPartitionVersion() {
+    $(".overlay").show();
+
+    var JsonData = {
+        Country: $("#selPartitionCountry").val(),
+        Initiative: $("#selPartitionInitiative").val(),
+        Population: $("#selPartitionPopulation").val(),
+        UserName: $("#selPartitionUser").val(),
+        VersionName: $("#selPartitionVersion").val()
+    };
+    $.ajax({
+        type: "POST",
+        url: HOST_ENV + "/Version/LoadSelectedPartitionVersion",
+        data: JsonData,
+        async: true,
+        dateType: "json",
+        success: function (Json) {
+            $("#hdnOrgChartHRCoreData").val(Json.ChartData);
+            $("#hdnOrgPartitionShowLevel").val(Json.UsedShowLevel);
+            $("#hdnOrgPartitionVersion").val(Json.UsedVersion);
+            document.getElementById("myPartitionSavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + $("#hdnOrgChartHRCoreData").val() + " }";
+
+            $("#myPartitionDiagramDiv").detach();
+            var iDiv = document.createElement('div');
+            iDiv.id = 'myPartitionDiagramDiv';
+            document.getElementById('myPartitionDiagramContainer').appendChild(iDiv);
+
+            // Org chart in Canvas
+            $("#divLeftOrgChart").removeClass("col-md-12");
+            $("#divLeftOrgChart").removeClass("col-md-8");
+            $("#divLeftOrgChart").removeClass("col-md-6");
+            if (Settings.SplitScreenDirection == "Vertical")
+                $("#divLeftOrgChart").addClass("col-md-6");
+            else
+                $("#divLeftOrgChart").addClass("col-md-12");
+
+            h = parseInt($("#divLeftOrgChart").css("height").substr(0, $("#divLeftOrgChart").css("height").indexOf("px")));
+            w = parseInt($("#divLeftOrgChart").css("width").substr(0, $("#divLeftOrgChart").css("width").indexOf("px")));
+            if (Settings.SplitScreenDirection == "Vertical") initPartition(w, h, DragDrop); else initPartition(w, 250, DragDrop);
+
+            PartitionBreadGram();
+
+            $(".overlay").hide();
+        }
+    });
+
+    return false;
+}
+
+function ShowOrgChartPartitionPosition(SL, PL) {
+    $(".overlay").show();
+
+    var JsonData = {
+        ShowLevel: SL,
+        ParentLevel: PL,
+        Version: $("#hdnOrgPartitionVersion").val()
+    };
+    $.ajax({
+        type: "POST",
+        url: HOST_ENV + "/Version/PartitionChangeShowLevel",
+        data: JsonData,
+        async: true,
+        dateType: "json",
+        success: function (Json) {
+            $("#hdnOrgChartHRCoreData").val(Json.ChartData);
+            $("#hdnOrgPartitionShowLevel").val(Json.UsedShowLevel);
+            $("#hdnOrgPartitionVersion").val(Json.UsedVersion);
+            document.getElementById("myPartitionSavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + $("#hdnOrgChartHRCoreData").val() + " }";
+
+            $("#myPartitionDiagramDiv").detach();
+            var iDiv = document.createElement('div');
+            iDiv.id = 'myPartitionDiagramDiv';
+            document.getElementById('myPartitionDiagramContainer').appendChild(iDiv);
+
+            // Org chart in Canvas
+            $("#divLeftOrgChart").removeClass("col-md-12");
+            $("#divLeftOrgChart").removeClass("col-md-8");
+            $("#divLeftOrgChart").removeClass("col-md-6");
+            if (Settings.SplitScreenDirection == "Vertical")
+                $("#divLeftOrgChart").addClass("col-md-6");
+            else
+                $("#divLeftOrgChart").addClass("col-md-12");
+
+            h = parseInt($("#divLeftOrgChart").css("height").substr(0, $("#divLeftOrgChart").css("height").indexOf("px")));
+            w = parseInt($("#divLeftOrgChart").css("width").substr(0, $("#divLeftOrgChart").css("width").indexOf("px")));
+            if (Settings.SplitScreenDirection == "Vertical") initPartition(w, h, DragDrop); else initPartition(w, 250, DragDrop);
+
+            PartitionBreadGram();
+
+            $(".overlay").hide();
+        }
+    });
+
+    return false;
+}
+
+</script>
+
+

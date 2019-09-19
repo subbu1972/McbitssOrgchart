@@ -1,0 +1,3786 @@
+﻿<!DOCTYPE html>
+<html>
+<head lang="en-US">
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title>@ViewBag.Title - OrgChart Application</title>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="~/assets/js/vendor/go.js"></script>
+    <script src="~/Scripts/OrgchartScript/OrgchartGOJS.js?cd=801"></script>
+    <script src="~/Scripts/OrgchartScript/PartitionOrgchartGOJS.js?cd=800"></script>
+    <script src="~/Scripts/OrgchartScript/SearchOrgchartGOJS.js"></script>
+    <script src="~/Scripts/multiselectLeftRight/multiselect.min.js"></script>
+    <link href="~/Scripts/DataTables/jquery.dataTables.css" rel="stylesheet" />
+    <script src="~/Scripts/DataTables/jquery.dataTables.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Scripts/select2/select2.css" rel="stylesheet" />
+    <script src="~/Scripts/select2/select2.js"></script>
+    <link href="~/Content/app-style.css" rel="stylesheet" />
+    <link href="~/Content/Map/ammap.css" rel="stylesheet" />
+    <script src="~/Content/Map/ammap.js"></script>
+    <script src="~/Content/Map/worldLow.js"></script>
+    <link href="~/Scripts/zTree/zTreeStyle/zTreeStyle.css" rel="stylesheet" />
+    <script src="~/Scripts/zTree/js/jquery.ztree.core-3.5.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/zTree/js/jquery.ztree.excheck-3.5.min.js" type="text/javascript"></script>
+    <link href="~/Scripts/ColorPicker/css/evol-colorpicker.css" rel="stylesheet" />
+    <script src="~/Scripts/ColorPicker/js/evol-colorpicker.js" type="text/javascript"></script>
+
+    <style type="text/css">
+        @@media (min-width: 768px) {
+            .modal-dialog {
+                width: 700px !important;
+            }
+        }
+
+        @@media (min-width: 1024px) {
+            .modal-dialog {
+                width: 1000px !important;
+            }
+        }
+
+        #loading-img {
+            background: url(~/assets/images/Velocity.gif) center center no-repeat;
+            height: 100%;
+            z-index: 20;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            margin-left: -170px;
+            margin-top: -320px;
+        }
+
+        .center-div {
+            width: 390px;
+            height: 80px;
+            text-align: left;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            margin-left: -170px;
+            margin-top: -20px;
+            border: 1px solid lightgray;
+            border-radius: 5px;
+            font-size: 22px;
+            font-weight: bold;
+            background-color: white;
+            padding: 10px;
+        }
+
+        .overlay {
+            background: #e9e9e9;
+            display: none;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            opacity: 0.2;
+        }
+
+        body {
+            font-family: "Open Sans","Helvetica Neue","Helvetica",Arial,Verdana,sans-serif;
+            font-weight: normal;
+            font-style: normal;
+            font-size: 14px;
+        }
+
+        .radio {
+            font-family: "Open Sans","Helvetica Neue","Helvetica",Arial,Verdana,sans-serif;
+            font-weight: normal;
+            font-style: normal;
+            font-size: 14px;
+            padding: 2px;
+            display: inline-block;
+        }
+
+        .label {
+            font-family: "Open Sans","Helvetica Neue","Helvetica",Arial,Verdana,sans-serif;
+            font-weight: normal;
+            font-style: normal;
+            font-size: 14px;
+            display: inline-block;
+            color: #333;
+            text-align: left !important;
+        }
+
+        .select {
+            font-family: "Open Sans","Helvetica Neue","Helvetica",Arial,Verdana,sans-serif;
+            font-weight: normal;
+            font-style: normal;
+            font-size: 11px;
+        }
+
+        .hidePreview {
+            display: none;
+        }
+
+        .showPreview {
+            display: inline-block;
+        }
+
+        .back[class^="fa-"] {
+            border: 2px solid;
+            border-radius: 50% 50% 50% 50%;
+            margin: 0 1px;
+            padding: 7px 9px;
+            text-shadow: 0 0 0;
+            transition: all .25s ease;
+        }
+
+        /* The side navigation menu */
+        .mainsidenav {
+            height: 100%; /* 100% Full-height */
+            width: 0; /* 0 width - change this with JavaScript */
+            position: fixed; /* Stay in place */
+            z-index: 5000; /* Stay on top */
+            top: 0; /* Stay at the top */
+            left: 0;
+            background-color: #343135; /* Black*/
+            overflow-x: hidden; /* Disable horizontal scroll */
+            overflow-y: hidden; /* Disable horizontal scroll */
+            padding-top: 35px; /* Place content 60px from the top */
+            transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+        }
+
+            /* The navigation menu links */
+            .mainsidenav a {
+                /*padding: 8px 8px 8px 32px;*/
+                text-decoration: none;
+                font-size: 12px;
+                color: #cccccc;
+                display: block;
+                transition: 0.3s;
+            }
+
+                /* When you mouse over the navigation links, change their color */
+                .mainsidenav a:hover {
+                    color: #f5f5f5;
+                }
+
+            /* Position and style the close button (top right corner) */
+            .mainsidenav .closebtn {
+                position: absolute;
+                top: 0;
+                right: 2px;
+                font-size: 36px;
+                margin-left: 50px;
+            }
+
+        .mainsidenav {
+            color: white;
+        }
+
+
+        /* Slider Starts*/
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 25px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+            .slider:hover {
+                opacity: 1;
+            }
+
+            .slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 25px;
+                height: 25px;
+                background: #4CAF50;
+                cursor: pointer;
+            }
+
+            .slider::-moz-range-thumb {
+                width: 25px;
+                height: 25px;
+                background: #4CAF50;
+                cursor: pointer;
+            }
+
+        .btn-primary.toggle-bttn {
+            color: #000000;
+            background-color: #f5f5f5;
+            border-color: #cccccc;
+        }
+
+            .btn-primary.toggle-bttn.select,
+            .btn-primary.toggle-bttn:hover {
+                color: white;
+                background-color: #337ab7;
+                border-color: #2e6da4;
+            }
+
+        .active-class {
+            color: #fff;
+            background-color: #286090;
+            border-color: #204d74;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            line-height: 40px;
+            background-color: #343135;
+            color: #f5f5f5;
+            /*text-align: center;*/
+            padding: 0px 15px;
+            font-size: 13px;
+            z-index: 9;
+            left: 0px;
+            right: 0px;
+            width: 100%;
+        }
+
+            .footer ul {
+                padding: 0px;
+                margin: 0px;
+                text-align: center;
+            }
+
+                .footer ul li {
+                    display: inline-block;
+                }
+
+                    .footer ul li a {
+                        color: #dddddd;
+                        text-decoration: none;
+                        font-size: 13px;
+                        padding: 0px 10px;
+                    }
+
+                    .footer ul li:first-child a {
+                        border-right: 1px solid #cccccc;
+                    }
+
+                    .footer ul li a:hover {
+                        color: white;
+                    }
+
+                .footer ul.social-links {
+                    text-align: right;
+                }
+
+                    .footer ul.social-links li a {
+                        color: #4267B2;
+                        padding: 0px 10px;
+                        font-size: 16px;
+                        border: none;
+                    }
+
+        #myDiagramDiv {
+            margin-bottom: 70px;
+        }
+
+        .navbar {
+            min-height: 42px;
+        }
+
+        .collapse {
+            padding-top: 3px;
+        }
+
+        .grid {
+            margin: 0 auto;
+        }
+
+        .fieldset {
+            border: 1px solid #ddd;
+            margin-top: 1em;
+            width: 97%;
+        }
+
+            .fieldset h4 {
+                font-size: 12px;
+                text-align: left;
+                margin-left: 10px;
+            }
+
+                .fieldset h4 span {
+                    display: inline;
+                    background: #fff;
+                    position: relative;
+                    top: -2.3em;
+                }
+
+        .center {
+            position: absolute;
+            margin: auto;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 350px;
+            max-height: 450px;
+            background-color: #ffffff;
+            border-radius: 3px;
+            border: 3px solid lightblue;
+        }
+
+        .navIndexGreen {
+            border: 5px solid #337ab7;
+            width: 25px;
+            height: 25px;
+            background-color: Green;
+            text-align: center;
+            vertical-align: middle;
+            font-weight: bold;
+            font-family: Arial;
+            color: white;
+        }
+
+        .navIndexWhite {
+            border: 5px solid #caddef;
+            width: 25px;
+            height: 25px;
+            background-color: White;
+            text-align: center;
+            vertical-align: middle;
+            font-weight: bold;
+            font-family: Arial;
+            color: black;
+        }
+
+        input, button, select, textarea {
+            max-width: 100% !important;
+            margin-top: 5px;
+        }
+
+        canvas {
+            outline: none;
+        }
+    </style>
+
+
+    @Html.DevExpress().GetStyleSheets(
+            new StyleSheet { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+            new StyleSheet { ExtensionSuite = ExtensionSuite.Editors },
+            new StyleSheet { ExtensionSuite = ExtensionSuite.GridView }
+        )
+    @Html.DevExpress().GetScripts(
+            new Script { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+            new Script { ExtensionSuite = ExtensionSuite.Editors },
+            new Script { ExtensionSuite = ExtensionSuite.GridView }
+        )
+</head>
+<body style="padding-top:0px;">
+    <input type="hidden" name="hdnBaseURL" id="hdnBaseURL" value='@System.Configuration.ConfigurationManager.AppSettings["BasePath"]' />
+    <div class="navbar navbar-inverse navbar-fixed-top header-style">
+        <div class="container" style="width:100%!important;">
+            <div class="navbar-header" style="width:100%;margin:5px 0px 0px 0px;">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="col-md-6" style="padding-left:0px;">
+                            <a class="showMenu" href="javascript:void(0);" id="ancOpenSideMenu" title="menu" style="color:#cccccc!important;"><i class="fa-bars fa icon-x back"></i></a>
+                            <span style="color:#ffffff">ReOrgchart Modeling Tool</span>
+                        </div>
+                        <div style="height:20px;margin-top:5px; text-align:right;" class="col-md-6">
+                            <div style="margin: 0px;padding: 0px 0px 0px 10px;color:white;">
+                                <span style="font-size:10px;margin-left:0px;">(</span>
+                                <span id="spnOrgType" style="font-size:10px;margin-left:0px;display:none">Operational View</span>
+                                <span id="spnOrgLevel" style="font-size:10px;margin-left:0px;display:none">Level One</span>
+                                <span id="spnOrgView" style="font-size:10px;margin-left:0px;">Normal View</span>
+                                <span style="font-size:10px;margin-left:0px;">&nbsp;:&nbsp;</span>
+                                <span id="spnOrgRole" style="font-size:10px;margin-left:0px;">User</span>
+                                <span style="font-size:10px;margin-left:0px;">)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" style="padding-right:0px;">
+                        <button type="button" class="navbar-toggle col-md-2" data-toggle="collapse" data-target=".navbar-collapse" style="float:right;">
+                            <span class="icon-bar" style="background-color:black;"></span>
+                            <span class="icon-bar" style="background-color:black;"></span>
+                            <span class="icon-bar" style="background-color:black;"></span>
+                        </button>
+                        <div class="col-md-10 right-icon-wrap" style="float:right;">
+                            <div style="float:right;">
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                        @User.Identity.Name
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" style="left:-55px!important;">
+                                        <li>@Html.ActionLink("About", "About", "Home")</li>
+                                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                                        <li class="divider"></li>
+                                        <li>@Html.ActionLink("Add User", "UserRegister", "Account")</li>
+                                        <li class="divider"></li>
+                                        <li>@Html.ActionLink("Log Out", "LogOut", "Home")</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <a class="showMenu" href="#" title="Search" id="ancOpenTreeView" style="cursor:pointer;float:right;">
+                                <i class="fa-search fa icon-x back"></i>
+                            </a>
+                            <a class="showMenu" href="#" onclick="DownloadDialogBox();" title="Download Version" style="cursor:pointer;float:right;">
+                                <i class="fa-download fa icon-x back"></i>
+                            </a>
+                            <a class="showMenu saveversion" href="#" onclick="SaveVersion(); return false;" title="Finilyze Version" style="cursor:pointer;float:right;">
+                                <i class="fa-save fa icon-x back"></i>
+                            </a>
+                            <a class="showMenu" href="#" onclick="UpdateSettings();" title="Settings" style="cursor:pointer;float:right;">
+                                <i class="fa-cog fa icon-x back"></i>
+                            </a>
+                            <a class="showMenu splitscreen" href="#" onclick="ToggleSplitScreen(); return false;" title="Split Screen" style="cursor:pointer;float:right;">
+                                <i class="fa-columns fa icon-x back"></i>
+                            </a>
+                            <a class="showMenu" href="#" data-toggle="collapse" data-target="#demo" title="Version Info" style="cursor:pointer;float:right;">
+                                <i class="fa-sliders fa icon-x back"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="demo" class="collapse">
+        <div class="navbar-collapse collapse">
+            <div class="nav navbar-nav  navbar-left" style="width:100%">
+                <div id="divCountry" style="float:left;height:30px;margin:5px 5px;display:none;">
+                    <select class="select" id="selCountry" onclick="ShowPopupDialog(this)">
+                        <option value="SelectCountry">SELECT COUNTRY</option>
+                    </select>
+                    <i class="fa-times fa icon-x deleteinitiative"></i>
+                </div>
+                <div style="float:left;height:30px;margin:5px 5px;">
+                    <select class="select" id="selInitiative" onclick="ShowPopupDialog(this)">
+                        <option value="SelectInitiative">SELECT INITIATIVE</option>
+                    </select>
+                    <i class="fa-times fa icon-x deleteinitiative"></i>
+                </div>
+                <div style="float:left;height:30px;margin:5px 5px;">
+                    <select class="select" id="selPopulation" onclick="ShowPopupDialog(this)">
+                        <option value="SelectPopulation">SELECT POPULATION</option>
+                    </select>
+                    <i class="fa-times fa icon-x deleteinitiative"></i>
+                </div>
+                <div style="float:left;height:30px;margin:5px 5px;">
+                    <select class="select" id="selUser">
+                        <option value="SelectUser">SELECT USER</option>
+                    </select>
+                </div>
+                <div style="float:left;height:30px;margin:5px 5px;">
+                    <select class="select" id="selVersion" onclick="ShowPopupDialog(this)">
+                        <option value="SelectVersion">SELECT VERSION</option>
+                    </select>
+                    <i class="fa-plus fa icon-x addinitiative" onclick="AddNewVersion();"></i>
+                    <i class="fa-times fa icon-x deleteinitiative"></i>
+                </div>
+                <div style="float:left;height:30px;margin:5px 5px;">
+                    <button id="btnDeletePopulation" class="btn btn-primary" type="button" style="display:none;" onclick="window.location.href='~/Version/PartitionChart'">Partition Chart</button>
+                </div>
+                <div style="float:left;height:30px;margin:5px 5px;">
+                    <button id="btnSaveChart" class="btn btn-primary" type="button" style="display:none;" onclick="FinalyzeVersion()">Save Version</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content" style="width:100%!important;clear:both;padding:0px!important;margin:0px!important;min-height:500px;overflow: hidden;padding-bottom:70px;">
+        @Html.Partial("SideMenuPartial")
+        @RenderBody()
+    </div>
+    <footer class="footer">
+        <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-4">
+                <p style="margin: 0px;">&copy; @DateTime.Now.Year - McBitss</p>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4">
+                <ul class="about-sec">
+                    <li><a href="">About Us</a></li>
+                    <li><a href="">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4">
+                <ul class="social-links">
+                    <li><a href=""><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                    <li><a href=""><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                    <li><a href=""><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Modal Download -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DownloadModal" style="display:none;" id="btnDownloadPopup"></button>
+    <div id="DownloadModal" class="modal fade" role="dialog">
+        <div class="modal-dialog  modal-dialog-centered">
+            <!-- Modal content( Download )-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="width:80%;display:inline;">Download/Upload</h4>
+                    <button type="button" class="close" onclick="PPTXUploadClose()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs">
+                        <li class="active" data-id="Download"><a data-toggle="tab" href="#DownloadU">Download</a></li>
+                        <li data-id="UploadTemplate"><a data-toggle="tab" href="#UploadTemplate">Upload Template</a></li>
+                        <li data-id="RevokeTemplate"><a data-toggle="tab" href="#DRTemplate">Delete/Revoke Template</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="DownloadU" class="tab-pane fade in active">
+                            <div class="row">
+                                <div class="col-md-12" style="margin:5px 0px;">
+                                    <input type="hidden" id="hdnPPTXinfo" name="hdnPPTXinfo" value="" />
+                                    <span id="spnVersionDetailsBG" style="font-style:italic;"></span>
+                                    <div style="margin-bottom:5px;"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-12" style="margin:15px 0px;">
+                                <button type="button" id="divDownloadInitiate" class="btn btn-primary" style="width:150px;" onclick="DownloadInitiative();">Download Initiative</button>
+                                <button type="button" id="divDownloadVersion" class="btn btn-primary" style="width:150px;" onclick="DownloadVersion();">Download Version</button>
+                                <button type="button" id="divDownloadPDF" class="btn btn-primary" style="width:150px;" onclick="ShowSelectFields(this);">Download PDF(Single Level)</button>
+                                <button type="button" id="divDownloadPDF" class="btn btn-primary" style="width:150px;" onclick="ShowSelectFields(this);">Download PDF(Multiple Level)</button>
+                                <button type="button" id="divDownloadPPT" class="btn btn-primary" style="width:150px;" onclick="ShowSelectFields(this);">Download PPT</button>
+                                <div class="row" id="divFieldSelection" style="display:none;margin-top:10px;border-top:1px solid #e5e5e5">
+                                    <div class="col-md-12" id="divFields">
+                                    </div>
+                                </div>
+                                <div class="row" id="divTemplateSelection" style="display:none;margin-top:10px;border-top:1px solid #e5e5e5">
+                                    <div class="col-md-12" id="divTemplateData">
+                                    </div>
+                                </div>
+                                <div id="RespDownload">
+                                    <table id="RespDownloadTable" style="width: 100%"></table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="btnDownLoadSave" type="button" class="btn btn-primary" data-dismiss="modal" style="display:none;" onclick="SaveSelectedFields()">Save</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        <div id="UploadTemplate" class="tab-pane fade">
+                            <div class="row">
+                                <div class="col-md-12" style="margin:10px 0px">
+                                    <div id="divAddPPTX">
+                                        <div class="row">
+                                            <div id="divUploadPPTX" class="col-md-12" style="padding-left:15px;">
+                                                <div style="margin:0px 20px">
+                                                    <center>
+                                                        <div style="padding-left:0px;padding-top:10px">
+                                                            <table cellspacing="0" cellpadding="0" id="topNavigation">
+                                                                <tr>
+                                                                    <td>
+                                                                        <div>
+                                                                            <img id="img_PPTX1" src="~/Content/Images/number1.svg" style="width:40px;height:40px;" />
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div id="dvNav_B_PPTX2" style="width: 100px; height: 3px; margin-top: -1px; margin-left: -4px;"
+                                                                             class="navIndexWhite">
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div>
+                                                                            <img id="img_PPTX2" src="~/Content/Images/number2.svg" style="width:40px;height:40px;" />
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div id="dvNav_B_PPTX3" style="width: 100px; height: 3px; margin-top: -1px; margin-left: -4px;"
+                                                                             class="navIndexWhite">
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div>
+                                                                            <img id="img_PPTX3" src="~/Content/Images/number3.svg" style="width:40px;height:40px;" />
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </center>
+                                                    <center>
+                                                        <div id="divPPTX1" style="height:250px;padding-top:10px; width:50%;margin:0 auto;">
+                                                            <div class="row">
+                                                                <input type="hidden" value="" id="hdnPPTXUseFields" name="hdnPPTXUseFields" />
+                                                                <input type="hidden" value="" id="hdnPPTXFields" name="hdnPPTXFields" />
+                                                                <input type="hidden" value="" id="hdnPPTXSelectedFields" name="hdnPPTXSelectedFields" />
+                                                                <div class="col-md-12">
+                                                                    <form id="dataPPTX" method="post" enctype="multipart/form-data">
+                                                                        <input type="hidden" id="hdnPPTXFileName" name="hdnPPTXFileName" value="" />
+                                                                        <input type="file" class="form-control" id="uploadPPTX" name="upload" onchange="SetPPTXDivIds();" style="height: auto;max-width:100%!important;margin-bottom:5px;">
+                                                                    </form>
+                                                                    <div id="divErrorPPTXUploadFile" style="color:red;display:none;width:100%;text-align:left;">Please select PPTX  file .</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <input class="form-control" type="text" value="" id="txtTemplateNamePPTX" name="txtTemplateNamePPTX" placeholder="Template Name" style="max-width:100%" />
+                                                                    <div id="divErrorTemplateNamePPTX" style="color:red;display:none;width:100%;text-align:left;">Template is empty.</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <textarea class="form-control" type="text" value="" id="txtTemplateDescriptionPPTX" name="txtTemplateDescriptionPPTX" rows="3" cols="20" placeholder="Description" style="max-width:100%"></textarea>
+                                                                    <div id="divErrorTemplateDescriptionPPTX" style="color:red;display:none;width:100%;text-align:left;">Description is empty.</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </center>
+                                                    <div id="divPPTX2" style="display:none;height:300px;padding-top:10px;">
+                                                    </div>
+                                                    <div id="divPPTX3" style="display:none;height: 300px;padding: 10px;width: 50%;margin: 5% auto 0;border: 1px solid #ededed;" class="form-group">
+                                                        <div style="width:100%;text-align:left;font-weight:bold;margin-top:5px;color:blue;">Following Fields will be used for PPTX template</div>
+                                                        <div id="divPPTXShowFields" style="max-height:260px;overflow-y:auto;margin-bottom:5px;"></div>
+                                                    </div>
+                                                    <div class="col-md-12" style="margin:5px 0px;">
+                                                        <div id="divRespPPTX" style="margin:5px 0px;">
+                                                            <div id="divPTX" style="font-style:italic;color:green;"></div>
+                                                            <div id="divPPTXError" style="font-style:italic;color:red;"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div style="clear:both;"></div>
+                                                    <div id="divErrorSelectionFields" style="color:red;display:none;max-height:40px;margin-top:30px;">Please select field(s) to show.</div>
+                                                    <center>
+                                                        <div style="padding-bottom:20px;padding-left:10px;padding-top:30px;">
+                                                            <button id="btnPPTXBack" class="btn btn-primary" disabled style="width:70px;" onclick="BackPQ()">Back</button>
+                                                            <button id="btnPPTXNext" class="btn btn-primary" style="width:70px" onclick="NextPQ()">Next</button>
+                                                            <button id="btnPPTXFinish" class="btn btn-primary" disabled style="width:70px" onclick="FinishPPTX()">Finish</button>
+                                                        </div>
+                                                    </center>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" onclick="PPTXUploadClose()">Close</button>
+                            </div>
+                        </div>
+                        <div id="DRTemplate" class="tab-pane fade">
+                            <div class="row">
+                                <div class="col-md-12" style="margin:10px 0px">
+                                    <span style="font-style:italic;">PLUS symbol in action column indicate that we can revoke PPT template and INTO mark indicate that we can delete the PPT template</span>
+                                    <div class="row" id="divTemplateList" style="margin:0px;border-top:1px solid #e5e5e5">
+                                        <div class="col-md-12" id="divDRTemplateData">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Image -->
+    <div id="AddNewImage" class="modal fade">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+
+            <!-- Modal content( Add New Position )-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="width:80%;display:inline;">Add New Picture</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="tab-content">
+                        <div id="divNewPosition" class="tab-pane fade in active">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form id="ImageContent" name="ImageContent" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" id="hdnImageFileName" name="hdnImageFileName" value="" />
+                                        <input type="file" class="form-control" id="uploadImageContent" name="upload" style="height: auto;max-width:100%!important;margin-bottom:5px;">
+                                        <div id="divImageError" style="font-style:italic;color:red;"></div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" onclick="$('#ImageContent').submit();">Save</button>
+                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="margin:5px 0px;color:red" id="divAddPositionError"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Model Version Details -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#VersionDetailsModal" style="display:none;" id="btnVersionDetailsPopup"></button>
+    <div id="VersionDetailsModal" class="modal fade" role="dialog">
+        <div class="modal-dialog  modal-dialog-centered" role="document" style="width:80%">
+
+            <!-- Modal content( Download )-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="width:80%;display:inline;">Add Initiative</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12" style="margin:5px 0px;border-bottom: 1px solid #e5e5e5">
+                            <span id="spnVersionDetailsBG1" style="font-style:italic;"></span>
+                            <div style="margin-bottom:5px;"></div>
+                        </div>
+                        <div class="col-md-12">
+                            <div style="width:100%;margin:5px 0px;">
+                                <input class="form-control" type="text" value="" id="txtName" name="txtName" placeholder="Name" />
+                                <div id="divErrorVersionName" style="color:red;display:none;">Version is empty.</div>
+                            </div>
+                            <div style="width:100%;margin:5px 0px;">
+                                <textarea class="form-control" type="text" value="" id="txtDescription" name="txtDescription" rows="3" cols="20" placeholder="Description"></textarea>
+                                <div id="divErrorDescription" style="color:red;display:none;">Description is empty.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="javascript:SaveVersion();">Add</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="javascript:FinalyzeVersion();">Finalize Version</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Position -->
+    <div id="AddNewPositionModal" class="modal fade">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+
+            <!-- Modal content( Add New Position )-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="width:80%;display:inline;">Add New Position</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs">
+                        <li class="positionpopup active" data-id="divNewPosition"><a data-toggle="tab" href="#divNewPosition">New Position</a></li>
+                        <li class="positionpopup" data-id="divAssignEmployee" onclick="AddEmployeeAssign()"><a data-toggle="tab" href="#divAssignEmployee">Assign Employee</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="divNewPosition" class="tab-pane fade in active">
+                            <div class="row">
+                                <div class="col-md-12" style="margin:5px 0px;">
+                                    <input id="txtPositionId" name="txtPositionId" type="text" value="" placeholder="Position ID" class="form-control" />
+                                </div>
+                                <div class="col-md-12" style="margin:5px 0px;">
+                                    <input id="txtNextPositionId" name="txtNextPositionId" type="text" value="" readonly="readonly" placeholder="Parent Position ID" class="form-control" />
+                                </div>
+                                <div class="col-md-12" style="margin:5px 0px;">
+                                    <input id="txtFirstName" name="txtFirstName" type="text" value="" placeholder="First Name" class="form-control" />
+                                </div>
+                                <div class="col-md-12" style="margin:5px 0px;">
+                                    <input id="txtLastName" name="txtLastName" type="text" value="" placeholder="Last Name" class="form-control" />
+                                </div>
+                                <div class="col-md-12" style="margin:5px 0px;">
+                                    <input id="txtPositionCost" name="txtPositionCost" type="text" value="0.00" placeholder="Position Cost" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div id="divAssignEmployee" class="tab-pane fade">
+                            <div class="row" id="divAssignEmployeeFields">
+                            </div>
+                            <div class="row" id="divAssignEmployeeInfo">
+                                <div class="col-md-12" style="margin:5px 0px;">
+                                    @Html.Action("ShowEmployeeView")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="margin:5px 0px;color:red" id="divAddPositionError"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="return SaveNewPosition();">Save</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Initiative -->
+    <div id="InitiativeModal" class="modal fade">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+
+            <!-- Modal content( Initiative )-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="width:80%;display:inline;">Add a New Initiative</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="return SaveInitiative();">Add</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Version -->
+    <div id="VersionModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Select Version</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="divProcessedList">
+                        <table id="tblVersionList" class="cell-border" cellspacing="0" style="width:100%;text-align:left;"></table>
+                        <div id="divVersionList" style="width:100%;text-align:left;"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Full Name selection -->
+    <div id="MultiSelectModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Select Full Name</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <select name="from" id="multiselect" class="form-control" size="8" multiple="multiple">
+                                <option value="1">Item 1</option>
+                                <option value="2">Item 5</option>
+                                <option value="2">Item 2</option>
+                                <option value="2">Item 4</option>
+                                <option value="3">Item 3</option>
+                            </select>
+                        </div>
+
+                        <div class="col-xs-2">
+                            <button type="button" id="multiselect_rightAll" class="btn btn-block"><i class="glyphicon glyphicon-forward"></i></button>
+                            <button type="button" id="multiselect_rightSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
+                            <button type="button" id="multiselect_leftSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
+                            <button type="button" id="multiselect_leftAll" class="btn btn-block"><i class="glyphicon glyphicon-backward"></i></button>
+                        </div>
+
+                        <div class="col-xs-5">
+                            <select name="to" id="multiselect_to" class="form-control" size="8" multiple="multiple"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="SelectFullName()">Select</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Upload PPT Template  -->
+    <div id="UploadTemplatePPTModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        Upload Template PPT
+                    </h4>
+                </div>
+                <div id="divAddPPTX">
+                    <div class="row">
+                        <div id="divUploadPPTX" class="col-md-12" style="padding-left:15px;">
+                            <div style="margin:0px 20px">
+                                <center>
+                                    <div style="padding-left:0px;padding-top:10px">
+                                        <table cellspacing="0" cellpadding="0" id="topNavigation">
+                                            <tr>
+                                                <td>
+                                                    <div>
+                                                        <img id="img_PPTX1" src="~/Content/Images/number1.svg" style="width:40px;height:40px;" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div id="dvNav_B_PPTX2" style="width: 100px; height: 3px; margin-top: -1px; margin-left: -4px;"
+                                                         class="navIndexWhite">
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <img id="img_PPTX2" src="~/Content/Images/number2.svg" style="width:40px;height:40px;" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div id="dvNav_B_PPTX3" style="width: 100px; height: 3px; margin-top: -1px; margin-left: -4px;"
+                                                         class="navIndexWhite">
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <img id="img_PPTX3" src="~/Content/Images/number3.svg" style="width:40px;height:40px;" />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </center>
+                                <center>
+                                    <div id="divPPTX1" style="height:250px;padding-top:10px; width:50%;margin:0 auto;">
+                                        <div class="row">
+                                            <input type="hidden" value="" id="hdnPPTXUseFields" name="hdnPPTXUseFields" />
+                                            <input type="hidden" value="" id="hdnPPTXFields" name="hdnPPTXFields" />
+                                            <input type="hidden" value="" id="hdnPPTXSelectedFields" name="hdnPPTXSelectedFields" />
+                                            <div class="col-md-12">
+                                                <form id="dataPPTX" method="post" enctype="multipart/form-data">
+                                                    <input type="hidden" id="hdnPPTXFileName" name="hdnPPTXFileName" value="" />
+                                                    <input type="file" class="form-control" id="uploadPPTX" name="upload" onchange="SetPPTXDivIds();" style="height: auto;max-width:100%!important;margin-bottom:5px;">
+                                                </form>
+                                                <div id="divErrorPPTXUploadFile" style="color:red;display:none;width:100%;text-align:left;">Please select PPTX  file .</div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <input class="form-control" type="text" value="" id="txtTemplateNamePPTX" name="txtTemplateNamePPTX" placeholder="Template Name" style="max-width:100%" />
+                                                <div id="divErrorTemplateNamePPTX" style="color:red;display:none;width:100%;text-align:left;">Template is empty.</div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <textarea class="form-control" type="text" value="" id="txtTemplateDescriptionPPTX" name="txtTemplateDescriptionPPTX" rows="3" cols="20" placeholder="Description" style="max-width:100%"></textarea>
+                                                <div id="divErrorTemplateDescriptionPPTX" style="color:red;display:none;width:100%;text-align:left;">Description is empty.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </center>
+                                <div id="divPPTX2" style="display:none;height:300px;padding-top:10px;">
+                                </div>
+                                <div id="divPPTX3" style="display:none;height: 300px;padding: 10px;width: 50%;margin: 5% auto 0;border: 1px solid #ededed;" class="form-group">
+                                    <div style="width:100%;text-align:left;font-weight:bold;margin-top:5px;color:blue;">Following Fields will be used for PPTX template</div>
+                                    <div id="divPPTXShowFields" style="max-height:260px;overflow-y:auto;margin-bottom:5px;"></div>
+                                </div>
+                                <div class="col-md-12" style="margin:5px 0px;">
+                                    <div id="divRespPPTX" style="margin:5px 0px;">
+                                        <div id="divPTX" style="font-style:italic;color:green;"></div>
+                                        <div id="divPPTXError" style="font-style:italic;color:red;"></div>
+                                    </div>
+                                </div>
+                                <div style="clear:both;"></div>
+                                <div id="divErrorSelectionFields" style="color:red;display:none;max-height:40px;margin-top:30px;">Please select field(s) to show.</div>
+                                <center>
+                                    <div style="padding-bottom:20px;padding-left:10px;padding-top:30px;">
+                                        <button id="btnPPTXBack" class="btn btn-primary" disabled style="width:70px;" onclick="BackPQ()">Back</button>
+                                        <button id="btnPPTXNext" class="btn btn-primary" style="width:70px" onclick="NextPQ()">Next</button>
+                                        <button id="btnPPTXFinish" class="btn btn-primary" disabled style="width:70px" onclick="FinishPPTX()">Finish</button>
+                                    </div>
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal Full Name selection -->
+    <div id="SearchModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        Search by Entities
+                        <i class="fa fa-filter" title="Filter" onclick="SelectFilters();" aria-hidden="true" style="width:24px;height:24px;cursor:pointer;"></i>
+                    </h4>
+                </div>
+                <div class="row">
+                    <div id="divShowSearchMenuResult" class="col-md-12">
+                        <div class="modal-body" style="width:100%">
+                            <center>
+                                <div class="myFilterFields" id="myFilterFields" style="margin:10px;"></div>
+                                <div class="mysearchmenu" id="mySearchMenu" style="margin:10px;"></div>
+                            </center>
+                            <div id="divSearchTable" style="padding:0px 30px;display:none;">
+                                @Html.Action("ShowSearchMenu")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="return ShowSearchInformation();">Search</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Settings -->
+    <div id="SettingsModal" class="modal fade">
+        <div class="modal-dialog modal-dialog-centered">
+
+            <!-- Modal content( Settings )-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="width:80%;display:inline;">Settings</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#home">Initial Settings</a></li>
+                        <li><a data-toggle="tab" href="#menu1">Skin Selection</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div id="home" class="tab-pane fade in active">
+                            <div class="row">
+                                <div class="col-md-4" style="margin:10px 0px;height:130px;">
+                                    <b>Select Shape : </b>
+                                    <br />
+                                    <br />
+                                    <input type="radio" id="rectangle" class="radio" name="shape" style="vertical-align: text-top" checked value="RoundedRectangle" />
+                                    <label class="label" for="rectangle">Rectangle</label><br />
+                                    <input type="radio" id="circle" class="radio" name="shape" style="vertical-align: text-top" value="Circle" />
+                                    <label class="label" for="circle">Circle</label><br />
+                                    <input type="radio" id="ellipse" class="radio" name="shape" style="vertical-align: text-top" value="Ellipse" />
+                                    <label class="label" for="ellipse">Ellipse</label>
+                                </div>
+                                <div class="col-md-4" style="margin:10px 0px;height:130px;">
+                                    <b>Show Picture : </b>
+                                    <br />
+                                    <br />
+                                    <input type="radio" class="radio" id="Yes" name="picture" style="vertical-align: text-top" value="Y" checked />
+                                    <label class="label" for="Yes">Yes</label><br />
+                                    <input type="radio" class="radio" id="No" name="picture" style="vertical-align: text-top" value="N" />
+                                    <label class="label" for="No">No</label><br />
+                                </div>
+                                <div class="col-md-4" style="margin:10px 0px;height:130px;">
+                                    <b>Select View : </b>
+                                    <br />
+                                    <br />
+                                    <select id="selView" name="selView" style="color: black; width: 300px;" class="form-control">
+                                        <option value="Normal" selected>Normal</option>
+                                        <option value="Cost">Cost</option>
+                                        <option value="Mcbitss">Mcbitss</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 slidecontainer" style="margin:10px 0px;height:130px;">
+                                    <b>Level : </b>
+                                    <br />
+                                    <br />
+                                    <div><input type="range" id="myRange" min="1" max="3" value="1" style="float:left;margin-right:5px;display:block;line-height:20px"></div>
+                                    <center><div><span>Level:&nbsp;</span><input type="text" id="myLevel" readonly="readonly" value="" style="width:15px;height:20px;text-align:center;line-height:20px" /></div></center>
+                                </div>
+                                <div class="col-md-4" style="margin:10px 0px;height:130px;">
+                                    <b>Split Screen Direction : </b>
+                                    <br />
+                                    <br />
+                                    <input type="radio" class="radio" id="Vetical" name="splitscreendirection" style="vertical-align: text-top" value="Vertical" checked />
+                                    <label class="label" for="Vetical">Vertical</label><br />
+                                    <input type="radio" class="radio" id="Horizontal" name="splitscreendirection" style="vertical-align: text-top" value="Horizontal" />
+                                    <label class="label" for="Horizontal">Horizontal</label><br />
+                                </div>
+                                <div class="btn-group col-md-4" role="group" aria-label="Basic example" style="margin:10px 0px;height:130px;">
+                                    <b>Toggle View : </b>
+                                    <br />
+                                    <br />
+                                    <div id="viewToggle">
+                                        <button type="button" class="btn btn-primary btn-sm active-class" id="operational" aria-pressed="true" data-url="~/Version/UploadVersion" onclick="CreateOrgChart(this, 'Type', 'OV')"><i class="fa-plus fa icon-x"></i>&nbsp;Operational</button>
+                                        <button type="button" class="btn btn-primary btn-sm" id="Legal" aria-pressed="true" data-url="~/Version/UploadVersion" onclick="CreateOrgChart(this, 'Type', 'LV')"><i class="fa-minus fa icon-x"></i>&nbsp;Legal</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 demoPanel">
+                                    <b>Node Line Color : </b>
+                                    <br />
+                                    <br />
+                                    <div id="cpInline2"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="menu1" class="tab-pane fade">
+                            <div class="row">
+                                <div class="col-md-12" style="margin:10px 0px">
+                                    <div class="col-md-3">
+                                        <input type="radio" class="radio" name="skin" style="vertical-align: text-top" value="Brown" />
+                                        <img src="~/assets/images/SKIN-1.jpg" style="width: 150px;margin-bottom:10px;" />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="radio" class="radio" name="skin" style="vertical-align: text-top" value="White" checked />
+                                        <img src="~/assets/images/SKIN-2.jpg" style="width: 155px;margin-bottom:10px;" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="return SaveScreenSettings();">Save</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        var DataPPTX = 0;
+        var header = document.getElementById("viewToggle");
+        var btns = header.getElementsByClassName("btn");
+        for (var Idx = 0; Idx < btns.length; Idx++) {
+            btns[Idx].addEventListener("click", function () {
+                var current = document.getElementsByClassName("active-class");
+                current[0].className = current[0].className.replace(" active-class", "");
+                this.className += " active-class";
+            });
+        }
+
+        var setting = {
+            check: {
+                enable: false
+            },
+            callback: {
+                onCheck: onCheck
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            }
+        };
+
+        function setCheck(trName) {
+            var zTree = $.fn.zTree.getZTreeObj(trName),
+                py = $("#py").attr("checked") ? "p" : "",
+                sy = $("#sy").attr("checked") ? "s" : "",
+                pn = $("#pn").attr("checked") ? "p" : "",
+                sn = $("#sn").attr("checked") ? "s" : "",
+                type = { "Y": py + sy, "N": pn + sn };
+            zTree.setting.check.chkboxType = type;
+            showCode('setting.check.chkboxType = { "Y" : "' + type.Y + '", "N" : "' + type.N + '" };');
+        }
+
+        function showCode(str) {
+            if (!code) code = $("#code");
+            code.empty();
+            code.append("<li>" + str + "</li>");
+        }
+
+        function onCheck(e, treeId, treeNode) {
+        }
+
+        /* Set the width of the side navigation to 0 */
+        function closeNav() {
+            $("#mySidenav").css("width", "0px");
+            $("#divHelpData").css("marginLeft", "0%");
+        }
+
+        function DownloadInitiative() {
+            window.location.href = HOST_ENV +"/Version/DownLoadInitiative";
+        }
+
+        function DownloadVersion() {
+            window.location.href = HOST_ENV +"/Version/DownLoadVersion";
+        }
+
+        function SelectTempate(Obj, FileName) {
+            if ($(Obj).prop("checked"))
+                $("#hdnTemplatePPT").val(FileName);
+            else
+                $("#hdnTemplatePPT").val("");
+        }
+
+        function ShowTemplateFields(Value) {
+            TemplateData = JSON.parse($("#hdnPPTXinfo").val());
+            if (TemplateData.length >= 1) {
+                for (var Idx = 0; Idx <= TemplateData.length - 1; Idx++) {
+                    if (TemplateData[Idx].TemplateName == Value) {
+                        var JsonOrgSelectFields = JSON.parse(TemplateData[Idx].FieldsInfo);
+                        if (JsonOrgSelectFields.length >= 1) {
+                            var html = ""
+                            for (var Idx = 0; Idx <= JsonOrgSelectFields.length - 1; Idx++) {
+                                html += "<div class=\"col-md-4\">";
+                                html += "    <label class=\"label\">" + JsonOrgSelectFields[Idx].SelectedField + " ( " + JsonOrgSelectFields[Idx].MappedFields + " )</label>";
+                                html += "</div>";
+                            }
+                            $("#divFields").html(html);
+                        }
+                    }
+                }
+            }
+        }
+
+        var DownLoadId = "";
+        function ShowSelectFields(Obj) {
+            $(".overlay").show();
+
+            $("#divFields").empty();
+            DownLoadId = $(Obj).attr("id");
+            if ($(Obj).attr("id") == "divDownloadPDF") {
+                $("#divFieldSelection").show();
+                $("#divFields").html("");
+
+                var JsonData = JSON.parse($("#hdnOrgSelectFields").val());
+                if (JsonData.length >= 1) {
+                    var html = "";
+                    for (var Idx = 0; Idx <= JsonData.length - 1; Idx++) {
+                        var CheckedFlag = "";
+                        if (JsonData[Idx].ACTIVE_IND == "Y") CheckedFlag = "checked";
+                        html += "<div class=\"col-md-4\">" +
+                            "<input type =\"checkbox\" id=\"FieldSet" + Idx.toString() + "\" class=\"radio\" name=\"FieldSet\" style=\"vertical-align: text-top\" " + CheckedFlag + " value=\"" + JsonData[Idx].FIELD_NAME + "\" />" +
+                            "<label class=\"label\" for=\"FieldSet" + Idx.toString() + "\">" + JsonData[Idx].FIELD_CAPTION + "</label>" +
+                            "</div>";
+                    }
+                    $("#divFields").html(html);
+                }
+                $(".overlay").hide();
+            }
+            else if ($(Obj).attr("id") == "divDownloadPPT") {
+                $("#divFieldSelection").hide();
+                $("#divFields").html("");
+
+                var templatedata = "";
+                $.ajax({
+                    type: "post",
+                    url: HOST_ENV+"/Version/ShowTemplates",
+                    async: true,
+                    datetype: "json",
+                    success: function (json) {
+                        if (json.Success == "Yes") {
+                            $("#hdnPPTXinfo").val(json.SF);
+                            templatedata = JSON.parse(json.SF);
+                            $("#divTemplateData").empty();
+
+                            if (templatedata.length >= 1) {
+
+                                var PPTXTemplatehtml = "";
+                                PPTXTemplatehtml += "<div class=\"col-md-12\">" +
+                                    "<div class=\"row\">" +
+                                    "<div class=\"col-md-3\">" +
+                                    "<strong>TemplateName</strong>" +
+                                    "</div>" +
+                                    "<div class=\"col-md-3\">" +
+                                    "<strong> Description </strong>" +
+                                    "</div>" +
+                                    "<div class=\"col-md-3\">" +
+                                    "<strong>FileName </strong>" +
+                                    "</div>" +
+                                    "</div>" +
+                                    "</div>";
+
+                                var TemplateName=""
+                                for (var Idx = 0; Idx <= templatedata.length - 1; Idx++) {
+                                    var checkedflag = "";
+                                    if (templatedata[Idx].ACTIVE_IND == "Y") CheckedFlag = "checked";
+                                    PPTXTemplatehtml += "<div class=\"col-md-12\">" +
+                                        "<div class=\"row\">" +
+                                        "<div class=\"col-md-3\">" +
+                                        "<input type =\"radio\" name=\"TemplatePPTX\" " + CheckedFlag + " value=\"" + templatedata[Idx].TemplateName + "\" onclick=\"ShowTemplateFields('" + templatedata[Idx].TemplateName+"');\" />" +
+                                        "<label class=\"label\">" + templatedata[Idx].TemplateName + "</label>" +
+                                        "</div>" +
+                                        "<div class=\"col-md-3\">" +
+                                        "<label class=\"label\">" + templatedata[Idx].Description + "</label>" +
+                                        "</div>" +
+                                        "<div class=\"col-md-3\">" +
+                                        "<label class=\"label\">" + templatedata[Idx].FileName + "</label>" +
+                                        "</div>" +
+                                        "</div>" +
+                                        "</div>";
+                                    TemplateName=templatedata[Idx].TemplateName
+                                }
+                                ShowTemplateFields(TemplateName);
+                                $("#divFieldSelection").show();
+                                $("#divTemplateData").html(PPTXTemplatehtml);
+                            }
+                            $(".overlay").hide();
+                        }
+                    }
+                });
+                $("#divTemplateSelection").show();
+            }
+            else {
+                $("#divTemplateSelection").hide();
+                $(".overlay").hide();
+            }
+
+            $("#divFieldSelection").show();
+            $("#btnDownLoadSave").show();
+        }
+
+        function SaveSelectedFields() {
+            alert(DownLoadId);
+
+            if (DownLoadId != "") {
+                $(".overlay").show();
+                $("#hdnTemplatePPT").val($('input[name=TemplatePPTX]:checked').val());
+
+                var SelectedFields = "";
+                $("input[name='FieldSet']").each(function () {
+                    if ($(this).prop("checked") == true) {
+                        SelectedFields += ",\'" + $(this).val() + "\'";
+                    }
+                });
+
+                var JsonData = {
+                    SetSelectedFields: ((SelectedFields == "") ? "" : SelectedFields.substring(1)),
+                    TemplatePPTX: $("#hdnTemplatePPT").val()
+                };
+                alert(TemplatePPTX);
+
+                $.ajax({
+                    type: "POST",
+                    url: HOST_ENV +"/Version/SaveSelectedFields",
+                    data: JsonData,
+                    async: true,
+                    dateType: "json",
+                    success: function (Json) {
+                        if (Json.Success == "Yes") {
+                            $("#hdnOrgSelectFields").val(Json.SelectFields);
+
+                            if (DownLoadId == "divDownloadPDF") {
+                                window.location.href = HOST_ENV +'/Version/DownloadPDF'
+                            }
+                            else if (DownLoadId == "divDownloadPPT") {
+                                window.location.href = HOST_ENV +'/Version/DownloadPPT'
+                            }
+                        }
+                        $(".overlay").hide();
+                    }
+                });
+            }
+            else alert("Please select download PPT/PDF");
+        }
+
+        function AddNewImage(parent, levelID) {
+            $("#divImageError").html("");
+            $("#uploadImageContent").val("");
+            $("#hdnImageFileName").val(levelID);
+            $("#AddNewImage").modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+        }
+
+        $(document).ready(function () {
+
+            // Color Picker
+            $('#cpInline2').colorpicker({ color: '#92cddc', defaultPalette: 'web' });
+
+            // Methods demo 2 (inline colorpicker)
+            $('#cpInline2').on('click', function () {
+                alert('Selected color = "' + $('#cpInline2').colorpicker("val") + '"');
+                Settings.BorderColor = $('#cpInline2').colorpicker("val");
+            });
+
+            $("form#ImageContent").submit(function (e) {
+                e.preventDefault();
+                if ($("#uploadImageContent").val() != null || $("#uploadImageContent").val() != "") {
+
+                    $("#divImageError").html("");
+                    $(".overlay").show();
+                    var formData = new FormData(this);
+                    $.ajax({
+                        url: HOST_ENV + "/Version/UploadImage",
+                        type: 'POST',
+                        data: formData,
+                        async: false,
+                        success: function (data) {
+                            if (data.Success == "Yes") {
+                                $("#divImageError").html(data.Message);
+                                $("#divImageError").css('color', 'blue');
+                                $("#hdnOrgChartData").val(data.ChartData);
+                                CancelOperation();
+
+                            } else {
+
+                                $("#divImageError").html(data.Message);
+                                $(".overlay").hide();
+                            }
+
+                        },
+                        cache: false,
+                        contentType: false,
+                        processData: false
+                    });
+                }
+                else {
+                    $("#divImageError").html("Please Select a Picture");
+                    $("#divImageError").css('color', 'red');
+                }
+                $(".overlay").hide();
+            });
+
+            // PPTX template Starts
+            $("#img_PPTX1").attr("src", HOST_ENV + "/Content/Images/SelectedOne.svg");
+            $("form#dataPPTX").submit(function (e) {
+
+                $("#divPPTXError").html(""); $("#divPPTX").html("");
+                if ($("#hdnPPTXFileName").val() == "") {
+                    e.preventDefault();
+                    var formData = new FormData(this);
+
+                    $.ajax({
+                        url: HOST_ENV + "/Version/UploadPPTXFile",
+                        type: 'POST',
+                        data: formData,
+                        async: false,
+                        success: function (data) {
+                            if (data.Success == "Yes") {
+                                DataPPTX++;
+                                $("#hdnPPTXUseFields").val(data.SF);
+                                $("#hdnPPTXFields").val(data.MF);
+                                $("#hdnPPTXFileName").val(data.FN);
+                                var ShowFields = data.SF.split(",");
+                                var MappingFields = $("#hdnPPTXFields").val().split(",");
+                                var MF = "<option value=\"\">Select Mapping Field</option>";
+                                for (Idx = 0; Idx < MappingFields.length; Idx++) {
+                                    MF += "<option value=\"" + MappingFields[Idx] + "\">" + MappingFields[Idx] + "</option>"
+                                }
+                                var SelDataType = "";
+                                var Index = 0;
+                                for (Idx = 0; Idx < ShowFields.length; Idx++) {
+                                    SelDataType += "<div class=\"col-md-4\" style=\"margin-bottom:10px;float:left;\">";
+                                    SelDataType += "         <input type=\"checkbox\" value=\"" + ShowFields[Idx] + "\" id=\"chkFieldsPPTX" + Index.toString() + "\" name=\"chkFieldsPPTX\"  data-id=\"" + Index.toString() + "\" />";
+                                    SelDataType += "         <lable for=\"lblFieldsPPTX" + Index.toString() + "\" value=" + ShowFields[Idx] + " style=\"width:100%;text-align:left;\">" + ShowFields[Idx] + "</lable>";
+                                    SelDataType += "    <div style=\"width:100%\">";
+                                    SelDataType += "       <select class=\"form-control\" id=\"selMapFieldsPPTX" + Index.toString() + "\" data-id=\"" + Index.toString() + "\" name=\"selMapFieldsPPTX" + Index.toString() + "\"> ";
+                                    SelDataType += MF;
+                                    SelDataType += "       </select> ";
+                                    SelDataType += "    </div> ";
+                                    SelDataType += "    <div style=\"width:100%\">";
+                                    SelDataType += "       <select class=\"form-control\" onclick=\"SetDataTypePPTX(this)\" id=\"selDataTypePPTX" + Index.toString() + "\" data-id=\"" + Index.toString() + "\" name=\"selDataTypePPTX" + Index.toString() + "\"> ";
+                                    SelDataType += "            <option value=\"String\"" + (this.FieldType == "String" ? " selected=\'selected\'" : "") + ">String</option>";
+                                    SelDataType += "            <option value=\"Float\"" + (this.FieldType == "Number" ? " selected=\'selected\'" : "") + ">Float</option>";
+                                    SelDataType += "            <option value=\"Int\"" + (this.FieldType == "Int" ? " selected=\'selected\'" : "") + ">Int</option>";
+                                    SelDataType += "            <option value=\"DateTime\"" + (this.FieldType == "DateTime" ? " selected=\'selected\'" : "") + ">DateTime</option>";
+                                    SelDataType += "       </select> ";
+                                    SelDataType += "    </div> ";
+                                    SelDataType += "    <div id=\"divFormatPPTX\"" + Index.toString() + " style=\"width:100%\">";
+                                    SelDataType += "       <select class=\"form-control\" id=\"selFormatPPTX" + Index.toString() + "\" data-id=\"" + Index.toString() + "\" name=\"selFormatPPTX" + Index.toString() + "\"> ";
+                                    SelDataType += "           <option value=\"\" selected=\"selected\">Format not Required</option>";
+                                    SelDataType += "       </select> ";
+                                    SelDataType += "    </div> ";
+                                    SelDataType += "</div>";
+                                    Index++;
+                                }
+
+                                SelDataType += "<div class=\"col-md-12\" style=\"clear: both;\">&nbsp;</div>";
+                                $("#divPPTX2").html(SelDataType);
+                            }
+                            else {
+                                if (data.Success == "No") {
+                                    $("#divPPTXError").html(data.Message);
+                                    $("#divRespPPTX").show();
+                                }
+                            }
+                        },
+                        cache: false,
+                        contentType: false,
+                        processData: false
+                    });
+                }
+                else DataPPTX++;
+            });
+            // PPTX template Ends
+
+            try {
+                $(document).mouseup(function (e) {
+                    var container = $("#mySidenav");
+
+                    $("#mySidenav").hover(function () {
+                        mouse_is_inside = true;
+                    }, function () {
+                        mouse_is_inside = false;
+                    });
+
+                    if ($("#imgPin").attr("src").indexOf("unpin.svg") != -1) {
+                        if (mouse_is_inside)
+                            container.show();
+                        else {
+                            container.hide();
+                            try {
+                                $("#divHelpData").css("marginLeft", "0%");
+                            }
+                            catch (ex) {
+                            }
+                        }
+                    }
+                });
+            }
+            catch (ex) {
+            }
+
+            $(".deleteinitiative").click(function () {
+                if (confirm("Do you want to delete " + $(this).attr("id") + "!")) {
+                }
+            });
+
+            $("#ancOpenSideMenu").click(function () {
+                $("#mySidenav").css("width", "350px");
+                $("#mySidenav").show();
+                $("#divSideMenu").show();
+                $("#myMenuContainer").show();
+            });
+
+            $("#ancOpenTreeView").click(function () {
+                $("#SearchModal").modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+
+                var SearchFields = "", DisplayField = "";
+                var ShowSearch = JSON.parse($("#hdnSearchMenu").val());
+
+                SearchFields += "<div class=\"row\">";
+                SearchFields += "   <div class=\"col-md-12\" style=\"margin: 0px 0px;\">";
+                $.each(ShowSearch, function (key, item) {
+                    if (item.SearchFlag == "Y") DisplayField = ""; else DisplayField = "display:none;";
+                    SearchFields += "<div class=\"col-md-3\" style=\"margin: 0px 0px;padding-bottom:5px;" + DisplayField+"\">";
+                    SearchFields += "   <div style=\"width:100%;text-align:left;\">" + item.FieldCaption + "</div>";
+                    SearchFields += "   <div style=\"width:100%;padding:2px;\"><input data-id=\"" + item.SearchField + "\" id=\"div" + item.SearchField + "\" name=\"searchtext\" value=\"\"  class=\"form-control searchtext\" style=\"max-width:100%!important;\"/></div>";
+                    SearchFields += "</div>";
+                });
+                SearchFields += "   </div>";
+                SearchFields += "</div>";
+
+                $("#mySearchMenu").html(SearchFields);
+                GridViewPartial.PerformCallback();
+            });
+
+            $("#imgPin").click(function () {
+                if ($("#imgPin").attr("src").indexOf("unpin.svg") != -1) {
+                    $("#imgPin").attr("src", HOST_ENV + "/Content/images/pin.svg?cid=11");
+                }
+                else {
+                    $("#imgPin").attr("src", HOST_ENV + "/Content/images/unpin.svg?cid=11");
+                }
+            });
+
+            var slider = document.getElementById("myRange");
+            var output = document.getElementById("myLevel");
+            $("#myLevel").val(slider.value); // Display the default slider value
+
+            // Update the current slider value (each time you drag the slider handle)
+            $("input[type='range']").change(function () {
+                $("#myLevel").val(this.value);
+                ChangeLevels(this.value);
+            });
+
+            // Use Select2
+            $('.select').select2({ width: "200px" });
+
+            if ("@ViewBag.Title" == "UploadVersion" || "@ViewBag.Title" == "UploadData") {
+
+                var h = 0, w = 0;
+                document.getElementById("mySavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + $("#hdnOrgChartData").val() + " }";
+                document.getElementById("myPartitionSavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + $("#hdnOrgChartHRCoreData").val() + " }";
+
+                // Org chart in Canvas
+                h = parseInt($("#divRightOrgChart").css("height").substr(0, $("#divRightOrgChart").css("height").indexOf("px")));
+                w = parseInt($("#divRightOrgChart").css("width").substr(0, $("#divRightOrgChart").css("width").indexOf("px")));
+                init(w, h);
+
+                h = parseInt($("#divLeftOrgChart").css("height").substr(0, $("#divLeftOrgChart").css("height").indexOf("px")));
+                w = parseInt($("#divLeftOrgChart").css("width").substr(0, $("#divLeftOrgChart").css("width").indexOf("px")));
+                initPartition(w, h);
+
+                $('#multiselect').multiselect();  // Full Name multi select
+            }
+            else if ("@ViewBag.Title" == "Home Page") {
+                var h = 0, w = 0;
+                document.getElementById("mySavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + $("#hdnOrgChartData").val() + " }";
+
+                // Org chart in Canvas
+                h = parseInt($("#divRightOrgChart").css("height").substr(0, $("#divRightOrgChart").css("height").indexOf("px")));
+                w = parseInt($("#divRightOrgChart").css("width").substr(0, $("#divRightOrgChart").css("width").indexOf("px")));
+                init(w, h);
+            }
+
+            var DivRow = "", GroupName = "";
+            var TABLES = JSON.parse($("#hdnOrgMenu").val());
+            var MENU_TABLE = TABLES.MT;
+            if (MENU_TABLE.length >= 1) {
+                for (var Idx = 0; Idx <= MENU_TABLE.length - 1; Idx++) {
+                    if (MENU_TABLE[Idx].GroupName != "Views") {
+                        if (MENU_TABLE[Idx].GroupName == "Role" && $("#hdnOrgAssignedRole").val().indexOf(MENU_TABLE[Idx].Role) != -1) {
+                            if (GroupName != MENU_TABLE[Idx].GroupName) {
+                                if (GroupName != "") DivRow += "</div>";
+                                DivRow += "<div class=\"col-md-12\" style=\"margin:0px;min-height:150px;\">"
+                                DivRow += "<div style='width:100%;border-bottom:1px solid lightgray;clear:both;font-size:20px;color:#ffffff!important;'>" + MENU_TABLE[Idx].DisplayGroupName + "</div>";
+                                GroupName = MENU_TABLE[Idx].GroupName;
+                            }
+                            if (MENU_TABLE[Idx].Link == "Y")
+                                DivRow += "<div style='width:70px;float:left;margin:10px;'><a href='" + MENU_TABLE[Idx].URL + "'>";
+                            else if (MENU_TABLE[Idx].JSMethod != "" && MENU_TABLE[Idx].ModelDailog == "")
+                                DivRow += "<div style='width:70px;float:left;margin:10px;'><a href='javascript: void (0);' data-url=\"" + MENU_TABLE[Idx].URL + "\"  onclick=\"return " + MENU_TABLE[Idx].JSMethod + "(this, " + GetParameter(MENU_TABLE[Idx].Parameter) + ");\">";
+                            else if (MENU_TABLE[Idx].ModelDailog != "")
+                                DivRow += "<div style='width:70px;float:left;margin:10px;'><a href='javascript: void (0);' data-url=\"" + MENU_TABLE[Idx].URL + "\" data-toggle='modal' data-target='#" + MENU_TABLE[Idx].ModelDailog + "' onclick=\"return " + MENU_TABLE[Idx].JSMethod + "(this, " + GetParameter(MENU_TABLE[Idx].Parameter) + ");\">";
+                            DivRow += "<div style='width:100%'><img src=\'" + HOST_ENV + "/content/images/" + MENU_TABLE[Idx].ImageURL + "\' alt=\'" + MENU_TABLE[Idx].ImageURL + "\' style=\'width:100%;height100px;\'></div>";
+                            DivRow += "<center><div style='width:100%'>" + MENU_TABLE[Idx].DisplayName + "</div></center>";
+                            DivRow += "</a></div>";
+                        }
+                    }
+                }
+                DivRow += "</div>";
+            }
+
+            var MENU_TABLE = TABLES.VT;
+            DivRow += "<div class=\"col-md-12\" style=\"margin:0px;min-height:150px;\">"
+            DivRow += "<div style='width:100%;border-bottom:1px solid lightgray;clear:both;font-size:20px;color:#ffffff!important;'>Views</div>";
+            for (var Idx = 0; Idx <= MENU_TABLE.length - 1; Idx++) {
+                DivRow += "<div style='width:70px;float:left;margin:10px;'><a href='javascript: void (0);' data-url=\"" + MENU_TABLE[Idx].URL + "\" onclick=\"return " + MENU_TABLE[Idx].JSMethod + "(this, " + GetParameter(MENU_TABLE[Idx].Parameter) + ");\">";
+                DivRow += "<div style='width:100%'><img src=\'" + HOST_ENV + "/content/images/" + MENU_TABLE[Idx].ImageURL + "\' alt=\'" + MENU_TABLE[Idx].ImageURL + "\' style=\'width:100%;height100px;\'></div>";
+                DivRow += "<center><div style='width:100%'>" + MENU_TABLE[Idx].DisplayName + "</div></center>";
+                DivRow += "</a></div>";
+            }
+            DivRow += "</div>";
+            $("#myMenuContainer").html(DivRow);
+
+
+            // Setting current position of Org Chart
+            var DisplayUserRole = GetDisplayUserRole($("#hdnOrgRole").val());
+            $("#spnOrgRole").html(DisplayUserRole);
+
+            var sValue = $("#hdnOrgType").val();
+            if (sValue == "OV") {
+                $("#spnOrgType").html("Operational View");
+                $("#divCountry").hide();
+            }
+            else if (sValue == "LV") {
+                $("#spnOrgType").html("Legal View");
+                $("#divCountry").show();
+            }
+
+            sValue = $("#hdnOrgLevel").val();
+            if (sValue == "One") $("#spnOrgLevel").html("Level One");
+            else if (sValue == "Two") $("#spnOrgLevel").html("Level Two");
+
+            sValue = $("#hdnOrgView").val();
+            if (sValue == "Sample") $("#spnOrgView").html("Sample View");
+            else if (sValue == "Normal") $("#spnOrgView").html("Normal View");
+            else if (sValue == "Cost") $("#spnOrgView").html("Position Cost View");
+
+            if ($("#hdnOrgRole").val() == "Finalyzer" || $("#hdnOrgRole").val() == "Player" || $("#hdnOrgRole").val() == "User") {
+                SelectedInitiativeDDL($("#hdnOrgDDL").val(), $("#hdnSelectedInitiative").val(), "N");
+                if ($("#hdnOrgRole").val() == "Player") SelectedInitiativeDDL($("#hdnOrgDDL").val(), $("#hdnSelectedInitiative").val(), "Y");
+
+                $("#selInitiative").select2("val", $("#hdnSelectedInitiative").val());
+                $("#selPopulation").select2("val", $("#hdnSelectedPopulation").val());
+                $("#selUser").select2("val", $("#hdnSelectedUser").val());
+                $("#selVersion").select2("val", $("#hdnSelectedVersion").val());
+            }
+
+            switch ($("#hdnOrgLevel").val().toUpperCase()) {
+                case "ONE":
+                    Levels = 1;
+                    break;
+                case "TWO":
+                    Levels = 2;
+                    break;
+                case "ALL":
+                    Levels = 3;
+                    break;
+            }
+            $("#myRange").val(Levels);
+            $("#myLevel").val(Levels);
+        });
+
+        function GetDuplicateField(FieldName) {
+            if (JsonFieldInfo.length >= 1) {
+                for (Idx = 0; Idx <= JsonFieldInfo.length - 1; Idx++) {
+                    if (JsonFieldInfo[Idx].SelectedField.toUpperCase() == FieldName.toUpperCase()) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        var JsonFieldInfo = [];
+        var ErrorJsonData = "";
+        function GetFieldsInfoPPTX() {
+            JsonFieldInfo = [];
+            ErrorJsonData = "";
+
+            $('input[name="chkFieldsPPTX"]:checked').each(function () {
+                if ($("#selMapFieldsPPTX" + $(this).attr("data-id")).val() == "")
+                    ErrorJsonData += ", " + $("#chkFieldsPPTX" + $(this).attr("data-id")).val() + " not mapped"
+                if (GetDuplicateField($("#chkFieldsPPTX" + $(this).attr("data-id")).val())) {
+                    JsonFieldInfo.push({
+                        SelectedField: $("#chkFieldsPPTX" + $(this).attr("data-id")).val(),
+                        MappedFields: $("#selMapFieldsPPTX" + $(this).attr("data-id")).val(),
+                        FieldDataType: $("#selDataTypePPTX" + $(this).attr("data-id")).val(),
+                        FieldDataFormat: $("#selFormatPPTX" + $(this).attr("data-id")).val()
+                    })
+                }
+            });
+        }
+
+        function SetDataTypePPTX(Obj, FieldFormat) {
+            var DataTypePPTX = ""
+            if ($(Obj).val().toUpperCase() == "FLOAT") {
+                DataTypePPTX += "            <option value=\"0\"" + (FieldFormat == "0" ? " selected=\'selected\'" : "") + ">0</option>";
+                DataTypePPTX += "            <option value=\"1\"" + (FieldFormat == "1" ? " selected=\'selected\'" : "") + ">1</option>";
+                DataTypePPTX += "            <option value=\"2\"" + (FieldFormat == "2" ? " selected=\'selected\'" : "") + ">2</option>";
+                DataTypePPTX += "            <option value=\"3\"" + (FieldFormat == "3" ? " selected=\'selected\'" : "") + ">3</option>";
+                DataTypePPTX += "            <option value=\"4\"" + (FieldFormat == "4" ? " selected=\'selected\'" : "") + ">4</option>";
+            }
+            else if ($(Obj).val().toUpperCase() == "DATETIME") {
+                DataTypePPTX += "            <option value=\"yyyy/MM/dd\"" + (FieldFormat == "yyyy/MM/dd" ? " selected=\'selected\'" : "") + ">yyyy/MM/dd</option>";
+                DataTypePPTX += "            <option value=\"dd/MM/yyyy\"" + (FieldFormat == "dd/MM/yyyy" ? " selected=\'selected\'" : "") + "dd/MM/yyyy</option>";
+                DataTypePPTX += "            <option value=\"MM/dd/yyyy\"" + (FieldFormat == "MM/dd/yyyy" ? " selected=\'selected\'" : "") + ">MM/dd/yyyy</option>";
+            }
+            else DataTypePPTX += "           <option value=\"\" selected=\"selected\">Format not Required</option>";
+
+            $("#selFormatPPTX" + $(Obj).attr("data-id")).html(DataTypePPTX);
+        }
+
+
+        // PPTX template starts
+        function SetPPTXDivIds() {
+            $("#divErrorPPTXUploadFile").hide();
+            $("#hdnPPTXFileName").val("");
+        }
+
+        function ErrorPPTXString() {
+            var sError = "N";
+            $("#divErrorPPTXUploadFile").hide();
+            $("#divErrorTemplateNamePPTX").hide();
+            $("#divErrorTemplateDescriptionPPTX").hide();
+            if (DataPPTX == 0) {
+                if ($("#uploadPPTX").val().trim() == "") {
+                    $("#divErrorPPTXUploadFile").show();
+                    sError = "Y";
+                }
+                else {
+                    var ext = $('#uploadPPTX').val().split('.').pop().toLowerCase();
+                    if ($.inArray(ext, ['pptx']) == -1) {
+                        $("#divErrorPPTXUploadFile").show();
+                        sError = "Y";
+                    }
+                }
+
+                if ($("#txtTemplateNamePPTX").val().trim() == "") {
+                    $("#divErrorTemplateNamePPTX").show();
+                    sError = "Y";
+                }
+                if ($("#txtTemplateDescriptionPPTX").val().trim() == "") {
+                    $("#divErrorTemplateDescriptionPPTX").show();
+                    sError = "Y";
+                }
+            }
+            else if (DataPPTX == 2) {
+            }
+
+            return sError;
+        }
+
+        //Vijay
+        function PPTXUploadClose() {
+            var val = $('li.active').attr('data-id');
+            if (val == "UploadTemplate") {
+                if ($("#btnPPTXFinish").is(":disabled") == true && $("#btnPPTXNext").is(":disabled") == false || $("#btnPPTXFinish").is(":disabled") == false && $("#btnPPTXNext").is(":disabled") == true) {
+                    if (confirm("Are you sure you want to navigate away from this page? Be aware, if you press \"OK\" now, ALL your changes will be lost!. Press OK to continue or Cancel to stay on the current page"))
+                        popuprefresh();
+                    else $("#DownloadModal").modal("show");
+                }
+                else if ($("#btnPPTXFinish").is(":disabled") == true && $("#btnPPTXNext").is(":disabled") == true) popuprefresh();
+            }
+            else $("#DownloadModal").modal("hide");
+        }
+
+        function popuprefresh() {
+            $("#img_PPTX1").attr("src", HOST_ENV + "/Content/Images/SelectedOne.svg");
+            $("#txtTemplateDescriptionPPTX").val("");
+            $("#uploadPPTX").val("");
+            $("#txtTemplateNamePPTX").val("");
+            $("#divErrorSelectionFields").val("");
+            $("#dvNav_B_PPTX2").removeClass('navIndexGreen');
+            $("#dvNav_B_PPTX2").addClass('navIndexWhite');
+            $("#dvNav_B_PPTX3").removeClass('navIndexGreen');
+            $("#dvNav_B_PPTX3").addClass('navIndexWhite');
+            $("#btnPPTXFinish").prop("disabled", true);
+            $("#btnPPTXNext").prop("disabled", false);
+            $("#btnPPTXBack").prop("disabled", true);
+            $("#divPPTX1").show();
+            $("#divPPTX2").hide();
+            $("#divPPTX3").hide();
+            $("#img_PPTX2").attr("src", HOST_ENV + "/Content/Images/number2.svg");
+            $("#img_PPTX3").attr("src", HOST_ENV + "/Content/Images/number3.svg");
+            $("#DownloadModal").modal("hide");
+            DataPPTX = 0;
+        }
+
+        function FinishPPTX() {
+            $("#img_PPTX3").attr("src", HOST_ENV + "/Content/Images/SelectedThree.svg");
+
+            $(".overlay").show();
+            var JsonData = {
+                txtPFN: $("#hdnPPTXFileName").val(),
+                PPTXFields: JSON.stringify(JsonFieldInfo),
+                PPTXTemplateName: $("#txtTemplateNamePPTX").val(),
+                PPTXTemplateDesc: $("#txtTemplateDescriptionPPTX").val()
+            };
+
+            $.ajax({
+                url: HOST_ENV +"/Version/SavePPTXInfo",
+                type: 'POST',
+                data: JsonData,
+                dateType: "json",
+                async: true,
+                success: function (Json) {
+                    if (Json.Success == "Yes") {
+                        $("#divPPTXError").html(Json.ShowMessage);
+                        $("#btnPPTXFinish").prop('disabled', true);
+                    }
+                    else if (Json.Success == "No") $("#divPPTXError").html(Json.ShowMessage);
+                    $(".overlay").hide();
+                },
+                cache: false
+            });
+        }
+
+        function NextPQ() {
+            if (ErrorPPTXString() == "N") {
+                if (DataPPTX == 0) $("#dataPPTX").submit(); else DataPPTX++;
+
+                $("#img_PPTX1").attr("src", HOST_ENV + "/Content/Images/number1.svg");
+                $("#img_PPTX2").attr("src", HOST_ENV + "/Content/Images/number2.svg");
+                $("#img_PPTX3").attr("src", HOST_ENV + "/Content/Images/number3.svg");
+
+                if (DataPPTX == 1) {
+                    $("#dvNav_B_PPTX2").removeClass('navIndexWhite');
+                    $("#dvNav_B_PPTX2").addClass('navIndexGreen');
+                    $("#divPPTX1").hide();
+                    $("#divPPTX2").show();
+                    $("#divPPTX3").hide();
+                    $('#btnPPTXBack').prop('disabled', false);
+                    $("#img_PPTX2").attr("src", HOST_ENV + "/Content/Images/SelectedTwo.svg");
+                }
+                else if (DataPPTX == 2) {
+                    GetFieldsInfoPPTX();
+                    if (JsonFieldInfo.length <= 0 || ErrorJsonData != "") {
+                        DataPPTX--;
+                        $("#divPPTX2").show();
+                        $("#btnPPTXNext").prop('disabled', false);
+                        $("#btnPPTXFinish").prop('disabled', true);
+                        $("#divPPTX3").hide();
+                        if (JsonFieldInfo.length <= 0)
+                            $("#divErrorSelectionFields").html("Please select field(s) to show.");
+                        else if (ErrorJsonData != "")
+                            $("#divErrorSelectionFields").html(ErrorJsonData.substring(1));
+                        $("#divErrorSelectionFields").show();
+
+                    } else {
+                        $("#divErrorSelectionFields").hide();
+                        var SelDataType = "", SelectedValue="";
+                        for (Idx = 0; Idx < JsonFieldInfo.length; Idx++) {
+                            SelDataType += "<div style=\"width:100%;text-align:left;color:black;\">";
+                            if (JsonFieldInfo[Idx].FieldDataFormat == "") {
+                                SelectedValue = JsonFieldInfo[Idx].SelectedField + "( " + JsonFieldInfo[Idx].MappedFields + " : " + JsonFieldInfo[Idx].FieldDataType + " )";
+                            }
+                            else {
+                                SelectedValue = JsonFieldInfo[Idx].SelectedField + "( " + JsonFieldInfo[Idx].MappedFields + " : " + JsonFieldInfo[Idx].FieldDataType + " : " + JsonFieldInfo[Idx].FieldDataFormat + " )";
+                            }
+                            SelDataType += "    <label style='padding-left: 5px'>" + SelectedValue + "</label>";
+                            SelDataType += "</div>";
+                        }
+                        SelDataType += "<div class=\"col-md-12\" style=\"clear: both;\">&nbsp;</div>";
+                        $("#divPPTXShowFields").html(SelDataType);
+                        $("#hdnPPTXfields").val(JSON.stringify(JsonFieldInfo));
+                        $("#dvNav_B_PPTX3").removeClass('navIndexWhite');
+                        $("#dvNav_B_PPTX3").addClass('navIndexGreen');
+                        $("#divPPTX1").hide();
+                        $("#divPPTX2").hide();
+                        $("#divPPTX3").show();
+                        $("#btnPPTXNext").prop('disabled', true);
+                        $("#btnPPTXFinish").prop('disabled', false);
+                        $("#img_PPTX3").attr("src", HOST_ENV + "/Content/Images/SelectedThree.svg");
+                    }
+                }
+                else $("#img_PPTX1").attr("src", HOST_ENV + "/Content/Images/SelectedOne.svg");
+            }
+        }
+
+        function BackPQ() {
+            $("#divRepPopulationError").empty();
+            $("#divRepPopulationHeader").empty();
+
+            if (ErrorPPTXString() == "N") {
+                DataPPTX--;
+
+                $("#img_PPTX1").attr("src", HOST_ENV + "/Content/Images/number1.svg");
+                $("#img_PPTX2").attr("src", HOST_ENV + "/Content/Images/number2.svg");
+                $("#img_PPTX3").attr("src", HOST_ENV + "/Content/Images/number3.svg");
+
+                if (DataPPTX == 0) {
+                    $('#btnPPTXBack').prop('disabled', true);
+                    $('#btnPPTXFinish').prop('disabled', true);
+                    $("#dvNav_B_PPTX2").removeClass('navIndexWhite');
+                    $("#dvNav_B_PPTX2").addClass('navIndexGreen');
+                    $("#divPPTX1").show();
+                    $("#divPPTX2").hide();
+                    $("#divPPTX3").hide();
+                    $("#img_PPTX1").attr("src", HOST_ENV + "/Content/Images/SelectedOne.svg");
+                }
+                else if (DataPPTX == 1) {
+                    $('#btnPPTXNext').prop('disabled', false);
+                    $('#btnPPTXFinish').prop('disabled', true);
+                    $("#dvNav_B_PPTX3").removeClass('navIndexWhite');
+                    $("#dvNav_B_PPTX3").addClass('navIndexGreen');
+                    $("#divPPTX1").hide();
+                    $("#divPPTX2").show();
+                    $("#divPPTX3").hide();
+                    $("#img_PPTX2").attr("src", HOST_ENV + "/Content/Images/SelectedTwo.svg");
+                }
+            }
+        }
+        // PPTX template ends
+
+        function ShowGridViewToInputBox(LevelID) {
+            $(".overlay").show();
+            var JsonData = {
+                ShowLevel: LevelID
+            };
+
+            $.ajax({
+                url: HOST_ENV + "/Version/ShowLevelInfo",
+                type: 'POST',
+                data: JsonData,
+                dateType: "json",
+                async: true,
+                success: function (Json) {
+                    if (Json.Success == "Yes") {
+                        $.each(JSON.parse(Json.IB)[0], function (key, val) {
+                            try {
+                                $("#txt" + key).val(val);
+                                if (key == Json.PF) {
+                                    $("#txt" + key).attr("disabled", "disabled");
+                                }
+                            }
+                            catch (ex) {
+                            }
+                        });
+                    }
+                    else if (Json.Success == "No") $("#divAddPositionError").html(Json.ShowMessage);
+                    $(".overlay").hide();
+                },
+                cache: false
+            });
+        }
+
+
+        function SaveAssignEmployee() {
+            ArrayAssignEmployee = [];
+            var ShowSearch = JSON.parse($("#hdnSearchMenu").val());
+            $.each(ShowSearch, function (key, item) {
+                try {
+                    var JsonFieldName = item.SearchField;
+                    item = {}
+                    item[JsonFieldName] = $("#txt" + JsonFieldName).val();
+                    ArrayAssignEmployee.push(item);
+                }
+                catch (ex) {
+                }
+            });
+
+            return ArrayAssignEmployee;
+        }
+
+        function ClearAllFields() {
+            var ShowSearch = JSON.parse($("#hdnSearchMenu").val());
+            $.each(ShowSearch, function (key, item) {
+                try {
+                    $("#txt" + item.SearchField).val("");
+                    if (item.PositionFlag == "Y") {
+                        $("#txt" + item.SearchField).attr("disabled", "disabled");
+                        var ShowPosition = JSON.parse($("#hdnInitialValues").val());
+                        $("#txt" + item.SearchField).val((parseInt(ShowPosition.OprLevelId) - 100000).toString());
+                    }
+                }
+                catch (ex) {
+                }
+            });
+        }
+
+        function CopyPasteEmployeeInfo(Obj) {
+            $(".overlay").show();
+
+            AssignEmployee = SaveAssignEmployee();
+            var JsonData = {
+                CopyPaste: ($(Obj).hasClass("fa-copy") == true) ? "Copy" : "Paste",
+                CopyInfo: JSON.stringify(AssignEmployee)
+            };
+
+            $.ajax({
+                url: HOST_ENV + "/Version/CopyPasteEmployeeInfo",
+                type: 'POST',
+                data: JsonData,
+                dateType: "json",
+                async: true,
+                success: function (Json) {
+                    if (Json.Success == "Yes") {
+
+                        if ($(Obj).hasClass("fa-paste") == true) {
+
+                            $("#hdnInitialValues").val(Json.InitialValues);
+                            var ShowPosition = JSON.parse($("#hdnInitialValues").val());
+                            $("#txt" + Json.PF).val((parseInt(ShowPosition.OprLevelId) - 100000).toString());
+
+                            $.each(JSON.parse(Json.IB), function (key, value) {
+                                $.each(value, function (key, val) {
+                                    try {
+                                        if (key == Json.PF) {
+                                            $("#txt" + key).attr("disabled", "disabled");
+                                        }
+                                        else $("#txt" + key).val(val);
+                                    }
+                                    catch (ex) {
+                                    }
+                                });
+                            });
+                            $(Obj).removeClass("fa-paste");
+                            $(Obj).addClass("fa-copy");
+
+                            $("#divAddPositionError").html("* Employee information pasted.");
+                        }
+                        else if ($(Obj).hasClass("fa-copy") == true) {
+                            $("#divAddPositionError").html("* Employee information copied.");
+
+                            $(Obj).removeClass("fa-copy");
+                            $(Obj).addClass("fa-paste");
+                        }
+                    }
+                    else if (Json.Success == "No") $("#divAddPositionError").html(Json.ShowMessage);
+                    $(".overlay").hide();
+                },
+                cache: false
+            });
+        }
+
+        function AddEmployeeAssign() {
+            var SearchFields = "", PositionField="";
+            var ShowSearch = JSON.parse($("#hdnSearchMenu").val());
+
+            SearchFields += "<div class=\"row\">";
+            SearchFields += "   <div class=\"col-md-12\" style=\"margin: 10px 0px;\">";
+            $.each(ShowSearch, function (key, item) {
+                SearchFields += "<div class=\"col-md-3\" style=\"margin: 0px 0px;padding-bottom:5px;\">";
+                SearchFields += "   <div style=\"width:100%;padding:2px;text-align:left;\">";
+                if (item.PositionFlag == "Y") {
+                    SearchFields += "       <div style=\"width:100%\"><label style=\"width:65%\">" + item.SearchField + "</label>";
+                    SearchFields += "       <i class=\"fa-plus fa icon-x\" id=\"ico" + item.SearchField + "\" onclick=\"ClearAllFields();\" style=\"float:right;margin-left:5px;cursor:pointer;\"></i>";
+                    SearchFields += "       <i class=\"fa-copy fa icon-x\" id=\"icoCopyPaste" + item.SearchField + "\" onclick=\"CopyPasteEmployeeInfo(this);\" style=\"float:right;cursor:pointer;\"></i></div>";
+                    SearchFields += "       <input style=\"width:100%\" type=\"text\" data-id=\"" + item.SearchField + "\" id=\"txt" + item.SearchField + "\" name=\"inputbox\" value=\"\"  class=\"form-control textfields\" disabled=\"disabled\" style=\"width:10%!important;\"/>";
+                    PositionField = item.SearchField;
+                }
+                else {
+                    SearchFields += "      <label style=\"width:100%\">" + item.SearchField + "</label>";
+                    SearchFields += "      <input style=\"width:100%\" type=\"text\" data-id=\"" + item.SearchField + "\" id=\"txt" + item.SearchField + "\" name=\"inputbox\" value=\"\"  class=\"form-control textfields\" style=\"width:10%!important;\"/>";
+                }
+                SearchFields += "   </div>";
+                SearchFields += "</div>";
+            });
+            SearchFields += "   </div>";
+            SearchFields += "</div>";
+
+            $("#divAssignEmployeeFields").html(SearchFields);
+            var ShowPosition = JSON.parse($("#hdnInitialValues").val());
+            $("#txt" + PositionField).val((parseInt(ShowPosition.OprLevelId) - 100000).toString());
+
+            GridViewEmployee.PerformCallback();
+        }
+
+        function SelectFilters() {
+            if ($("#myFilterFields").html() == "") {
+                var SearchFields = "", DisplayField = "";
+                var ShowSearch = JSON.parse($("#hdnSearchMenu").val());
+
+                SearchFields += "<div class=\"row\">";
+                SearchFields += "   <div class=\"col-md-12\" style=\"margin: 0px 0px;\">";
+                $.each(ShowSearch, function (key, item) {
+                    if (item.SearchFlag == "Y") DisplayField = "checked=\"checked\""; else DisplayField = "";
+                    SearchFields += "<div class=\"col-md-3\" style=\"margin: 0px 0px;padding-bottom:5px;\">";
+                    SearchFields += "   <div style=\"width:100%;padding:2px;text-align:left;\">";
+                    SearchFields += "       <input " + DisplayField + " type=\"checkbox\" data-id=\"" + item.SearchField + "\" id=\"div" + item.SearchField + "\" name=\"checkmarksearch\" value=\"" + item.SearchField + "\"  class=\"checkmarksearch\" style=\"width:10%!important;\"/>";
+                    SearchFields += "       <label for=\"" + item.SearchField + "\">" + item.SearchField + "</label>";
+                    SearchFields += "   </div>";
+                    SearchFields += "</div>";
+                });
+                SearchFields += "   </div>";
+                SearchFields += "</div>";
+
+                $("#myFilterFields").html(SearchFields);
+            }
+            else {
+
+                var SelectedBoxes = [];
+                $('.checkmarksearch:checkbox:checked').each(function() {
+                    SelectedBoxes.push($(this).val());
+                });
+
+                var SearchFields = "", DisplayField = "";
+                var ShowSearch = JSON.parse($("#hdnSearchMenu").val());
+                if (ShowSearch.length >= 1) {
+                    for (var Idx = 0; Idx <= ShowSearch.length - 1; Idx++) {
+                        ShowSearch[Idx].SearchFlag = "N";
+                        if (SelectedBoxes.indexOf(ShowSearch[Idx].SearchField) != -1) {
+                            ShowSearch[Idx].SearchFlag = "Y";
+                        }
+                    }
+                }
+                $("#hdnSearchMenu").val(JSON.stringify(ShowSearch));
+
+                SearchFields += "<div class=\"row\">";
+                SearchFields += "   <div class=\"col-md-12\" style=\"margin: 0px 0px;\">";
+                $.each(ShowSearch, function (key, item) {
+                    if (item.SearchFlag == "Y") DisplayField = ""; else DisplayField = "display:none;";
+                    SearchFields += "<div class=\"col-md-3\" style=\"margin: 0px 0px;padding-bottom:5px;" + DisplayField + "\">";
+                    SearchFields += "   <div style=\"width:100%;text-align:left;\">" + item.FieldCaption + "</div>";
+                    SearchFields += "   <div style=\"width:100%;padding:2px;\"><input data-id=\"" + item.SearchField + "\" id=\"div" + item.SearchField + "\" name=\"searchtext\" value=\"\"  class=\"form-control searchtext\" style=\"max-width:100%!important;\"/></div>";
+                    SearchFields += "</div>";
+                });
+                SearchFields += "   </div>";
+                SearchFields += "</div>";
+
+                $("#mySearchMenu").html(SearchFields);
+                $("#myFilterFields").empty();
+            }
+        }
+
+        function GetDisplayUserRole(Role) {
+            var TABLES = JSON.parse($("#hdnOrgMenu").val());
+            var MENU_TABLE = TABLES.MT;
+            if (MENU_TABLE.length >= 1) {
+                for (var Idx = 0; Idx <= MENU_TABLE.length - 1; Idx++) {
+                    if (MENU_TABLE[Idx].Role == Role) {
+                        return (MENU_TABLE[Idx].DisplayName);
+                    }
+                }
+            }
+
+            return Role;
+        }
+
+        // when a Levels changes
+        function ChangeLevels(SelectedLevel) {
+            var Levels = 1;
+            switch ($("#hdnOrgLevel").val().toUpperCase()) {
+                case "ONE":
+                    Levels = 1;
+                    break;
+                case "TWO":
+                    Levels = 2;
+                    break;
+                case "ALL":
+                    Levels = 3;
+                    break;
+            }
+
+            if (Levels != SelectedLevel) {
+                $('.overlay').show();
+
+                var URL = HOST_ENV + "/Version/ChangeLevels";
+                if ($("#hdnOrgRole").val().toUpperCase() == "USER") URL = "/Home/ChangeLevels";
+
+                var JsonData = {
+                    UptoLevel: SelectedLevel
+                };
+
+                jQuery.ajax({
+                    type: "POST",
+                    url: URL,
+                    data: JsonData,
+                    async: true,
+                    dateType: "json",
+                }).done(function (JsonString) {
+                    if (JsonString != "No Changes") {
+                        $("#hdnOrgChartData").val(JsonString);
+                        switch (SelectedLevel) {
+                            case "1":
+                                $("#hdnOrgLevel").val("One");
+                                break;
+                            case "2":
+                                $("#hdnOrgLevel").val("Two");
+                                break;
+                            case "3":
+                                $("#hdnOrgLevel").val("All");
+                                break;
+                        }
+
+                        CancelOperation();
+                    }
+                    $('.overlay').hide();
+                });
+            }
+        }
+
+        var SearchFieldValue = [];
+        function ShowSearchInformation() {
+            $(".overlay").show();
+
+            SearchFieldValue = [];
+            $("input.searchtext").each(function () {
+                SearchFieldValue.push({ "FieldName"  :  $(this).attr("data-id"),  "FieldValue" : $(this).val() });
+            });
+
+            var JsonData = {
+                IV: JSON.stringify(SearchFieldValue)
+            };
+            $.ajax({
+                type: "POST",
+                url: HOST_ENV + "/Version/ShowSearchInformation",
+                data: JsonData,
+                async: true,
+                dateType: "json",
+                success: function (Json) {
+                    GridViewPartial.PerformCallback();
+                    $("#divSearchTable").show();
+                    $(".overlay").hide();
+                }
+            });
+        }
+
+
+        function SaveScreenSettings() {
+            Settings.SelectShape = $("input[name='shape']:checked").val();
+            Settings.Skin = $("input[name='skin']:checked").val();
+            Settings.ShowPicture = $("input[name='picture']:checked").val();
+            Settings.SelectView = $("#selView").val();
+            $("#hdnOrgView").val(Settings.SelectView);
+            Settings.SplitScreenDirection = $("input[name='splitscreendirection']:checked").val();
+            Settings.BorderColor = $('#cpInline2').colorpicker("val");
+
+            CancelOperation();
+        }
+
+        function CheckAlreadyExist(Value, AE) {
+            if (AE.length >= 1) {
+                for (var Idy = 0; Idy <= AE.length - 1; Idy++) {
+                    if (AE[Idy] == Value) return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Populate Options in respective DDLs
+        function ShowDDL(AEI, AEP, AEU, AEV, FlagPartition) {
+
+            var SelectDDL = "";
+
+            // Initiative DDL
+            var SelectI = "<option value=\"SelectInitiative\">SELECT INITIATIVE</option>" +
+                "<option value=\"AddInitiative\">ADD INITIATIVE</option>";
+            if (FlagPartition == "Y" || $("#hdnOrgRole").val().toUpperCase() == "USER") SelectI = "<option value=\"SelectInitiative\">SELECT INITIATIVE</option>";
+
+            if (AEI.length >= 1) {
+                for (var Idx = 0; Idx <= AEI.length - 1; Idx++) {
+                    if (AEI[Idx] != "") {
+                        SelectI += "<option value=\"" + AEI[Idx] + "\">INITIATIVE::" + AEI[Idx] + "</option>";
+                    }
+                }
+            }
+            if (FlagPartition == "Y") SelectDDL = '#selPartitionInitiative'; else SelectDDL = '#selInitiative';
+            $(SelectDDL)
+                .find('option')
+                .remove()
+                .end()
+                .append(SelectI)
+                .val('SelectInitiative');
+
+            // Population DDL
+            var SelectP = "<option value=\"SelectPopulation\">SELECT POPULATION</option>" +
+                "<option value=\"AddPopulation\">ADD POPULATION</option>";
+            if (FlagPartition == "Y" || $("#hdnOrgRole").val().toUpperCase() == "USER") SelectP = "<option value=\"SelectPopulation\">SELECT POPULATION</option>";
+
+            if (AEP.length >= 1) {
+                for (var Idx = 0; Idx <= AEP.length - 1; Idx++) {
+                    if (AEP[Idx] != "") {
+                        SelectP += "<option value=\"" + AEP[Idx] + "\">POPULATION::" + AEP[Idx] + "</option>";
+                    }
+                }
+            }
+            if (FlagPartition == "Y") SelectDDL = '#selPartitionPopulation'; else SelectDDL = '#selPopulation';
+            $(SelectDDL)
+                .find('option')
+                .remove()
+                .end()
+                .append(SelectP)
+                .val('SelectPopulation');
+
+            // User DDL
+            var UserName = "@User.Identity.Name";
+            var SelectU = "<option value=\"SelectUser\">SELECT USER</option>" +
+                "<option value=\"" + UserName + "\">USER::" + UserName.toUpperCase() + "</option>";
+
+            if (AEU.length >= 1) {
+                for (var Idx = 0; Idx <= AEU.length - 1; Idx++) {
+                    if (AEU[Idx] != "") {
+                        SelectU += "<option value=\"" + AEU[Idx] + "\">USER::" + AEU[Idx].toUpperCase() + "</option>";
+                    }
+                }
+            }
+            if (FlagPartition == "Y") SelectDDL = '#selPartitionUser'; else SelectDDL = '#selUser';
+            $(SelectDDL)
+                .find('option')
+                .remove()
+                .end()
+                .append(SelectU)
+                .val('SelectUser');
+
+            // Version DDL
+            var SelectV = "<option value=\"SelectVersion\">SELECT VERSION</option>";
+            if ($("#hdnHRCoreVersion").val() != "NOT AN HR CORE VERSION")
+                SelectV += "<option value=\"" + $("#hdnHRCoreVersion").val() + "\">VERSION::" + $("#hdnHRCoreVersion").val() + "</option>";
+
+            if (FlagPartition == "Y") {
+                SelectV = "<option value=\"SelectVersion\">SELECT VERSION</option>" +
+                    "<option value=\"" + $("#hdnHRCoreVersion").val() + "\">VERSION::" + $("#hdnHRCoreVersion").val() + "</option>";
+            }
+
+            if (AEV.length >= 1) {
+                for (var Idx = 0; Idx <= AEV.length - 1; Idx++) {
+                    if (AEV[Idx] != "") {
+                        if ($("#hdnHRCoreVersion").val()!=AEV[Idx])
+                            SelectV += "<option value=\"" + AEV[Idx] + "\">VERSION::" + AEV[Idx] + "</option>";
+                    }
+                }
+            }
+            if (FlagPartition == "Y") SelectDDL = '#selPartitionVersion'; else SelectDDL = '#selVersion';
+            $(SelectDDL)
+                .find('option')
+                .remove()
+                .end()
+                .append(SelectV)
+                .val('SelectVersion');
+        }
+
+        var AEP = [], AEU = [], AEV = [];
+        function SelectedCountryDDL(Result, CValue, FlagPartition) {
+            $(".overlay").show();
+
+            var JSONResult = JSON.parse(Result);
+            var Value = "";
+
+            AEI = [], AEP = [], AEU = [], AEV = [];
+            if (JSONResult.length >= 1) {
+                for (var Idx = 0; Idx <= JSONResult.length - 1; Idx++) {
+                    if (JSONResult[Idx].Country == CValue) {
+                        if (JSONResult[Idx].Initiative) {
+                            if (!CheckAlreadyExist(JSONResult[Idx].Initiative, AEI)) {
+                                AEI.push(JSONResult[Idx].Initiative);
+                            }
+                        }
+                        if (JSONResult[Idx].Population) {
+                            if (!CheckAlreadyExist(JSONResult[Idx].Population, AEP)) {
+                                AEP.push(JSONResult[Idx].Population);
+                            }
+                        }
+
+                        if (JSONResult[Idx].UserName) {
+                            if (!CheckAlreadyExist(JSONResult[Idx].UserName, AEU)) {
+                                if ("@User.Identity.Name" != JSONResult[Idx].UserName) AEU.push(JSONResult[Idx].UserName);
+                            }
+                        }
+
+                        if (JSONResult[Idx].Version) {
+                            if (!CheckAlreadyExist(JSONResult[Idx].Version, AEV)) {
+                                AEV.push(JSONResult[Idx].Version);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (FlagPartition == "Y") {
+                ShowDDL(AEI, AEP, AEU, AEV, FlagPartition); // Populate Options
+                $('#selPartitionCountry').select2("val", CValue);
+                $('#selPartitionInitiative').select2("val", "SelectInitiative");
+                $('#selPartitionPopulation').select2("val", "SelectPopulation");
+                $('#selPartitionUser').select2("val", "@User.Identity.Name");
+                $('#selPartitionVersion').select2("val", "SelectVersion");
+            }
+            else if (FlagPartition == "N") {
+                ShowDDL(AEI, AEP, AEU, AEV, FlagPartition); // Populate Options
+                $('#selCountry').select2("val", CValue);
+                $('#selInitiative').select2("val", "SelectInitiative");
+                $('#selPopulation').select2("val", "SelectPopulation");
+                $('#selUser').select2("val", "@User.Identity.Name");
+                $('#selVersion').select2("val", "SelectVersion");
+            }
+
+            $(".overlay").hide();
+        }
+
+        function SelectedInitiativeDDL(Result, CValue, FlagPartition) {
+            $(".overlay").show();
+
+            var JSONResult = JSON.parse(Result);
+            var Value = "";
+
+            AEI = [], AEP = [], AEU = [], AEV = [];
+            if (JSONResult.length >= 1) {
+                for (var Idx = 0; Idx <= JSONResult.length - 1; Idx++) {
+                    if (($("#hdnOrgType").val() == "OV" && JSONResult[Idx].Country == "CH") ||
+                        ($("#hdnOrgType").val() == "LV" &&
+                            ((JSONResult[Idx].Country == $("#selCountry").val()) ||
+                        (JSONResult[Idx].Country == "CH" && $("#selCountry").val() == "SelectCountry" && ($("#hdnOrgRole").val() == "Finalyzer" || $("#hdnOrgRole").val() == "User"))))) {
+                        if (!CheckAlreadyExist(JSONResult[Idx].Initiative, AEI)) AEI.push(JSONResult[Idx].Initiative);
+                        if (JSONResult[Idx].Initiative == CValue) {
+                            if (JSONResult[Idx].Population) {
+                                if (!CheckAlreadyExist(JSONResult[Idx].Population, AEP)) {
+                                    AEP.push(JSONResult[Idx].Population);
+                                }
+
+                                if (JSONResult[Idx].UserName) {
+                                    if (!CheckAlreadyExist(JSONResult[Idx].UserName, AEU)) {
+                                        if ("@User.Identity.Name" != JSONResult[Idx].UserName) AEU.push(JSONResult[Idx].UserName);
+                                    }
+
+                                    if (JSONResult[Idx].Version) {
+                                        if (!CheckAlreadyExist(JSONResult[Idx].Version, AEV)) {
+                                            AEV.push(JSONResult[Idx].Version);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (FlagPartition == "Y") {
+                ShowDDL(AEI, AEP, AEU, AEV, FlagPartition); // Populate Options
+                $('#selPartitionInitiative').select2("val", CValue);
+                $('#selPartitionPopulation').select2("val", "SelectPopulation");
+                $('#selPartitionUser').select2("val", "@User.Identity.Name");
+                $('#selPartitionVersion').select2("val", "SelectVersion");
+            }
+            else if (FlagPartition == "N") {
+                ShowDDL(AEI, AEP, AEU, AEV, FlagPartition); // Populate Options
+                $('#selInitiative').select2("val", CValue);
+                $('#selPopulation').select2("val", "SelectPopulation");
+                $('#selUser').select2("val", "@User.Identity.Name");
+                $('#selVersion').select2("val", "SelectVersion");
+            }
+
+            $(".overlay").hide();
+        }
+
+        function SelectedPopulationDDL(Result, CValue, IValue, FlagPartition) {
+            $(".overlay").show();
+
+            var JSONResult = JSON.parse(Result);
+            var Value = "";
+
+            AEI = [], AEP = [], AEU = [], AEV = [];
+            if (JSONResult.length >= 1) {
+                for (var Idx = 0; Idx <= JSONResult.length - 1; Idx++) {
+                    if (($("#hdnOrgType").val() == "OV" && JSONResult[Idx].Country == "CH") ||
+                        ($("#hdnOrgType").val() == "LV" &&
+                            ((JSONResult[Idx].Country == $("#selCountry").val()) ||
+                                (JSONResult[Idx].Country == "CH" && $("#selCountry").val() == "SelectCountry" && ($("#hdnOrgRole").val() == "Finalyzer" || $("#hdnOrgRole").val() == "User"))))) {
+                        if (!CheckAlreadyExist(JSONResult[Idx].Initiative, AEI)) AEI.push(JSONResult[Idx].Initiative);
+                        if (JSONResult[Idx].Initiative == IValue) {
+                            if (JSONResult[Idx].Population) {
+                                if (!CheckAlreadyExist(JSONResult[Idx].Population, AEP)) {
+                                    AEP.push(JSONResult[Idx].Population);
+                                }
+
+                                if (JSONResult[Idx].Population == CValue) {
+                                    if (JSONResult[Idx].UserName) {
+                                        if (!CheckAlreadyExist(JSONResult[Idx].UserName, AEU)) {
+                                            if ("@User.Identity.Name" != JSONResult[Idx].UserName) AEU.push(JSONResult[Idx].UserName);
+                                        }
+
+                                        if (JSONResult[Idx].Version) {
+                                            if (!CheckAlreadyExist(JSONResult[Idx].Version, AEV)) {
+                                                AEV.push(JSONResult[Idx].Version);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (FlagPartition == "Y") {
+                ShowDDL(AEI, AEP, AEU, AEV, FlagPartition); // Populate Options
+                $('#selPartitionInitiative').select2("val", IValue);
+                $('#selPartitionPopulation').select2("val", CValue);
+                $('#selPartitionUser').select2("val", "@User.Identity.Name");
+                $('#selPartitionVersion').select2("val", "SelectVersion");
+            }
+            else if (FlagPartition == "N") {
+                ShowDDL(AEI, AEP, AEU, AEV, FlagPartition); // Populate Options
+                $('#selInitiative').select2("val", IValue);
+                $('#selPopulation').select2("val", CValue);
+                $('#selUser').select2("val", "@User.Identity.Name");
+                $('#selVersion').select2("val", "SelectVersion");
+            }
+
+            $(".overlay").hide();
+        }
+
+        function SelectedUserDDL(Result, CValue, PValue, IValue, FlagPartition) {
+            $(".overlay").show();
+
+            var JSONResult = JSON.parse(Result);
+            var Value = "";
+
+            AEI = [], AEP = [], AEU = [], AEV = [];
+            if (JSONResult.length >= 1) {
+                for (var Idx = 0; Idx <= JSONResult.length - 1; Idx++) {
+                    if (($("#hdnOrgType").val() == "OV" && JSONResult[Idx].Country == "CH") ||
+                        ($("#hdnOrgType").val() == "LV" &&
+                            ((JSONResult[Idx].Country == $("#selCountry").val()) ||
+                        (JSONResult[Idx].Country == "CH" && $("#selCountry").val() == "SelectCountry" && ($("#hdnOrgRole").val() == "Finalyzer" || $("#hdnOrgRole").val() == "User"))))) {
+                        if (!CheckAlreadyExist(JSONResult[Idx].Initiative, AEI)) {
+                            AEI.push(JSONResult[Idx].Initiative);
+                            if (JSONResult[Idx].Initiative == IValue) {
+                                if (JSONResult[Idx].Population) {
+                                    if (!CheckAlreadyExist(JSONResult[Idx].Population, AEP)) {
+                                        AEP.push(JSONResult[Idx].Population);
+                                    }
+
+                                    if (JSONResult[Idx].Population == PValue) {
+                                        if (JSONResult[Idx].UserName) {
+                                            if (!CheckAlreadyExist(JSONResult[Idx].UserName, AEU)) {
+                                                if ("@User.Identity.Name" != JSONResult[Idx].UserName) AEU.push(JSONResult[Idx].UserName);
+                                            }
+
+                                            if (JSONResult[Idx].UserName == CValue) {
+                                                if (JSONResult[Idx].Version) {
+                                                    if (!CheckAlreadyExist(JSONResult[Idx].Version, AEV)) {
+                                                        AEV.push(JSONResult[Idx].Version);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (FlagPartition == "Y") {
+                ShowDDL(AEI, AEP, AEU, AEV, FlagPartition); // Populate Options
+                $('#selPartitionInitiative').select2("val", IValue);
+                $('#selPartitionPopulation').select2("val", PValue);
+                $('#selPartitionUser').select2("val", CValue);
+                $('#selPartitionVersion').select2("val", "SelectVersion");
+            }
+            else if (FlagPartition == "N") {
+                ShowDDL(AEI, AEP, AEU, AEV, FlagPartition); // Populate Options
+                $('#selInitiative').select2("val", IValue);
+                $('#selPopulation').select2("val", PValue);
+                $('#selUser').select2("val", CValue);
+                $('#selVersion').select2("val", "SelectVersion");
+            }
+
+            $(".overlay").hide();
+
+        }
+
+        function SaveInitiative() {
+            $(".overlay").show();
+
+            var MessageError = "";
+            $("#divRepInitiativeHeader").html("Message");
+            if ($("#InitiativeTitle").val() == "") {
+                MessageError += "<div style=\"width:100%\">* Initiative Title should not be empty</div>";
+            }
+            if ($("#InitiativeDescription").val() == "") {
+                MessageError += "<div style=\"width:100%\">* Initiative Description should not be empty</div>";
+            }
+            if (MessageError == "") {
+                var JsonData = {
+                    Name: $("#InitiativeTitle").val(),
+                    Description: $("#InitiativeDescription").val()
+                };
+                $.ajax({
+                    type: "POST",
+                    url: HOST_ENV + "/Version/SaveInitiative",
+                    data: JsonData,
+                    async: true,
+                    dateType: "json",
+                    success: function (Json) {
+                        $("#divRepInitiativeError").html(Json.ShowMessage);
+                        $("#hdnOrgDDL").val(Json.DDL);
+                        SelectedInitiativeDDL(Json.DDL, $("#InitiativeTitle").val(), "N");
+
+                        $(".overlay").hide();
+                    }
+                });
+            }
+            else {
+                $("#divRepInitiativeError").html(MessageError);
+                $(".overlay").hide();
+            }
+
+            return false;
+        }
+
+        function SaveVersionTitle() {
+
+            $(".overlay").show();
+            var MessageError = "";
+            $("#divRepVersionHeader").html("Message");
+            if ($("#VersionTitleNew").val() == "") {
+                MessageError += "<div style=\"width:100%\">* Version Title should not be empty</div>";
+            }
+            if ($("#VersionDescriptionNew").val() == "") {
+                MessageError += "<div style=\"width:100%\">* Version Description should not be empty</div>";
+            }
+            if (MessageError == "") {
+                var JsonData = {
+                    Initiative: $("#selInitiative").select2("val"),
+                    Population: $("#selPopulation").select2("val"),
+                    UserName: $("#selUser").select2("val"),
+                    VersionSelected: $('#selVersion').select2("val"),
+                    Name: $("#VersionTitleNew").val(),
+                    Description: $("#VersionDescriptionNew").val()
+                };
+                $.ajax({
+                    type: "POST",
+                    url: HOST_ENV + "/Version/SaveVersionTitle",
+                    data: JsonData,
+                    async: true,
+                    dateType: "json",
+                    success: function (Json) {
+                        if (Json.Success == "Yes") {
+                            $("#divRepVersionError").html(Json.ShowMessage);
+                            $("#hdnOrgDDL").val(Json.DDL);
+                            SelectedUserDDL(Json.DDL, $("#selUser").select2("val"), $("#selPopulation").select2("val"), $("#selInitiative").select2("val"), "N");
+                            $("#selVersion").select2("val", $("#VersionTitleNew").val());
+
+                            $("#hdnOrgChartData").val(Json.ChartData);
+                            $("#hdnOrgChartHRCoreData").val(Json.ChartData);
+                            $("#hdnOrgShowLevel").val(Json.UsedShowLevel);
+                            $("#hdnOrgPartitionShowLevel").val(Json.UsedShowLevel);
+                            $("#hdnOrgVersion").val(Json.UsedVersion);
+                            $("#hdnOrgPartitionVersion").val(Json.UsedVersion);
+
+                            CancelOperation();
+                            $(".overlay").hide();
+                        }
+                        else if (Json.Success == "No") {
+                            $(".overlay").hide();
+                            $("#divRepVersionError").html(Json.ShowMessage);
+                        }
+                    }
+                });
+            }
+            else {
+                $("#divRepVersionError").html(MessageError);
+                $(".overlay").hide();
+            }
+
+            return false;
+        }
+
+        function LoadSelectedVersion() {
+            $(".overlay").show();
+
+            var JsonData = {
+                Country: $("#selCountry").val(),
+                Initiative: $("#selInitiative").val(),
+                Population: $("#selPopulation").val(),
+                UserName: $("#selUser").val(),
+                VersionName: $("#selVersion").val()
+            };
+            $.ajax({
+                type: "POST",
+                url: HOST_ENV + "/Version/LoadSelectedVersion",
+                data: JsonData,
+                async: true,
+                dateType: "json",
+                success: function (Json) {
+                    $("#hdnOrgChartData").val(Json.ChartData);
+                    $("#hdnOrgChartHRCoreData").val(Json.ChartData);
+                    $("#hdnOrgShowLevel").val(Json.UsedShowLevel);
+                    $("#hdnOrgPartitionShowLevel").val(Json.UsedShowLevel);
+                    $("#hdnOrgVersion").val(Json.UsedVersion);
+                    $("#hdnOrgPartitionVersion").val(Json.UsedVersion);
+                    document.getElementById("mySavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + $("#hdnOrgChartData").val() + " }";
+
+                    CancelOperation();
+                    $(".overlay").hide();
+                }
+            });
+
+            return false;
+        }
+
+        function LoadSelectedUserVersion() {
+            $(".overlay").show();
+
+            var JsonData = {
+                Country: $("#selCountry").val(),
+                Initiative: $("#selInitiative").val(),
+                Population: $("#selPopulation").val(),
+                UserName: $("#selUser").val(),
+                VersionName: $("#selVersion").val()
+            };
+            $.ajax({
+                type: "POST",
+                url: HOST_ENV + "/Version/LoadSelectedVersion",
+                data: JsonData,
+                async: true,
+                dateType: "json",
+                success: function (Json) {
+                    $("#hdnOrgChartData").val(Json.ChartData);
+                    $("#hdnOrgChartHRCoreData").val(Json.ChartData);
+                    $("#hdnOrgShowLevel").val(Json.UsedShowLevel);
+                    $("#hdnOrgPartitionShowLevel").val(Json.UsedShowLevel);
+                    $("#hdnOrgVersion").val(Json.UsedVersion);
+                    $("#hdnOrgPartitionVersion").val(Json.UsedVersion);
+                    document.getElementById("mySavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + $("#hdnOrgChartData").val() + " }";
+
+                    CancelOperation();
+                    $(".overlay").hide();
+                }
+            });
+
+            return false;
+        }
+
+        function CancelOperation() {
+            if ($("#hdnOrgType").val() == "LV") {
+                $("#divShowMap").hide();
+                $("#divAddInitiative").hide();
+                $("#divAddPopulation").show();
+                $("#divAddVersion").hide();
+            }
+            $("#divRightOrgChart").removeClass("col-md-12");
+            $("#divRightOrgChart").removeClass("col-md-8");
+            $("#divRightOrgChart").removeClass("col-md-6");
+            $("#divRightOrgChart").addClass("col-md-12");
+
+            $("#divAddInitiative").hide();
+            $("#divAddVersion").hide();
+            $("#divRightOrgChart").show();
+            $("#divLeftOrgChart").hide();
+            $("#divUploadVersion").hide();
+
+            $("#myDiagramDiv").detach();
+            var iDiv = document.createElement('div');
+            iDiv.id = 'myDiagramDiv';
+            document.getElementById('myDiagramContainer').appendChild(iDiv);
+
+            // Org chart in Canvas
+            h = parseInt($("#divRightOrgChart").css("height").substr(0, $("#divRightOrgChart").css("height").indexOf("px")));
+            w = parseInt($("#divRightOrgChart").css("width").substr(0, $("#divRightOrgChart").css("width").indexOf("px")));
+            document.getElementById("mySavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + $("#hdnOrgChartData").val() + " }";
+            init(w, h);
+
+            SplitScreen = "Y";
+
+            // Bread Gram
+            var OrgData = JSON.parse($("#hdnOrgChartData").val());
+            $.each(OrgData, function (key, item) {
+                if (item.LEVEL_ID == $("#hdnOrgShowLevel").val()) {
+                    $("#divBreadCrumbs").html("Location: <span style='font-style:italic;'>" + item.BREAD_GRAM_NAME + "</span>");
+                }
+            });
+        }
+
+        var SplitScreen = "Y";
+        function ToggleSplitScreen() {
+            $(".overlay").show();
+
+            if (SplitScreen == "Y") {
+                $("#divRightOrgChart").removeClass("col-md-12");
+                $("#divRightOrgChart").removeClass("col-md-8");
+                $("#divRightOrgChart").removeClass("col-md-6");
+
+                $("#divAddInitiative").hide();
+                $("#divAddVersion").hide();
+                $("#divRightOrgChart").show();
+                $("#divLeftOrgChart").show();
+                $("#divUploadVersion").hide();
+
+                $("#myDiagramDiv").detach();
+                var iDiv = document.createElement('div');
+                iDiv.id = 'myDiagramDiv';
+                document.getElementById('myDiagramContainer').appendChild(iDiv);
+
+                // Org chart in Canvas
+                if (Settings.SplitScreenDirection == "Vertical")
+                    $("#divRightOrgChart").addClass("col-md-6");
+                else {
+                    $("#divRightOrgChart").addClass("col-md-12");
+                }
+                h = parseInt($("#divRightOrgChart").css("height").substr(0, $("#divRightOrgChart").css("height").indexOf("px")));
+                w = parseInt($("#divRightOrgChart").css("width").substr(0, $("#divRightOrgChart").css("width").indexOf("px")));
+                document.getElementById("mySavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + $("#hdnOrgChartData").val() + " }";
+                if (Settings.SplitScreenDirection == "Vertical") init(w, h); else init(w, 250);
+
+                // Bread Gram
+                var OrgData = JSON.parse($("#hdnOrgChartData").val());
+                $.each(OrgData, function (key, item) {
+                    if (item.LEVEL_ID == $("#hdnOrgShowLevel").val()) {
+                        $("#divBreadCrumbs").html("Location: <span style='font-style:italic;'>" + item.BREAD_GRAM_NAME + "</span>");
+                    }
+                });
+
+                $("#myPartitionDiagramDiv").detach();
+                var iDiv = document.createElement('div');
+                iDiv.id = 'myPartitionDiagramDiv';
+                document.getElementById('myPartitionDiagramContainer').appendChild(iDiv);
+
+                // Org chart in Canvas
+                $("#divLeftOrgChart").removeClass("col-md-12");
+                $("#divLeftOrgChart").removeClass("col-md-8");
+                $("#divLeftOrgChart").removeClass("col-md-6");
+                if (Settings.SplitScreenDirection == "Vertical")
+                    $("#divLeftOrgChart").addClass("col-md-6");
+                else {
+                    $("#divLeftOrgChart").addClass("col-md-12");
+                }
+                h = parseInt($("#divLeftOrgChart").css("height").substr(0, $("#divLeftOrgChart").css("height").indexOf("px")));
+                w = parseInt($("#divLeftOrgChart").css("width").substr(0, $("#divLeftOrgChart").css("width").indexOf("px")));
+                document.getElementById("myPartitionSavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + $("#hdnOrgChartHRCoreData").val() + " }";
+                if (Settings.SplitScreenDirection == "Vertical") initPartition(w, h); else initPartition(w, 250);
+
+                // Bread Gram
+                var OrgData = JSON.parse($("#hdnOrgChartHRCoreData").val());
+                $.each(OrgData, function (key, item) {
+                    if (item.Level_ID == $("#hdnOrgPartitionShowLevel").val()) {
+                        $("#divPartitionBreadCrumbs").html("Pallete Location: <span style='font-style:italic;'>"+item.BREAD_GRAM_NAME+"</span>");
+                    }
+                });
+
+                SplitScreen = "N";
+            }
+            else if (SplitScreen == "N") {
+                $("#divRightOrgChart").removeClass("col-md-12");
+                $("#divRightOrgChart").removeClass("col-md-8");
+                $("#divRightOrgChart").removeClass("col-md-6");
+                $("#divRightOrgChart").addClass("col-md-12");
+
+                $("#divAddInitiative").hide();
+                $("#divAddVersion").hide();
+                $("#divRightOrgChart").show();
+                $("#divLeftOrgChart").hide();
+                $("#divUploadVersion").hide();
+
+                $("#myDiagramDiv").detach();
+                var iDiv = document.createElement('div');
+                iDiv.id = 'myDiagramDiv';
+                document.getElementById('myDiagramContainer').appendChild(iDiv);
+
+                // Org chart in Canvas
+                h = parseInt($("#divRightOrgChart").css("height").substr(0, $("#divRightOrgChart").css("height").indexOf("px")));
+                w = parseInt($("#divRightOrgChart").css("width").substr(0, $("#divRightOrgChart").css("width").indexOf("px")));
+                init(w, h);
+
+                SplitScreen = "Y";
+
+                // Bread Gram
+                var OrgData = JSON.parse($("#hdnOrgChartData").val());
+                $.each(OrgData, function (key, item) {
+                    if (item.LEVEL_ID == $("#hdnOrgShowLevel").val()) {
+                        $("#divBreadCrumbs").html("Location: <span style='font-style:italic;'>" + item.BREAD_GRAM_NAME + "</span>");
+                    }
+                });
+            }
+
+            $(".overlay").hide();
+        }
+
+        function UploadPopulation() {
+            window.location.href = HOST_ENV +'/Version/UploadVersion';
+        }
+
+        function UploadTemplatePPTX() {
+            $("#UploadTemplatePPTModal").modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+        }
+
+        function UpdateSettings() {
+            $("#SettingsModal").modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+        }
+
+        function LoadPopupBox(popBoxID) {    // To Load the Popupbox
+            $('#' + popBoxID).fadeIn("slow");
+        }
+
+        function UnloadPopupBox(popBoxID) {    // TO Unload the Popupbox
+            $('#' + popBoxID).fadeOut("slow");
+        }
+
+        function SaveNewPosition() {
+            $(".overlay").show();
+            $("#divAddPositionError").hide();
+
+            AssignEmployee = SaveAssignEmployee();
+            var JsonData = {
+                VersionName: $("#selVersion").select2("val"),
+                PositionId:$("#txtPositionId").val(),
+                NextPositionId:$("#txtNextPositionId").val(),
+                FirstName: $("#txtFirstName").val(),
+                LastName: $("#txtLastName").val(),
+                PositionCost: $("#txtPositionCost").val(),
+                AssignEmployee: JSON.stringify(AssignEmployee),
+                SelectedDiv: $(".positionpopup.active").attr("data-id")
+            };
+            $.ajax({
+                type: "POST",
+                url: HOST_ENV + "/Version/SaveNewPosition",
+                data: JsonData,
+                async: true,
+                dateType: "json",
+                success: function (Json) {
+                    if (Json.Success == "Yes") {
+                        $("#hdnOrgChartData").val(Json.Message);
+                        document.getElementById("mySavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + $("#hdnOrgChartData").val() + " }";
+
+                        CancelOperation();
+                    }
+                    else if (Json.Success == "No") {
+                        $("#divAddPositionError").show();
+                        $("#divAddPositionError").html(Json.Message);
+                    }
+                    $(".overlay").hide();
+                }
+            });
+
+            return false;
+        }
+
+        function AddNewPositionModal(parent) {
+            $("#divAddPositionError").hide();
+            $("#txtPositionId").val("");
+            $("#txtNextPositionId").val(parent);
+            $("#txtFirstName").val("");
+            $("#txtLastName").val("");
+            $("#txtPositionCost").val("0.00");
+
+            $("#AddNewPositionModal").modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+
+            var ShowPosition = JSON.parse($("#hdnInitialValues").val());
+            $("#txtPositionId").val(ShowPosition.OprLevelId);
+            $("#txtPositionId").attr("disabled", "disabled");
+        }
+
+        function DownloadDialogBox() {
+
+            $("#divFieldSelection").hide();
+            $("#btnDownLoadSave").hide();
+            $("#divTemplateSelection").hide();
+
+            var BG = "<b style=\"float:left;\">Select Version:&nbsp;</b>" +
+                "<div style=\"color:black;float:left;\">" + ($("#selInitiative").val() == "" ? "SELECT INITIATIVE" : $("#selInitiative").val()) + "&nbsp;</div>" +
+                "<div style=\"float:left;\">&nbsp;>>&nbsp;</div>" +
+                "<div style=\"color:black;float:left;\">" + ($("#selPopulation").val() == "" ? "SELECT POPULATION" : $("#selPopulation").val()) + "&nbsp;</div>" +
+                "<div style=\"float:left;\">&nbsp;>>&nbsp;</div>" +
+                "<div style=\"color:black;float:left;\">" + ($("#selUser").val() == "" ? "SELECT USER" : $("#selUser").val()) + "&nbsp;>>&nbsp;</div>" +
+                "<div style=\"color:black;float:left;\">" + ($("#selVersion").val() == "" ? "SELECT VERSION" : $("#selVersion").val()) + "&nbsp;</div>";
+
+            $("#spnVersionDetailsBG").html(BG);
+            $("#DownloadModal").modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+            DelRevTemplate();
+        }
+
+        function DelRevTemplate() {
+            var templatedata = "";
+            $.ajax({
+                type: "post",
+                url: HOST_ENV + "/Version/ShowTemplatesList",
+                async: true,
+                datetype: "json",
+                success: function (json) {
+                    if (json.Success == "Yes") {
+                        templatedata = JSON.parse(json.SF);
+                        $("#divTemplateData").empty();
+
+                        if (templatedata.length >= 1) {
+
+                            $("#divDRTemplateData").empty();
+                            var DRPPTXTemplatehtml = "";
+                            DRPPTXTemplatehtml += "<div class=\"col-md-12\">" +
+                                "<div class=\"row\">" +
+                                "<div class=\"col-md-3\">" +
+                                "<strong>TemplateName</strong>" +
+                                "</div>" +
+                                "<div class=\"col-md-3\">" +
+                                "<strong> Description </strong>" +
+                                "</div>" +
+                                "<div class=\"col-md-3\">" +
+                                "<strong>FileName </strong>" +
+                                "</div>" +
+                                "<div class=\"col-md-3\">" +
+                                "<strong>Action </strong>" +
+                                "</div>" +
+                                "</div>" +
+                                "</div>";
+
+                            for (var Idx = 0; Idx <= templatedata.length - 1; Idx++) {
+                                var DeleteRevokeFlag = "";
+
+                                if (templatedata[Idx].ACTIVE_IND == "N") DeleteRevokeFlag = "<i  onclick=DeleteRevokeTemplate(" + templatedata[Idx].ID + ",'R') class=\"fa fa-plus contextmenu\" style=\"padding-left:15px;\"></i>";
+                                if (templatedata[Idx].ACTIVE_IND == "Y") DeleteRevokeFlag = "<i  onclick=DeleteRevokeTemplate(" + templatedata[Idx].ID + ",'D') class=\"fa fa-remove contextmenu\" style=\"padding-left:15px;\"></i>";
+
+                                DRPPTXTemplatehtml += "<div class=\"col-md-12\">" +
+                                    "<div class=\"row\">" +
+                                    "<div class=\"col-md-3\">" +
+                                    "<label class=\"label\">" + templatedata[Idx].TemplateName + "</label>" +
+                                    "</div>" +
+                                    "<div class=\"col-md-3\">" +
+                                    "<label class=\"label\">" + templatedata[Idx].Description + "</label>" +
+                                    "</div>" +
+                                    "<div class=\"col-md-3\">" +
+                                    "<label class=\"label\">" + templatedata[Idx].FileName + "</label>" +
+                                    "</div>" +
+                                    "<div class=\"col-md-3\">" +
+                                    "<div class=\"btn-group btn-group-toggle\" data-toggle=\"buttons\">" +
+                                    "<label style=\"cursor: pointer;\" >" +
+                                    DeleteRevokeFlag +
+                                    "</label>" +
+                                    "</div>" +
+                                    "</div>" +
+                                    "</div>" +
+                                    "</div>";
+                            }
+                            $("#divDRTemplateData").html(DRPPTXTemplatehtml);
+                        }
+
+                    }
+                }
+            });
+        }
+        function DeleteRevokeTemplate(TemplateId, DRType) {
+            if (DRType == "R") {
+                if (confirm("Do you want to Revoke Template?")) {
+                    $(".overlay").show();
+                    var JsonData = {
+                    TemplateId:TemplateId,
+                    DRType:DRType
+                    };
+                    $.ajax({
+                        type: "POST",
+                        url: HOST_ENV + "/Version/DeleteRevokeTemplate",
+                        data: JsonData,
+                        async: true,
+                        dateType: "json",
+                        success: function () {
+                            DelRevTemplate();
+                            $(".overlay").hide();
+                        }
+                    });
+                }
+            }
+            else if (DRType == "D") {
+                if (confirm("Do you want to Delete Template?")) {
+                    $(".overlay").show();
+                    var JsonData = {
+                        TemplateId: TemplateId,
+                        DRType: DRType
+                    };
+                    $.ajax({
+                        type: "POST",
+                        url: HOST_ENV + "/Version/DeleteRevokeTemplate",
+                        data: JsonData,
+                        async: true,
+                        dateType: "json",
+                        success: function () {
+                            DelRevTemplate();
+                            $(".overlay").hide();
+                        }
+                    });
+                }}
+
+        }
+
+        function VersionDetailsDialogBox() {
+
+            var IColor = ($("#selInitiative").val() == "" ? "#5B64FD" : "#48FD45");
+            var PColor = ($("#selPopulation").val() == "" ? "#FE4A38" : "#48FD45");
+            if (IColor == "#48FD45" && PColor == "#FE4A38") {
+                PColor ="#5B64FD";
+            }
+            var VColor = ($("#selVersion").val() == "" ? "#FE4A38" : "#FFFF00");
+            if (PColor == "#48FD45" && VColor == "#FE4A38") {
+                VColor = "#5B64FD";
+            }
+            var UColor = "#48FD45";
+
+            var BG = "<b style=\"float:left;\">Select Version:&nbsp;</b>" +
+                "<div style=\"color:" + IColor + ";float:left;\">" + ($("#selInitiative").val() == "" ? "SELECT INITIATIVE" : $("#selInitiative").val()) + "&nbsp;</div>" +
+                "<div style=\"float:left;cursor:pointer;\"><i class=\"fa-plus fa icon-x\" onclick=\"AddInitiative('" + $("#txtName").val() + "','" + $("#txtDescription").val() +"')\"></i>&nbsp;</div>" +
+                "<div style=\"float:left;cursor:pointer;\"><i class=\"fa-remove fa icon-x\" onclick=\"RemoveInitiative('" + $("#selInitiative").val() + "')\"></i>&nbsp;</div>" +
+                "<div style=\"float:left;\">&nbsp;>>&nbsp;</div>" +
+                "<div style=\"color:" + PColor + ";float:left;\">" + ($("#selPopulation").val() == "" ? "SELECT POPULATION" : $("#selPopulation").val()) + "&nbsp;</div>" +
+                "<div style=\"float:left;cursor:pointer;\"><i class=\"fa-plus fa icon-x\" onclick=\"AddPopulation('" + $("#selInitiative").val()+"','" + $("#txtName").val() + "','" + $("#txtDescription").val() +"')\"></i>&nbsp;</div>" +
+                "<div style=\"float:left;cursor:pointer;\"><i class=\"fa-remove fa icon-x\" onclick=\"RemovePopulation('" + $("#selPopulation").val() + "')\"></i>&nbsp;</div>" +
+                "<div style=\"float:left;\">&nbsp;>>&nbsp;</div>" +
+                "<div style=\"color:" + UColor + ";float:left;\">" + ($("#selUser").val() == "" ? "SELECT USER" : $("#selUser").val()) + "&nbsp;>>&nbsp;</div>" +
+                "<div style=\"color:" + VColor + ";float:left;\">" + ($("#selVersion").val() == "" ? "SELECT VERSION" : $("#selVersion").val()) + "&nbsp;</div>" +
+                "<div style=\"float:left;cursor:pointer;\"><i class=\"fa-plus fa icon-x\" onclick=\"AddVersion('" + $("#selVersion").val() + "')\"></i>&nbsp;</div>" +
+                "<div style=\"float:left;cursor:pointer;\"><i class=\"fa-remove fa icon-x\" onclick=\"RemoveVersion('" + $("#selVersion").val() + "')\"></i>&nbsp;</div>";
+
+            $("#spnVersionDetailsBG").html(BG);
+            $("#btnVersionDetailsPopup").click();
+        }
+
+        function GetSelectedCountryLevel(SelectedCountry) {
+            var OrgC = JSON.parse($("#hdnOrgCountries").val());
+            if (OrgC.length >= 1) {
+                for (Idx = 0; Idx <= OrgC.length - 1; Idx++) {
+                    if (OrgC[Idx].CountryCode == SelectedCountry) return OrgC[Idx].OrgUnit;
+                }
+            }
+            return "CH";
+        }
+
+        function ChangeFinalyzerVersion(SelectedCountry) {
+            if ($("#hdnOrgRole").val() == "Finalyzer" || $("#hdnOrgRole").val() == "User") {
+                var OrgDDL = JSON.parse($("#hdnOrgDDL").val());
+
+                if (OrgDDL.length >= 1) {
+                    for (Idx = 0; Idx <= OrgDDL.length - 1; Idx++) {
+                        if (OrgDDL[Idx].UserRole == "Finalyzer" && OrgDDL[Idx].UserName == "@User.Identity.Name" && OrgDDL[Idx].OperType == "LV") {
+                            OrgDDL[Idx].Country = SelectedCountry;
+                            OrgDDL[Idx].ShowLevel = GetSelectedCountryLevel(SelectedCountry);
+                        }
+                        else if (OrgDDL[Idx].UserRole == "User" && OrgDDL[Idx].OperType == "LV") {
+                            OrgDDL[Idx].Country = SelectedCountry;
+                            OrgDDL[Idx].ShowLevel = GetSelectedCountryLevel(SelectedCountry);
+                        }
+                    }
+                    $("#hdnOrgDDL").val(JSON.stringify(OrgDDL));
+                }
+            }
+        }
+
+        function AddNewVersion() {
+            if ($("#selInitiative").val() != "SelectInitiative" &&
+                $("#selInitiative").val() != "AddInitiative" &&
+                $("#selPopulation").val() != "SelectPopulation" &&
+                $("#selPopulation").val() != "AddPopulation" &&
+                $("#selUser").val() != "AddUser") {
+                $("#divRepVersionError").empty();
+                $("#divRepVersionHeader").empty();
+
+                $("#divShowMap").hide();
+                $("#divAddPopulation").show();
+                $("#divAddInitiative").hide();
+                $("#divAddVersion").show();
+                $("#divRightOrgChart").hide();
+                $("#divLeftOrgChart").hide();
+                $("#divUploadVersion").hide();
+            }
+            else alert("All this entities(Initiatives, Population and User) must have be selected");
+        }
+
+        function ShowPopupDialog(Obj) {
+            switch ($(Obj).val()) {
+                case "AddInitiative":
+                    $("#divRepInitiativeError").empty();
+                    $("#divRepInitiativeHeader").empty();
+                    if (($("#selCountry").val() != "SelectCountry" && $("#hdnOrgType").val() == "LV") ||
+                        ($("#hdnOrgType").val() == "OV") ||
+                        ($("#hdnOrgRole").val() == "Finalyzer")) {
+                        $("#divShowMap").hide();
+                        $("#divAddPopulation").hide();
+                        $("#divAddInitiative").show();
+                        $("#divAddVersion").hide();
+                        $("#divRightOrgChart").hide();
+                        $("#divLeftOrgChart").hide();
+                        $("#divUploadVersion").hide();
+
+                        $("#selPopulation").select2("val", "SelectPopulation");
+                        $("#selUser").select2("val", "@User.Identity.Name");
+                        $("#selVersion").select2("val", "SelectVersion");
+                    }
+                    else alert("Please select Country");
+
+                    break;
+                case "AddPopulation":
+                    $("#divRepPopulationError").empty();
+                    $("#divRepPopulationHeader").empty();
+
+                    if ($("#selInitiative").val() != "SelectInitiative" &&
+                        $("#selInitiative").val() != "AddInitiative") {
+
+                        $(".overlay").show();
+                        $("#divRightOrgChart").removeClass("col-md-12");
+                        $("#divRightOrgChart").removeClass("col-md-8");
+                        $("#divRightOrgChart").removeClass("col-md-6");
+                        $("#divRightOrgChart").addClass("col-md-8");
+
+                        $("#divShowMap").hide();
+                        $("#divAddPopulation").show();
+                        $("#divAddInitiative").hide();
+                        $("#divAddVersion").hide();
+                        $("#divRightOrgChart").show();
+                        $("#divLeftOrgChart").hide();
+                        $("#divUploadVersion").show();
+
+                        $("#myDiagramDiv").detach();
+                        var iDiv = document.createElement('div');
+                        iDiv.id = 'myDiagramDiv';
+                        document.getElementById('myDiagramContainer').appendChild(iDiv);
+
+                        // Org chart in Canvas
+                        h = parseInt($("#divRightOrgChart").css("height").substr(0, $("#divRightOrgChart").css("height").indexOf("px")));
+                        w = parseInt($("#divRightOrgChart").css("width").substr(0, $("#divRightOrgChart").css("width").indexOf("px")));
+                        init(w, h);
+
+                        $("#selUser").select2("val", "@User.Identity.Name");
+                        $("#selVersion").select2("val", "SelectVersion");
+                        $(".overlay").hide();
+                    }
+                    else alert("Please select Initiative");
+
+                    break;
+                case "AddVersion":
+                    if ($("#selInitiative").val() != "SelectInitiative" &&
+                        $("#selInitiative").val() != "AddInitiative" &&
+                        $("#selPopulation").val() != "SelectPopulation" &&
+                        $("#selPopulation").val() != "AddPopulation" &&
+                        $("#selUser").val() != "AddUser") {
+                        $("#divRepVersionError").empty();
+                        $("#divRepVersionHeader").empty();
+
+                        $("#divShowMap").hide();
+                        $("#divAddPopulation").show();
+                        $("#divAddInitiative").hide();
+                        $("#divAddVersion").show();
+                        $("#divRightOrgChart").hide();
+                        $("#divLeftOrgChart").hide();
+                        $("#divUploadVersion").hide();
+                    }
+                    else alert("All this entities(Initiatives, Population and User) must have be selected");
+
+                    break;
+                case "Download":
+                    $("#btnDownloadPopup").click();
+                    break;
+                default:
+                     if ($(Obj).attr("id") == "selCountry") {
+                        if ($("#selCountry").select2("val") == "SelectCountry") {
+                            $(".overlay").show();
+                            $("#selInitiative").select2("val", "SelectInitiative");
+                            $("#selPopulation").select2("val", "SelectPopulation");
+                            $("#selUser").select2("val", "SelectUser");
+                            $("#selVersion").select2("val", "SelectVersion");
+                            ShowDDL(AEI, [], [], [], "N");
+                            $(".overlay").hide();
+                        }
+                        else {
+                            ChangeFinalyzerVersion($("#selCountry").select2("val"));
+                            SelectedCountryDDL($("#hdnOrgDDL").val(), $("#selCountry").select2("val"), "N");
+                            $("#selInitiative").select2("val", "SelectInitiative");
+                            $("#selPopulation").select2("val", "SelectPopulation");
+                            $("#selUser").select2("val", "@User.Identity.Name");
+                            $("#selVersion").select2("val", "SelectVersion");
+                        }
+                     }
+                    else if ($(Obj).attr("id") == "selInitiative") {
+                        if ($("#selInitiative").select2("val") == "SelectInitiative") {
+                            $(".overlay").show();
+                            $("#selPopulation").select2("val", "SelectPopulation");
+                            $("#selUser").select2("val", "SelectUser");
+                            $("#selVersion").select2("val", "SelectVersion");
+                            ShowDDL(AEI, [], [], [], "N");
+                            $(".overlay").hide();
+                        }
+                        else {
+                            SelectedInitiativeDDL($("#hdnOrgDDL").val(), $("#selInitiative").select2("val"), "N");
+                            $("#selPopulation").select2("val", "SelectPopulation");
+                            $("#selUser").select2("val", "@User.Identity.Name");
+                            $("#selVersion").select2("val", "SelectVersion");
+                        }
+                    }
+                    else if ($(Obj).attr("id") == "selPopulation") {
+                        if ($("#selPopulation").select2("val") == "SelectPopulation") {
+                            $(".overlay").show();
+                            $("#selUser").select2("val", "@User.Identity.Name");
+                            $("#selVersion").select2("val", "SelectVersion");
+                            ShowDDL(AEI, AEP, [], [], "N");
+                            $(".overlay").hide();
+                        }
+                        else {
+                            SelectedPopulationDDL($("#hdnOrgDDL").val(), $("#selPopulation").select2("val"), $("#selInitiative").select2("val"), "N");
+                            $("#selUser").select2("val", "@User.Identity.Name");
+                            $("#selVersion").select2("val", "SelectVersion");
+                        }
+                    }
+                    else if ($(Obj).attr("id") == "selUser") {
+                        if ($("#selUser").select2("val") == "SelectUser") {
+                            $(".overlay").show();
+                            $("#selVersion").select2("val", "SelectVersion");
+                            ShowDDL(AEI, AEP, AEU, [], "N");
+                            $(".overlay").hide();
+                        }
+                        else {
+                            SelectedUserDDL($("#hdnOrgDDL").val(), $("#selUser").select2("val"), $("#selPopulation").select2("val"), $("#selInitiative").select2("val"), "N");
+                            $("#selVersion").select2("val", "SelectVersion");
+                        }
+                    }
+                    else if ($(Obj).attr("id") == "selVersion") {
+                        if ($("#selVersion").select2("val") != "SelectVersion" &&
+                            $("#selVersion").select2("val") != "AddVersion") {
+                            if ($("#hdnOrgRole").val()=="User")
+                                LoadSelectedUserVersion();
+                            else
+                                LoadSelectedVersion();
+                        }
+                    }
+
+                    break;
+            }
+        }
+
+        function GetParameter(Parameter) {
+            var StringConcat = "";
+
+            if (Parameter.trim() != "") {
+                var ArrayParam = Parameter.split(';');
+                if (ArrayParam.length >= 1) {
+                    for (var Idx = 0; Idx <= ArrayParam.length - 1; Idx++) {
+                        var MenuItem = ArrayParam[Idx].split(':');
+                        if (MenuItem[0] == "S") StringConcat += "," + "\'" + MenuItem[1] + "\'"
+                    }
+
+                    return StringConcat.substring(1);
+                }
+            }
+
+            return StringConcat;
+        }
+
+        function ShowEmptyTable() {
+            return "<b style='color:red'>There is no Version</b>";
+        }
+
+        function FinalyzeVersion() {
+            $(".overlay").show();
+
+            var JsonData = {
+            };
+            $.ajax({
+                type: "POST",
+                url: HOST_ENV + "/Version/FinalyseVersion",
+                data: JsonData,
+                async: false,
+                dateType: "json",
+                success: function (jsonStr) {
+                    alert("Version Updated");
+                    $(".overlay").hide();
+                }
+            });
+        }
+
+        function ShowVersionNo(VNo, VRole) {
+            $(".overlay").show();
+            var JsonData = {
+                VersionNo: VNo,
+                Role: VRole
+            };
+            $.ajax({
+                type: "POST",
+                url: HOST_ENV + "/Version/ShowVersionInfo",
+                data: JsonData,
+                async: false,
+                dateType: "json",
+                success: function (jsonStr) {
+                    $(".overlay").hide();
+                    window.location.href = "/Version/UpdateVersion";
+                }
+            });
+        }
+
+        function GetVersionList() {
+            $(".overlay").show();
+
+            var JsonData = {
+            };
+            $.ajax({
+                type: "POST",
+                url: HOST_ENV + "/Version/GetVersionList",
+                data: JsonData,
+                async: false,
+                dateType: "json",
+                success: function (data) {
+
+                    if (!($(".navbar-toggle").is(":visible"))) {
+                        $("#tblVersionList").show();
+                        $("#divVersionList").hide();
+
+                        $("#tblVersionList").empty();
+
+                        if ($("#tblVersionList").hasClass("dataTable") == true) {
+                            var oTable = $('#tblVersionList').dataTable();
+                            oTable.fnDestroy();
+                        }
+                        var tblHead = "";
+
+                        tblHead = "<thead>" +
+                            "  <tr style=\"background-color:lightgray;\">" +
+                            "     <th style=\"text-align:left;border-top:1px solid gray;border-left:1px solid gray;border-right:1px solid gray\">Version No</th>" +
+                            "     <th style=\"text-align:left;border-top:1px solid gray;border-right:1px solid gray\">Version Name</th>" +
+                            "     <th style=\"text-align:left;border-top:1px solid gray;border-right:1px solid gray\">Version Desc</th>" +
+                            "     <th style=\"text-align:left;border-top:1px solid gray;border-right:1px solid gray\">Version Date</th>" +
+                            "  </tr>" +
+                            "</thead>";
+                        $("#tblVersionList").html(tblHead);
+                        $('#tblVersionList').dataTable({
+                            "bPaginate": true,
+                            "bLengthChange": false,
+                            "bAutoWidth": false,
+                            "iDisplayLength": 5,
+                            "bDestroy": true,
+                            "aaSorting": [[0, "desc"]],
+                            "aaData": JSON.parse(data.VL),
+                            "sDom": 'T<"clear">lfrtip',
+                            "buttons": false,
+                            "language": {
+                                "emptyTable": ShowEmptyTable("1")
+                            },
+                            "aoColumnDefs": [{ "sWidth": "27%", "aTargets": [2] }],
+                            "columns": [
+                                {
+                                    "data": "VersionNo", "render": function (data, type, full, meta) {
+                                        return '<a href="javascript:void(0);"  onclick="return ShowVersionNo(\'' + data + '\',\'' + full.Role + '\');">' + data + '</a>';
+                                    }
+                                },
+                                {
+                                    "data": "VersionName", "render": function (data, type, full, meta) {
+                                        return full.VersionName.trim();
+                                    }
+                                },
+                                {
+                                    "data": "VersionDesc", "render": function (data, type, full, meta) {
+                                        return full.VersionDesc.trim();
+                                    }
+                                },
+                                {
+                                    "data": "KeyDate", "render": function (data, type, full, meta) {
+                                        return full.KeyDate.trim();
+                                    }
+                                }
+                            ]
+                        });
+                    }
+                    else {
+                        $("#tblVersionList").hide();
+                        $("#divVersionList").show();
+
+                        var VERSION_TABLE = JSON.parse(data.VL);
+                        if (VERSION_TABLE.length >= 1) {
+                            var DivRow = "";
+                            for (var Idx = 0; Idx <= VERSION_TABLE.length - 1; Idx++) {
+                                DivRow += "<div style='width:100%;border-bottom:1px solid lightgray'>";
+                                DivRow += "<div style='width:100%'><a href='javascript: void (0);'  onclick='return ShowVersionNo(\'" + VERSION_TABLE[Idx].VersionNo + "\',\'" + full.Role + "\');'>" + VERSION_TABLE[Idx].VersionNo + "</a></div>";
+                                DivRow += "<div style='width:100%'>" + VERSION_TABLE[Idx].VersionName + "</div>";
+                                DivRow += "<div style='width:100%'>" + VERSION_TABLE[Idx].VersionDesc + "</div>";
+                                DivRow += "<div style='width:100%'>" + VERSION_TABLE[Idx].KeyDate + "</div>";
+                                DivRow += "</div>";
+                            }
+                            $("#divVersionList").html(DivRow);
+                        }
+                        else $("#divVersionList").html("<div style='color:red;'>No Version available for the user</div>");
+                    }
+                    $(".overlay").hide();
+                }
+            });
+        }
+
+        function ClearTextBox(ObjName) {
+            $("#" + ObjName).val("");
+        }
+
+        function SelectFullName() {
+            var Option = "";
+            $("#multiselect_to option").each(function () {
+                Option+=","+$(this).val()
+            });
+            $("#txtFullName").val(Option.substring(1));
+        }
+
+        function SaveVersion() {
+
+
+            if ($("#hdnOrgRole").val() == "Player") {
+                $(".overlay").show();
+                var JsonData = {
+                };
+                $.ajax({
+                    type: "POST",
+                    url: HOST_ENV + "/Version/FinalyzePlayerVersion",
+                    data: JsonData,
+                    async: false,
+                    dateType: "json",
+                    success: function (Json) {
+                        if (Json.Success == "Yes") {
+                            $("#hdnOrgChartData").val(Json.Data);
+                            $("#hdnOrgChartHRCoreData").val(Json.IVData);
+
+                            $("#divRightOrgChart").removeClass("col-md-12");
+                            $("#divRightOrgChart").removeClass("col-md-8");
+                            $("#divRightOrgChart").removeClass("col-md-6");
+                            $("#divRightOrgChart").addClass("col-md-12");
+
+                            $("#divAddInitiative").hide();
+                            $("#divAddVersion").hide();
+                            $("#divRightOrgChart").show();
+                            $("#divLeftOrgChart").hide();
+                            $("#divUploadVersion").hide();
+
+                            $("#myDiagramDiv").detach();
+                            var iDiv = document.createElement('div');
+                            iDiv.id = 'myDiagramDiv';
+                            document.getElementById('myDiagramContainer').appendChild(iDiv);
+
+                            // Org chart in Canvas
+                            h = parseInt($("#divRightOrgChart").css("height").substr(0, $("#divRightOrgChart").css("height").indexOf("px")));
+                            w = parseInt($("#divRightOrgChart").css("width").substr(0, $("#divRightOrgChart").css("width").indexOf("px")));
+                            init(w, h);
+                        }
+                        else alert(Json.Message);
+
+                        $(".overlay").hide();
+                    }
+                });
+            }
+            else if ($("#hdnOrgRole").val() == "Finalyzer") {
+                $(".overlay").show();
+                var JsonData = {
+                };
+                $.ajax({
+                    type: "POST",
+                    url: HOST_ENV + "/Version/FinalyzeFinalyzerVersion",
+                    data: JsonData,
+                    async: false,
+                    dateType: "json",
+                    success: function (Json) {
+                        if (Json.Success == "Yes") {
+                            alert("Version Updated");
+                        }
+                        else alert(Json.Message);
+                        $(".overlay").hide();
+                    }
+                });
+            }
+        }
+
+        function LoadDataFromServer() {
+            $(".overlay").show();
+
+            var JsonData = {
+                UserType: $("#hdnOrgRole").val(),
+                Country: "",
+                ShowLevel: $("#hdnOrgShowLevel").val(),
+                Levels: $("#hdnOrgLevel").val(),
+                Oper: $("#hdnOrgType").val(),
+                Version: $("#hdnOrgVersion").val()
+            };
+            $.ajax({
+                type: "POST",
+                url: HOST_ENV + "/Version/GetOrgChartData",
+                data: JsonData,
+                async: false,
+                dateType: "json",
+                success: function (jsonStr) {
+                    loadJSON("{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + jsonStr + " }");
+                    $(".overlay").hide();
+                }
+            });
+        }
+
+        function SetSelectedValues(Obj, sType) {
+            $(".overlay").show();
+            if (sType == "Role") {
+                if ($("#hdnOrgRole").val().toUpperCase() == "USER")
+                    window.location.href = HOST_ENV + "/";
+                else if ($("#hdnOrgRole").val().toUpperCase() == "PLAYER")
+                    window.location.href = HOST_ENV +"/Version/UploadVersion";
+                else if ($("#hdnOrgRole").val().toUpperCase() == "FINALYZER")
+                    window.location.href = HOST_ENV +"/Version/UploadData";
+            }
+            else {
+
+                var JsonData = {
+                    KeyDate: $("#hdnOrgKeyDate").val(),
+                    UsedView: $("#hdnOrgView").val(),
+                    Country: $("#hdnOrgCountry").val(),
+                    ShowLevel: $("#hdnOrgShowLevel").val(),
+                    Levels: $("#hdnOrgLevel").val(),
+                    Oper: $("#hdnOrgType").val(),
+                    Version: $("#hdnOrgVersion").val(),
+                    Role: $("#hdnOrgRole").val(),
+                    Type: sType
+                };
+                $.ajax({
+                    type: "POST",
+                    url: HOST_ENV + "/Home/SetSelectedValues",
+                    data: JsonData,
+                    async: true,
+                    dateType: "json",
+                    success: function (jsonStr) {
+                        if ($("#hdnOrgType").val() == "OV") {
+                            $("#divRightOrgChart").show();
+                            $("#divShowMap").hide();
+
+                            $("#hdnOrgChartData").val(jsonStr);
+                            CancelOperation();
+                        }
+                        else if ($("#hdnOrgType").val() == "LV") {
+                            $("#divRightOrgChart").hide();
+                            $("#divShowMap").show();
+                        }
+                        $(".overlay").hide();
+                    }
+                });
+            }
+        }
+
+        function CreateOrgChart(Obj, sType, sValue)
+        {
+            switch (sType) {
+                case 'Role':
+                    $("#hdnOrgRole").val(sValue);
+                    var DisplayUserRole = GetDisplayUserRole($("#hdnOrgRole").val());
+                    $("#spnOrgRole").html(DisplayUserRole);
+
+                    SetSelectedValues(Obj, sType);
+
+                    break;
+                case 'Type':
+                    $("#hdnOrgType").val(sValue);
+                    if (sValue == "OV") {
+                        $("#spnOrgType").html("Operational View");
+                        $("#divCountry").hide();
+                    }
+                    else if (sValue == "LV") {
+                        $("#spnOrgType").html("Legal View");
+                        $("#divCountry").show();
+                    }
+
+                    SetSelectedValues(Obj, sType);
+
+                    break;
+                case 'Level':
+                    $("#hdnOrgLevel").val(sValue);
+                    if (sValue == "One") $("#spnOrgLevel").html("Level One");
+                    else if (sValue == "Two") $("#spnOrgLevel").html("Level Two");
+                    else if (sValue == "All") $("#spnOrgLevel").html("All Levels");
+
+                    SetSelectedValues(Obj, sType);
+
+                    break;
+                case 'View':
+                    $("#hdnOrgView").val(sValue);
+                    if (sValue == "Sample") $("#spnOrgView").html("Sample View");
+                    else if (sValue == "Normal") $("#spnOrgView").html("Normal View");
+                    else if (sValue == "Cost") $("#spnOrgView").html("Position Cost View");
+
+                    SetSelectedValues(Obj, sType);
+
+                    break;
+            }
+
+            return true;
+        }
+
+        function SelectVersion() {
+            var JsonData = {
+            };
+            $.ajax({
+                type: "POST",
+                url: HOST_ENV + "/Version/SelectVersion",
+                data: JsonData,
+                async: false,
+                dateType: "json",
+                success: function (jsonStr) {
+                    if ($(".navbar-toggle").is(":visible"))
+                        alert("Visible");
+                    else
+                        alert("Not Visible");
+                }
+            });
+        }
+
+        function VersionControl(vc) {
+            var JsonData = {
+                VersionControl: vc,
+                Oper: $("#hdnOrgType").val(),
+                Version: $("#hdnOrgVersion").val(),
+                ChartData: $("#mySavedModel").val()
+            };
+            $.ajax({
+                type: "POST",
+                url: HOST_ENV + "/Version/VersionControl",
+                data: JsonData,
+                async: false,
+                dateType: "json",
+                success: function (jsonStr) {
+                    loadJSON("{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + jsonStr + " }");
+                }
+            });
+
+            return false;
+        }
+    </script>
+</body>
+</html>

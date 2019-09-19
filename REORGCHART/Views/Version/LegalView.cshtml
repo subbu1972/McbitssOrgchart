@@ -1,0 +1,105 @@
+﻿@model REORGCHART.Models.MyModel
+
+@{
+    ViewBag.Title = "Legal View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<input type="hidden" value="@Model.Role" id="hdnOrgRole" name="hdnOrgRole" />
+<input type="hidden" value="@Model.Oper" id="hdnOrgType" name="hdnOrgType" />
+<input type="hidden" value="@Model.Country" id="hdnOrgCountry" name="hdnOrgCountry" />
+<input type="hidden" value="@Model.KeyDate" id="hdnOrgKeyDate" name="hdnOrgKeyDate" />
+<input type="hidden" value="@Model.Levels" id="hdnOrgLevel" name="hdnOrgLevel" />
+<input type="hidden" value="@Model.View" id="hdnOrgView" name="hdnOrgView" />
+<input type="hidden" value="@Model.ShowLevel" id="hdnOrgShowLevel" name="hdnOrgShowLevel" />
+<input type="hidden" value="@Model.Version" id="hdnOrgVersion" name="hdnOrgVersion" />
+<input type="hidden" value="@Model.ChartData" id="hdnOrgChartData" name="hdnOrgChartData" />
+<input type="hidden" value="@Model.ChartHRCoreData" id="hdnOrgChartHRCoreData" name="hdnOrgChartHRCoreData" />
+<input type="hidden" value="@Model.DDL" id="hdnOrgDDL" name="hdnOrgDDL" />
+<input type="hidden" value="@Model.HRCoreVersion" id="hdnHRCoreVersion" name="hdnHRCoreVersion" />
+
+<div style="height:20px;width:100%;background-color:#e5e5e5;position:relative;display:none;">
+    <div style="margin: 0px;padding: 0px 0px 0px 10px;color:black;">
+        <span style="font-size:12px;margin-left:0px;">(</span>
+        <span id="spnOrgType" style="font-size:12px;margin-left:0px;">Operational View</span>
+        <span style="font-size:12px;margin-left:0px;">&nbsp;:&nbsp;</span>
+        <span id="spnOrgLevel" style="font-size:12px;margin-left:0px;">Level One</span>
+        <span style="font-size:12px;margin-left:0px;">&nbsp;:&nbsp;</span>
+        <span id="spnOrgView" style="font-size:12px;margin-left:0px;">Normal View</span>
+        <span style="font-size:12px;margin-left:0px;">&nbsp;:&nbsp;</span>
+        <span id="spnOrgRole" style="font-size:12px;margin-left:0px;">User</span>
+        <span style="font-size:12px;margin-left:0px;">)</span>
+    </div>
+</div>
+
+<div>
+    <uc1:WorldMap id="WorldMap" />
+</div>
+
+
+<div id="map-section" style="text-align: center;">
+    <uc1:WorldMap runat="server" ID="WorldMap" />
+</div>
+<link href="~/Content/Map/ammap.css" rel="stylesheet" />
+<script src="~/Content/Map/ammap.js"></script>
+<script src="~/Content/Map/worldLow.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#hdnOrgType").val("LV");
+    });
+
+    var map;
+
+    function onMapClick(mapObject, event) {
+
+        alert(mapObject.id);
+
+        if (!SetSelectOption('#COUNTRY', "COUNTRY :: " + mapObject.title)) {
+            alert('No Orgunit exists for selected country.');
+        }
+    }
+
+    var map = AmCharts.ready(function () {
+        var map;
+
+        map = new AmCharts.AmMap();
+
+        map.dragMap = false;
+        map.color = "#FFFFFF";
+        //map.click = onMapClick;
+
+        map.clickMapObject = onMapClick;
+
+        var icon = "M21.25,8.375V28h6.5V8.375H21.25zM12.25,28h6.5V4.125h-6.5V28zM3.25,28h6.5V12.625h-6.5V28z";
+
+        map.areasSettings = {
+            autoZoom: false,
+            rollOverOutlineColor: "#AAAAAA",
+            outlineAlpha: 1,
+            outlineColor: "#FFFFFF",
+            outlineThickness: 1,
+            color: "#000000"
+        };
+
+
+        map.dataProvider = {
+            mapVar: AmCharts.maps.worldLow,
+            // images: [{ latitude: 47.1662, longitude: 8.5155, svgPath: icon, color: "#CC0000", scale: 0.5, label: "Zug, Switzerland", labelShiftY: 2, zoomLevel: 5, title: "Headquarters", description: "USA is one of the most important country for novartis." }],
+            areas: AmCharts.maps.worldLow.svg.g.path
+        };
+        var zoomControl = map.zoomControl;
+        zoomControl.panControlEnabled = false;
+        zoomControl.zoomControlEnabled = false;
+
+        map.write("mapdiv");
+
+
+    });
+
+</script>
+
+
+<div style="background-image: url('../assets/images/pattern/custom/background.jpg');">
+    <div id="mapdiv" style="width: 100%; height: 700px;"></div>
+</div>

@@ -1,0 +1,53 @@
+﻿@model System.Data.DataTable
+@Html.DevExpress().GridView(
+    settings =>   {
+        settings.Name = "GridViewPartialFM";
+        settings.CallbackRouteValues = new { Controller = "Version", Action = "GridViewPostPartialFM" };
+        settings.Styles.Cell.Wrap = DefaultBoolean.False;
+        settings.SettingsPager.PageSize = 5;
+
+        settings.Settings.ShowHeaderFilterButton = true;
+
+        settings.Width = System.Web.UI.WebControls.Unit.Percentage(100);
+        settings.SettingsAdaptivity.AdaptivityMode = GridViewAdaptivityMode.HideDataCells;
+        settings.SettingsAdaptivity.AllowOnlyOneAdaptiveDetailExpanded = true;
+        settings.SettingsBehavior.AllowEllipsisInText = true;
+
+        settings.KeyFieldName = "LEVEL_ID";
+
+        foreach (System.Data.DataColumn column in Model.Columns) {
+
+            if (column.ColumnName != "LEVEL_ID")
+            {
+                settings.Columns.Add(c =>
+                {
+                    c.FieldName = column.ColumnName;
+                    c.Caption = column.ColumnName;
+                });
+            }
+            else
+            {
+                settings.Columns.Add(c =>
+                {
+                    c.Caption = "LEVEL_ID";
+                    c.SetDataItemTemplateContent(container =>
+                    {
+                        Html.DevExpress().HyperLink(hyperlink =>
+                        {
+                            var KeyValue = container.KeyValue;
+                            var LevelID = DataBinder.Eval(container.DataItem, "LEVEL_ID");
+                            var MFlag = DataBinder.Eval(container.DataItem, "MFLAG");
+                            hyperlink.Properties.ClientSideEvents.Click = "function(){ SetFunctionalManager('" + LevelID + "');}";
+                            hyperlink.Name = "hleFM" + KeyValue.ToString() + MFlag;
+                            hyperlink.Properties.Text = LevelID.ToString();
+                            hyperlink.NavigateUrl = "javascript:void";
+                        }).Render();
+                    });
+                });
+            }
+        }
+    }).Bind(Model).GetHtml()
+
+
+
+
