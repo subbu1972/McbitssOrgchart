@@ -935,7 +935,7 @@ $(document).ready(function () {
         DivRow += "  <a data-html=\"Hierarchy\" href=\"#\"><img src=\"" + HOST_ENV + "/Content/NewTemplateUI/Images/views.svg\" width=\"25px\" alt=\"logo\"/><span class=\"sidemenu-label\">Hierarchy</span><i class=\"fas fa-angle-up control-btns\"></i><i class=\"fas fa-angle-down control-btns\"></i></a>";
         DivRow += "<ul>"
         DivRow += "<li>";
-        DivRow += "<div id=\"divHierarchy\" class=\"zTreeDemoBackground left\" style=\"max-height:300px;overflow:auto;\">";
+        DivRow += "<div id=\"divHierarchy\" class=\"zTreeDemoBackground left\" style=\"max-height:500px;overflow:auto;\">";
         DivRow += "<ul id=\"treeDemo\" class=\"ztree clsHier1\"></ul>";
         DivRow += "</div>";
         DivRow += "</li>";
@@ -1104,7 +1104,7 @@ function ShowHierarchy() {
                 }
             }
             catch (ex) {
-
+                alert(ex);
             }
         }
     }
@@ -2674,7 +2674,19 @@ function ToggleSplitScreen(Obj) {
         }
         h = parseInt($("#divRightOrgChart").css("height").substr(0, $("#divRightOrgChart").css("height").indexOf("px")));
         w = parseInt($("#divRightOrgChart").css("width").substr(0, $("#divRightOrgChart").css("width").indexOf("px")));
-        document.getElementById("mySavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + $("#hdnOrgChartData").val() + " }";
+        var hdnOrgChartData = JSON.parse($("#hdnOrgChartData").val());
+        if (hdnOrgChartData.length >= 1) {
+            for (var idr = hdnOrgChartData.length - 1; idr >= 0; idr--) {
+                if (!(document.getElementById("hdnOrgShowLevel").value == hdnOrgChartData[idr].LEVEL_ID ||
+                    document.getElementById("hdnOrgShowLevel").value == hdnOrgChartData[idr].PARENT_LEVEL_ID)) {
+                    hdnOrgChartData.splice(idr, 1);
+                }
+                else if (hdnOrgChartData[idr].DOTTED_LINE_FLAG == "Y") {
+                    hdnOrgChartData.splice(idr, 1);
+                }
+            }
+        }
+        document.getElementById("mySavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + JSON.stringify(hdnOrgChartData) + " }";
         $("#myOverviewDiv").hide();
         $("#divSearchDiagram").hide();
         if (Settings.SplitScreenDirection == "Vertical") {
@@ -2715,7 +2727,19 @@ function ToggleSplitScreen(Obj) {
         }
         h = parseInt($("#divLeftOrgChart").css("height").substr(0, $("#divLeftOrgChart").css("height").indexOf("px")));
         w = parseInt($("#divLeftOrgChart").css("width").substr(0, $("#divLeftOrgChart").css("width").indexOf("px")));
-        document.getElementById("myPartitionSavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + $("#hdnOrgChartHRCoreData").val() + " }";
+        var hdnOrgChartHRCoreData = JSON.parse($("#hdnOrgChartHRCoreData").val());
+        if (hdnOrgChartData.length >= 1) {
+            for (idr = hdnOrgChartHRCoreData.length - 1; idr >= 0; idr--) {
+                if (!(document.getElementById("hdnOrgPartitionShowLevel").value == hdnOrgChartHRCoreData[idr].LEVEL_ID ||
+                    document.getElementById("hdnOrgPartitionShowLevel").value == hdnOrgChartHRCoreData[idr].PARENT_LEVEL_ID)) {
+                    hdnOrgChartHRCoreData.splice(idr, 1);
+                }
+                else if (hdnOrgChartHRCoreData[idr].DOTTED_LINE_FLAG == "Y") {
+                    hdnOrgChartHRCoreData.splice(idr, 1);
+                }
+            }
+        }
+        document.getElementById("myPartitionSavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + JSON.stringify(hdnOrgChartHRCoreData) + " }";
         if (Settings.SplitScreenDirection == "Vertical") initPartition(w, h, DragDrop); else initPartition(w, 250, DragDrop);
 
         // Bread Gram

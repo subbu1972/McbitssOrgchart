@@ -1283,81 +1283,35 @@
             );  // end Node
     }
 
-    // the context menu allows users to make a position vacant,
-    // remove a role and reassign the subtree, or remove a department
-    //myPartitionDiagram.nodeTemplate.contextMenu =
-    //    $(go.Adornment, "Vertical",
-    //        $("ContextMenuButton",
-    //            $(go.TextBlock, "Vacate Position"),
-    //            {
-    //                click: function (e, obj) {
-    //                    var node = obj.part.adornedPart;
-    //                    if (node !== null) {
-    //                        var thisemp = node.data;
-    //                        myPartitionDiagram.startTransaction("vacate");
-    //                        // update the key, name, and comments
-    //                        myPartitionDiagram.model.setKeyForNodeData(thisemp, getNextKey());
-    //                        myPartitionDiagram.model.setDataProperty(thisemp, "name", "(Vacant)");
-    //                        myPartitionDiagram.model.setDataProperty(thisemp, "comments", "");
-    //                        myPartitionDiagram.commitTransaction("vacate");
-    //                    }
-    //                }
-    //            }
-    //        ),
-    //        $("ContextMenuButton",
-    //            $(go.TextBlock, "Remove Role"),
-    //            {
-    //                click: function (e, obj) {
-    //                    // reparent the subtree to this node's boss, then remove the node
-    //                    var node = obj.part.adornedPart;
-    //                    if (node !== null) {
-    //                        myPartitionDiagram.startTransaction("reparent remove");
-    //                        var chl = node.findTreeChildrenNodes();
-    //                        // iterate through the children and set their parent key to our selected node's parent key
-    //                        while (chl.next()) {
-    //                            var emp = chl.value;
-    //                            myPartitionDiagram.model.setParentKeyForNodeData(emp.data, node.findTreeParentNode().data.key);
-    //                        }
-    //                        // and now remove the selected node itself
-    //                        myPartitionDiagram.model.removeNodeData(node.data);
-    //                        myPartitionDiagram.commitTransaction("reparent remove");
-    //                    }
-    //                }
-    //            }
-    //        ),
-    //        $("ContextMenuButton",
-    //            $(go.TextBlock, "Remove Department"),
-    //            {
-    //                click: function (e, obj) {
-    //                    // remove the whole subtree, including the node itself
-    //                    var node = obj.part.adornedPart;
-    //                    if (node !== null) {
-    //                        myPartitionDiagram.startTransaction("remove dept");
-    //                        myPartitionDiagram.removeParts(node.findTreeParts());
-    //                        myPartitionDiagram.commitTransaction("remove dept");
-    //                    }
-    //                }
-    //            }
-    //        )
-    //    );
 
     // define the Link template
     var dotted = [3, 3];
     var dashed = [5, 5];
+    //myPartitionDiagram.linkTemplate =
+    //    $(go.Link, go.Link.AvoidsNodes,  // may be either Orthogonal or AvoidsNodes
+    //        { corner: 5, relinkableFrom: true, relinkableTo: true },
+    //        $(go.Shape,
+    //            {
+    //                strokeWidth: 2,
+    //                stroke: Settings.LineColor,
+    //                strokeDashArray: []
+    //            },
+    //            new go.Binding("strokeDashArray", "DOTTED_LINE_FLAG",
+    //                function (d) {
+    //                    return d == "Y" ? dotted :
+    //                        (d == "N" ? dashed : null);
+    //                }).makeTwoWay()
+    //        ));  // the link shape
+
     myPartitionDiagram.linkTemplate =
         $(go.Link, go.Link.AvoidsNodes,  // may be either Orthogonal or AvoidsNodes
-            { corner: 5, relinkableFrom: false, relinkableTo: false },
+            { corner: 5, relinkableFrom: true, relinkableTo: true },
             $(go.Shape,
                 {
                     strokeWidth: 2,
                     stroke: Settings.LineColor,
                     strokeDashArray: []
-                },
-                new go.Binding("strokeDashArray", "DOTTED_LINE_FLAG",
-                    function (d) {
-                        return d == "Y" ? dotted :
-                            (d == "N" ? dashed : null);
-                    }).makeTwoWay()
+                }
             ));  // the link shape
 
     // read in the JSON-format data from the "myPartitionSavedModel" element

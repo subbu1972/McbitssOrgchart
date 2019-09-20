@@ -38,7 +38,10 @@ function calculateShapeYDimention(shape) {
     return 80;
 }
 
-
+//https://gojs.net/latest/intro/connectionPoints.html
+//https://gojs.net/latest/extensions/ParallelRoute.html
+//https://gojs.net/latest/intro/trees.html
+//https://gojs.net/latest/intro/links.html
 function init(w, h, DragDrop) {
 
     var shape_X_Dimention = calculateShapeXDimention(Settings.SelectShape);
@@ -1796,9 +1799,6 @@ function GetLevelNo(nodeDataArray, LevelId) {
     return 99;
 }
 
-//https://gojs.net/latest/intro/connectionPoints.html
-//https://gojs.net/latest/extensions/ParallelRoute.html
-//https://gojs.net/latest/intro/links.html
 function ShowNodesInCanvas(InitialValues, nodeDataArray, OrgChartType) {
     var linkDataArray = [];
     if (nodeDataArray.length >= 1) {
@@ -1920,15 +1920,17 @@ function ShowNodesInCanvas(InitialValues, nodeDataArray, OrgChartType) {
 }
 
 function loadPortrait() {
-    //https://gojs.net/latest/intro/trees.html
-    //https://gojs.net/latest/intro/links.html
 
-    //alert(document.getElementById("hdnOrgChartData").value);
     var InitialValues = JSON.parse(document.getElementById("hdnInitialValues").value);
-    var nodeDataArray = JSON.parse(document.getElementById("hdnOrgChartData").value);
-    var OrgChartType = document.getElementById("hdnOrgChartType").value;
+    if (InitialValues.FuntionalManagerDottedLines == "Yes") {
+        var nodeDataArray = JSON.parse(document.getElementById("hdnOrgChartData").value);
+        var OrgChartType = document.getElementById("hdnOrgChartType").value;
 
-    ShowNodesInCanvas(InitialValues, nodeDataArray, OrgChartType);
+        ShowNodesInCanvas(InitialValues, nodeDataArray, OrgChartType);
+    }
+    else {
+        myDiagram.model = go.Model.fromJson(document.getElementById("mySavedModel").value);
+    }
 }
 
 // Show the diagram's model in JSON format
@@ -1940,8 +1942,14 @@ function loadJSON(SaveJson, JsonString) {
     else document.getElementById("mySavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":\"\" }";
 
     var InitialValues = JSON.parse(document.getElementById("hdnInitialValues").value);
-    var nodeDataArray = JSON.parse(JsonString);
-    var OrgChartType = document.getElementById("hdnOrgChartType").value;
+    if (InitialValues.FuntionalManagerDottedLines == "Yes") {
+        var nodeDataArray = JSON.parse(JsonString);
+        var OrgChartType = document.getElementById("hdnOrgChartType").value;
 
-    ShowNodesInCanvas(InitialValues, nodeDataArray, OrgChartType);
+        ShowNodesInCanvas(InitialValues, nodeDataArray, OrgChartType);
+    }
+    else {
+        myDiagram.model = go.Model.fromJson(document.getElementById("mySavedModel").value);
+    }
+
 }

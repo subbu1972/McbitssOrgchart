@@ -97,16 +97,14 @@ namespace REORGCHART.Controllers
             model.UserName = "";
             model.Password = "";
 
-            string OptionsCompanies = "";
             List<InitializeTables> INI = (from ini in db.InitializeTables select ini).ToList();
-            foreach(InitializeTables it in INI)
+            List<SelectListItem> listIT = new List<SelectListItem>();
+            foreach (var item in INI)
             {
-                if (wcCompanyName == it.CompanyName || wcCompanyName == "")
-                {
-                    OptionsCompanies += "<option value=\"" + it.CompanyName + "\">" + it.CompanyName + "</options>";
-                }
+                if (item.CompanyName.ToString()==wcCompanyName || wcCompanyName=="")
+                    listIT.Add(new SelectListItem() { Value = item.CompanyName.ToString(), Text = item.CompanyName });
             }
-            ViewBag.OptionsCompanies = OptionsCompanies;
+            ViewData["CompanyName"] = listIT;
 
             ViewBag.Title = "Login";
             HttpContext.Session["LoginUserInf"] = null;

@@ -33,8 +33,8 @@ function initOrgChartStatic(JsonData, w, h, DragDrop) {
                             alternateLayerSpacing: 35,
                             alternateAlignment: go.TreeLayout.AlignmentBus,
                             alternateNodeSpacing: 20,
-                            setsPortSpot: false,
-                            setsChildPortSpot: false
+                            setsPortSpot: true,
+                            setsChildPortSpot: true
 
                             //treeStyle: go.TreeLayout.StyleLastParents,
                             //// properties for most of the tree:
@@ -1764,8 +1764,13 @@ function GenerateImages() {
 function loadStaticChart() {
     //alert(document.getElementById("hdnOrgChartData").value);
     var InitialValues = JSON.parse(document.getElementById("hdnInitialValues").value);
-    var nodeDataArray = JSON.parse(document.getElementById("hdnOrgChartData").value);
-    var OrgChartType = document.getElementById("hdnOrgChartType").value;
+    if (InitialValues.FuntionalManagerDottedLines == "Yes") {
+        var nodeDataArray = JSON.parse(document.getElementById("hdnOrgChartData").value);
+        var OrgChartType = document.getElementById("hdnOrgChartType").value;
 
-    ShowNodesInCanvas(InitialValues, nodeDataArray, OrgChartType);
+        ShowNodesInCanvas(InitialValues, nodeDataArray, OrgChartType);
+    }
+    else {
+        myDiagram.model = go.Model.fromJson(document.getElementById("mySavedModel").value);
+    }
 }
