@@ -244,6 +244,7 @@ namespace REORGCHART.Controllers
                     UCA.SelectedPortraitModeMultipleLevel = SelectedPortraitModeMultipleLevel;
                     UCA.SelectedFunctionalManagerType = SelectedFunctionalManagerType;
                     UCA.OrgChartType = OrgChartType;
+                    UCA.Levels = Levels;
                 }
                 else if (Type == "")
                 {

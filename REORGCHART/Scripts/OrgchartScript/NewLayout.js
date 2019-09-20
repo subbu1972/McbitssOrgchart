@@ -758,7 +758,8 @@ $(document).ready(function () {
         // Update the current slider value (each time you drag the slider handle)
         $("input[type='range']").change(function () {
             $("#myLevel").val(this.value == "6" ? "All" : slider.value);
-            ChangeLevels(this.value);
+            //alert(slider.value);
+            //ChangeLevels(this.value);
         });
 
         // Use Select2
@@ -1708,73 +1709,49 @@ function ShowHide(Id, Obj) {
 
 // when a Levels changes
 function ChangeLevels(SelectedLevel) {
-    var Levels = 1;
-    switch ($("#hdnOrgLevel").val().toUpperCase()) {
-        case "ONE":
-            Levels = 1;
-            break;
-        case "TWO":
-            Levels = 2;
-            break;
-        case "THREE":
-            Levels = 3;
-            break;
-        case "FOUR":
-            Levels = 4;
-            break;
-        case "FIVE":
-            Levels = 5;
-            break;
-        case "ALL":
-            Levels = 6;
-            break;
-    }
+    $('.overlay').show();
 
-    if (Levels != SelectedLevel) {
-        $('.overlay').show();
+    var URL = HOST_ENV + "/Version/ChangeLevels";
+    if ($("#hdnOrgRole").val().toUpperCase() == "USER") URL = HOST_ENV + "/Home/ChangeLevels";
 
-        var URL = HOST_ENV + "/Version/ChangeLevels";
-        if ($("#hdnOrgRole").val().toUpperCase() == "USER") URL = HOST_ENV + "/Home/ChangeLevels";
+    var JsonData = {
+        UptoLevel: SelectedLevel
+    };
 
-        var JsonData = {
-            UptoLevel: SelectedLevel
-        };
-
-        jQuery.ajax({
-            type: "POST",
-            url: URL,
-            data: JsonData,
-            async: true,
-            dateType: "json",
-        }).done(function (JsonString) {
-            if (JsonString != "No Changes") {
-                $("#hdnOrgChartData").val(JsonString);
-                switch (SelectedLevel) {
-                    case "1":
-                        $("#hdnOrgLevel").val("One");
-                        break;
-                    case "2":
-                        $("#hdnOrgLevel").val("Two");
-                        break;
-                    case "3":
-                        $("#hdnOrgLevel").val("Three");
-                        break;
-                    case "4":
-                        $("#hdnOrgLevel").val("Four");
-                        break;
-                    case "5":
-                        $("#hdnOrgLevel").val("Five");
-                        break;
-                    case "6":
-                        $("#hdnOrgLevel").val("All");
-                        break;
-                }
-
-                CancelOperation();
+    jQuery.ajax({
+        type: "POST",
+        url: URL,
+        data: JsonData,
+        async: true,
+        dateType: "json",
+    }).done(function (JsonString) {
+        if (JsonString != "No Changes") {
+            $("#hdnOrgChartData").val(JsonString);
+            switch (SelectedLevel) {
+                case "1":
+                    $("#hdnOrgLevel").val("One");
+                    break;
+                case "2":
+                    $("#hdnOrgLevel").val("Two");
+                    break;
+                case "3":
+                    $("#hdnOrgLevel").val("Three");
+                    break;
+                case "4":
+                    $("#hdnOrgLevel").val("Four");
+                    break;
+                case "5":
+                    $("#hdnOrgLevel").val("Five");
+                    break;
+                case "6":
+                    $("#hdnOrgLevel").val("All");
+                    break;
             }
-            $('.overlay').hide();
-        });
-    }
+
+            CancelOperation();
+        }
+        $('.overlay').hide();
+    });
 }
 
 var SearchFieldValue = [];
@@ -1834,6 +1811,27 @@ function SaveScreenSettings() {
     $("#hdnSelectedPortraitModeMultipleLevel").val(Settings.PortraitModeMultipleLevel);
     Settings.FunctionalManagerType = $("input[name='functionalmanagertype']:checked").val();
     $("#hdnSelectedFunctionalManagerType").val(Settings.FunctionalManagerType);
+
+    switch ($("#myLevel").val()) {
+        case "1":
+            $("#hdnOrgLevel").val("One");
+            break;
+        case "2":
+            $("#hdnOrgLevel").val("Two");
+            break;
+        case "3":
+            $("#hdnOrgLevel").val("Three");
+            break;
+        case "4":
+            $("#hdnOrgLevel").val("Four");
+            break;
+        case "5":
+            $("#hdnOrgLevel").val("Five");
+            break;
+        case "All":
+            $("#hdnOrgLevel").val("All");
+            break;
+    }
 
     var JsonData = {
         KeyDate: $("#hdnOrgKeyDate").val(),
