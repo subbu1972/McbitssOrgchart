@@ -95,7 +95,9 @@ namespace REORGCHART.Controllers
                 Country = myla.Country,
                 Countries = JsonConvert.SerializeObject((from co in db.LegalCountries
                                                          select co).Distinct().ToList()),
-                ChartData =LI. GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
+                ChartData =LI. GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                               myla.Levels, myla.Oper, myla.Version, 
+                                               myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
                 Role = myla.Role,
                 AssignedRole = LI.GetUserRoles(),
                 HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),
@@ -174,7 +176,7 @@ namespace REORGCHART.Controllers
 
 
         [HttpPost]
-        public string SetSelectedValues(string KeyDate, string UsedView, string Country, string ShowLevel, string Levels, string Oper, string Version, string Role,
+        public JsonResult SetSelectedValues(string KeyDate, string UsedView, string Country, string ShowLevel, string Levels, string Oper, string Version, string Role,
                                         string SelectedShape, string SelectedSkin, string SelectedShowPicture, string SelectedSplitScreen, string SelectedSplitScreenDirection,
                                         string SelectedTextColor, string SelectedBorderColor, string SelectedBorderWidth, string SelectedLineColor, string SelectedBoxWidth,
                                         string SelectedPortraitModeMultipleLevel, string SelectedFunctionalManagerType, string OrgChartType, string Type)
@@ -223,7 +225,13 @@ namespace REORGCHART.Controllers
                         UCA.Role = Role;
                     }
 
-                    return "Sucess";
+                    Session.Contents["MyModel"] = null;
+                    return Json(new
+                    {
+                        Success = "Yes",
+                        ChartData = "Role Change",
+                        TreeData = ""
+                    });
                 }
                 else if (Type == "View") UCA.UsedView = UsedView;
                 else if (Type == "Level") UCA.Levels = Levels;
@@ -256,15 +264,46 @@ namespace REORGCHART.Controllers
                 db.SaveChanges();
             }
 
-            string ChangeLevel = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, UCA.Levels, UCA.Oper, UCA.Version);
+            string[] ChangeLevel = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
+                                                    UCA.Levels, UCA.Oper, UCA.Version, 
+                                                    UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType);
             if (Session.Contents["MyModel"] != null)
             {
                 MyModel MyModel = (MyModel)Session.Contents["MyModel"];
-                MyModel.ChartData = ChangeLevel;
+                MyModel.ChartData = ChangeLevel[1];
+                if (Type == "Settings")
+                {
+                    MyModel.View = UsedView;
+                    MyModel.SelectedShape = SelectedShape;
+                    MyModel.SelectedSkin = SelectedSkin;
+                    MyModel.SelectedShowPicture = SelectedShowPicture;
+                    MyModel.SelectedSplitScreen = SelectedSplitScreen;
+                    MyModel.SelectedSplitScreenDirection = SelectedSplitScreenDirection;
+                    MyModel.SelectedTextColor = SelectedTextColor;
+                    MyModel.SelectedBorderColor = SelectedBorderColor;
+                    MyModel.SelectedBorderWidth = SelectedBorderWidth;
+                    MyModel.SelectedBoxWidth = SelectedBoxWidth;
+                    MyModel.SelectedLineColor = SelectedLineColor;
+                    MyModel.SelectedPortraitModeMultipleLevel = SelectedPortraitModeMultipleLevel;
+                    MyModel.SelectedFunctionalManagerType = SelectedFunctionalManagerType;
+                    MyModel.OrgChartType = OrgChartType;
+                    MyModel.Levels = Levels;
+                }
+                else if (Type == "")
+                {
+                    MyModel.KeyDate = KeyDate;
+                    MyModel.Country = Country;
+                    MyModel.ShowLevel = ShowLevel;
+                }
                 Session.Contents["MyModel"] = MyModel;
             }
 
-            return ChangeLevel;
+            return Json(new
+            {
+                Success = "Yes",
+                ChartData = ChangeLevel[1],
+                TreeData = ChangeLevel[0]
+            });
         }
 
         public ActionResult ShowSearchMenu()
@@ -368,7 +407,9 @@ namespace REORGCHART.Controllers
                 db.SaveChanges();
             }
 
-            return LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, UCA.Levels, UCA.Oper, UCA.Version);
+            return LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
+                                      UCA.Levels, UCA.Oper, UCA.Version,
+                                      UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)[1];
         }
 
         public ActionResult About()

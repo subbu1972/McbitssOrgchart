@@ -153,9 +153,9 @@ namespace REORGCHART.Controllers
                                                      "1", "23/10/2018", 6, "EN", "", "PDF", "POSITION_CALCULATED_COST", 
                                                      UFH.PositionCostField, UserData.CompanyName, UFH.FirstPosition,
                                                      FinalyzerVersion);
-                DataSet OrgDataSet = LI.GetOrgChartDataTable(UCA.Role, UCA.Country, ShowLevelPDF, "999999", CurrentLevelPDF, UCA.Oper, UCA.Version, UCA.ShowLevel, LevelUp);
+                DataSet OrgDataSet = LI.GetOrgChartDataTable(UCA.Role, UCA.Country, ShowLevelPDF, "999999", CurrentLevelPDF, UCA.Oper, UCA.Version, UCA.ShowLevel, LevelUp, UCA.SelectedFunctionalManagerType);
                 AllPDF.CreateAllLevelPDFIntermediateResults(OrgDataSet, UCA.Oper.ToUpper(), UCA.Version, "", "PDF");
-                OrgDataSet = LI.GetOrgChartDataTable(UCA.Role, UCA.Country, ShowLevelPDF, "999999", CurrentLevelPDF, UCA.Oper, UCA.Version, UCA.ShowLevel, LevelUp);
+                OrgDataSet = LI.GetOrgChartDataTable(UCA.Role, UCA.Country, ShowLevelPDF, "999999", CurrentLevelPDF, UCA.Oper, UCA.Version, UCA.ShowLevel, LevelUp, UCA.SelectedFunctionalManagerType);
                 AllPDF.CreateAllLevelPDF("PDF", DateTime.Now, "", "PDF");
             }
 
@@ -187,9 +187,9 @@ namespace REORGCHART.Controllers
                                                      "1", "23/10/2018", 6, "EN", UCA.TemplatePPTX, "PPTX", "POSITION_CALCULATED_COST", 
                                                      UFH.PositionCostField, UserData.CompanyName, UFH.FirstPosition, 
                                                      FinalyzerVersion);
-                DataSet OrgDataSet = LI.GetOrgChartDataTable(UCA.Role, UCA.Country, ShowLevelPDF, "999999", CurrentLevelPDF, UCA.Oper, UCA.Version, UCA.ShowLevel, LevelUp);
+                DataSet OrgDataSet = LI.GetOrgChartDataTable(UCA.Role, UCA.Country, ShowLevelPDF, "999999", CurrentLevelPDF, UCA.Oper, UCA.Version, UCA.ShowLevel, LevelUp, UCA.SelectedFunctionalManagerType);
                 AllPDF.CreateAllLevelPDFIntermediateResults(OrgDataSet, UCA.Oper.ToUpper(), UCA.Version, UCA.TemplatePPTX, "PPTX");
-                OrgDataSet = LI.GetOrgChartDataTable(UCA.Role, UCA.Country, ShowLevelPDF, "999999", CurrentLevelPDF, UCA.Oper, UCA.Version, UCA.ShowLevel, LevelUp);
+                OrgDataSet = LI.GetOrgChartDataTable(UCA.Role, UCA.Country, ShowLevelPDF, "999999", CurrentLevelPDF, UCA.Oper, UCA.Version, UCA.ShowLevel, LevelUp, UCA.SelectedFunctionalManagerType);
                 AllPDF.CreateAllLevelTemplatePPT("PPT", DateTime.Now, UCA.TemplatePPTX, "PPTX");
             }
 
@@ -249,9 +249,9 @@ namespace REORGCHART.Controllers
                                                              CurrentLevelPDF, "23/10/2018", 6, "EN", "", "PDF", "POSITION_CALCULATED_COST", 
                                                              UFH.PositionCostField, UserData.CompanyName, UFH.FirstPosition, 
                                                              FinalyzerVersion);
-                        DataSet OrgDataSet = LI.GetOrgChartDataTable(UCA.Role, UCA.Country, ShowLevelPDF, "999999", CurrentLevelPDF, UCA.Oper, UCA.Version, UCA.ShowLevel, LevelUp);
+                        DataSet OrgDataSet = LI.GetOrgChartDataTable(UCA.Role, UCA.Country, ShowLevelPDF, "999999", CurrentLevelPDF, UCA.Oper, UCA.Version, UCA.ShowLevel, LevelUp, UCA.SelectedFunctionalManagerType);
                         AllPDF.CreateAllLevelPDFIntermediateResults(OrgDataSet, UCA.Oper.ToUpper(), VD.VersionNo.ToString(), "", "PDF");
-                        OrgDataSet = LI.GetOrgChartDataTable(UCA.Role, UCA.Country, ShowLevelPDF, "999999", CurrentLevelPDF, UCA.Oper, UCA.Version, UCA.ShowLevel, LevelUp);
+                        OrgDataSet = LI.GetOrgChartDataTable(UCA.Role, UCA.Country, ShowLevelPDF, "999999", CurrentLevelPDF, UCA.Oper, UCA.Version, UCA.ShowLevel, LevelUp, UCA.SelectedFunctionalManagerType);
                         AllPDF.CreateAllLevelPDF(OrgDataSet, "PDF", UCA.Company, UCA.Oper, ViewFlag, FileNameWithPath, LevelUp, UCA.ShowLevel);
                     }
                 }
@@ -297,7 +297,9 @@ namespace REORGCHART.Controllers
                 {
                     Success = "Yes",
                     FileName = FN,
-                    ChartData = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, UCA.Levels, UCA.Oper, UCA.Version)
+                    ChartData = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
+                                                   UCA.Levels, UCA.Oper, UCA.Version,
+                                                   UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)[1]
                 });
             }
 
@@ -368,7 +370,9 @@ namespace REORGCHART.Controllers
                 db.SaveChanges();
             }
 
-            string ChangeLevelOrgChart = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, UCA.Levels, UCA.Oper, UCA.Version);
+            string ChangeLevelOrgChart = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
+                                                            UCA.Levels, UCA.Oper, UCA.Version,
+                                                            UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)[1];
             if (Session.Contents["MyModel"] != null)
             {
                 MyModel MyModel = (MyModel)Session.Contents["MyModel"];
@@ -419,7 +423,9 @@ namespace REORGCHART.Controllers
                 UsedShowLevel = UCA.PartitionShowLevel,
                 UsedParentLevel = UCA.PartitionParentLevel,
                 UsedVersion = Version,
-                ChartData = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.PartitionShowLevel, UCA.PartitionParentLevel, UCA.Levels, UCA.Oper, Version)
+                ChartData = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.PartitionShowLevel, UCA.PartitionParentLevel, 
+                                               UCA.Levels, UCA.Oper, Version,
+                                               UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)[1]
             });
         }
 
@@ -459,7 +465,9 @@ namespace REORGCHART.Controllers
                 db.SaveChanges();
             }
 
-            string ChangeLevel = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, UCA.Levels, UCA.Oper, UCA.Version);
+            string ChangeLevel = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
+                                                    UCA.Levels, UCA.Oper, UCA.Version,
+                                                    UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)[1];
             if (Session.Contents["MyModel"] != null)
             {
                 MyModel MyModel = (MyModel)Session.Contents["MyModel"];
@@ -717,6 +725,10 @@ namespace REORGCHART.Controllers
                                  ufh.Role == "Finalyzer"
                            select ufh).FirstOrDefault();
 
+                string[] RetValue = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel,
+                                                       myla.Levels, myla.Oper, myla.Version,
+                                                       myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, 
+                                                       myla.SelectedFunctionalManagerType);
                 var viewModel = new MyModel
                 {
                     UserId = UserData.UserName,
@@ -750,7 +762,8 @@ namespace REORGCHART.Controllers
                     Country = myla.Country,
                     Countries = JsonConvert.SerializeObject((from co in db.LegalCountries
                                                              select co).Distinct().ToList()),
-                    ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
+                    TreeData = RetValue[0],
+                    ChartData = RetValue[1],
                     Role = myla.Role,
                     AssignedRole = LI.GetUserRoles(),
                     HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),
@@ -839,6 +852,9 @@ namespace REORGCHART.Controllers
                        where ufh.CompanyName == UserData.CompanyName &&
                              ufh.Role == "Finalyzer"
                        select ufh).FirstOrDefault();
+            string[] RetValue = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel,
+                                               myla.Levels, myla.Oper, myla.Version,
+                                               myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType);
             var viewModel = new MyModel
             {
                 UserId = UserData.UserName,
@@ -873,7 +889,8 @@ namespace REORGCHART.Controllers
                 Country = myla.Country,
                 Countries = JsonConvert.SerializeObject((from co in db.LegalCountries
                                                          select co).Distinct().ToList()),
-                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
+                TreeData = RetValue[0],
+                ChartData = RetValue[1],
                 Role = myla.Role,
                 AssignedRole = LI.GetUserRoles(),
                 HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),
@@ -959,6 +976,11 @@ namespace REORGCHART.Controllers
                            where ufh.CompanyName == UserData.CompanyName &&
                                  ufh.Role == "Finalyzer"
                            select ufh).FirstOrDefault();
+
+                string[] RetValue = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel,
+                                                   myla.Levels, myla.Oper, myla.Version,
+                                                   myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType);
+
                 var viewModel = new MyModel
                 {
                     UserId = UserData.UserName,
@@ -993,7 +1015,8 @@ namespace REORGCHART.Controllers
                     Country = myla.Country,
                     Countries = JsonConvert.SerializeObject((from co in db.LegalCountries
                                                              select co).Distinct().ToList()),
-                    ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
+                    TreeData = RetValue[0],
+                    ChartData = RetValue[1],
                     Role = myla.Role,
                     AssignedRole = LI.GetUserRoles(),
                     HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),
@@ -1097,6 +1120,9 @@ namespace REORGCHART.Controllers
                     if (VD.UserRole == "Finalyzer") FinalyzerVersionFlag = "Yes";
                 }
 
+                string[] RetValue = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel,
+                                                   myla.Levels, myla.Oper, myla.Version,
+                                                   myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType);
                 var viewModel = new MyModel
                 {
                     UserId = UserData.UserName,
@@ -1131,7 +1157,8 @@ namespace REORGCHART.Controllers
                     Country = myla.Country,
                     Countries = JsonConvert.SerializeObject((from co in db.LegalCountries
                                                              select co).Distinct().ToList()),
-                    ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
+                    TreeData = RetValue[0],
+                    ChartData = RetValue[1],
                     Role = myla.Role,
                     AssignedRole = LI.GetUserRoles(),
                     HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),
@@ -1374,7 +1401,9 @@ namespace REORGCHART.Controllers
                     {
                         Success = "Yes",
                         Message = "Picture Uploded successfully",
-                        ChartData = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, UCA.Levels, UCA.Oper, UCA.Version)
+                        ChartData = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
+                                                       UCA.Levels, UCA.Oper, UCA.Version,
+                                                       UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)
                     });
                 }
                 else
@@ -1708,7 +1737,9 @@ namespace REORGCHART.Controllers
                 Country = myla.Country,
                 Countries = JsonConvert.SerializeObject((from co in db.LegalCountries
                                                          select co).Distinct().ToList()),
-                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
+                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                               myla.Levels, myla.Oper, myla.Version,
+                                               myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
                 Role = myla.Role,
                 HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),
                 DDL = JsonConvert.SerializeObject((from vd in db.VersionDetails
@@ -1742,7 +1773,9 @@ namespace REORGCHART.Controllers
                 Country = myla.Country,
                 Countries = JsonConvert.SerializeObject((from co in db.LegalCountries
                                                          select co).Distinct().ToList()),
-                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
+                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                               myla.Levels, myla.Oper, myla.Version,
+                                               myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
                 Role = myla.Role,
                 HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),
                 DDL = JsonConvert.SerializeObject((from vd in db.VersionDetails
@@ -1776,7 +1809,9 @@ namespace REORGCHART.Controllers
                 Country = myla.Country,
                 Countries = JsonConvert.SerializeObject((from co in db.LegalCountries
                                                          select co).Distinct().ToList()),
-                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
+                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                               myla.Levels, myla.Oper, myla.Version,
+                                               myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
                 Role = myla.Role,
                 HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),
                 DDL = JsonConvert.SerializeObject((from vd in db.VersionDetails
@@ -1815,7 +1850,9 @@ namespace REORGCHART.Controllers
                 Country = myla.Country,
                 Countries = JsonConvert.SerializeObject((from co in db.LegalCountries
                                                          select co).Distinct().ToList()),
-                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
+                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                               myla.Levels, myla.Oper, myla.Version,
+                                               myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
                 Role = myla.Role,
                 HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),
                 DDL = JsonConvert.SerializeObject((from vd in db.VersionDetails
@@ -1985,7 +2022,9 @@ namespace REORGCHART.Controllers
                 }
             }
 
-            string FuncationalOrgChart = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, UCA.Levels, UCA.Oper, UCA.Version);
+            string FuncationalOrgChart = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
+                                                            UCA.Levels, UCA.Oper, UCA.Version,
+                                                            UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)[1];
             if (Session.Contents["MyModel"] != null)
             {
                 MyModel MyModel = (MyModel)Session.Contents["MyModel"];
@@ -2081,7 +2120,9 @@ namespace REORGCHART.Controllers
                 UsedShowLevel = UCA.ShowLevel,
                 UsedParentLevel = UCA.ParentLevel,
                 UsedVersion = UCA.Version,
-                ChartData = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, UCA.Levels, UCA.Oper, UCA.Version)
+                ChartData = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
+                                               UCA.Levels, UCA.Oper, UCA.Version,
+                                               UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)
             });
         }
 
@@ -2117,7 +2158,9 @@ namespace REORGCHART.Controllers
                 UsedShowLevel = UCA.ShowLevel,
                 UsedParentLevel = UCA.ParentLevel,
                 UsedVersion = UCA.Version,
-                ChartData = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, UCA.Levels, UCA.Oper, UCA.Version)
+                ChartData = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
+                                               UCA.Levels, UCA.Oper, UCA.Version,
+                                               UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)
             });
         }
 
@@ -2166,7 +2209,9 @@ namespace REORGCHART.Controllers
                 UsedShowLevel = UCA.ShowLevel,
                 UsedParentLevel = UCA.ParentLevel,
                 UsedVersion = UCA.Version,
-                ChartData = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, UCA.Levels, UCA.Oper, UCA.Version)
+                ChartData = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
+                                               UCA.Levels, UCA.Oper, UCA.Version,
+                                               UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)
             });
         }
 
@@ -2230,7 +2275,9 @@ namespace REORGCHART.Controllers
                     return Json(new
                     {
                         Success = "Failure",
-                        ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
+                        ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                                       myla.Levels, myla.Oper, myla.Version,
+                                                       myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
                         ShowMessage = "Error: Employee Information not saved, Please select your own version to edit employee information"
                     });
                 }
@@ -2238,7 +2285,9 @@ namespace REORGCHART.Controllers
                 return Json(new
                 {
                     Success = "Success",
-                    ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
+                    ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                                   myla.Levels, myla.Oper, myla.Version,
+                                                   myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
                     ShowMessage = "Employee Information Saved"
                 });
             }
@@ -2983,7 +3032,9 @@ namespace REORGCHART.Controllers
                     }
                     return Json(new
                     {
-                        ChartData = LI.GetOrgChartData(VD.UserRole, VD.Country, VD.ShowLevel, "999999", UCA.Levels, UCA.Oper, VD.VersionNo.ToString()),
+                        ChartData = LI.GetOrgChartData(VD.UserRole, VD.Country, VD.ShowLevel, "999999", 
+                                                       UCA.Levels, UCA.Oper, VD.VersionNo.ToString(),
+                                                       UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)[1],
                         UsedRole = VD.UserRole,
                         UsedShowLevel = VD.ShowLevel,
                         UsedParentLevel = "999999",
@@ -3005,7 +3056,9 @@ namespace REORGCHART.Controllers
                 UsedOper = myla.Oper,
                 UsedView = myla.View,
                 UsedCountry = myla.Country,
-                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
+                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                               myla.Levels, myla.Oper, myla.Version,
+                                               myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
                 ChartHRCoreData = JsonConvert.SerializeObject(""),
                 UsedRole = myla.Role,
                 HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),
@@ -3045,7 +3098,9 @@ namespace REORGCHART.Controllers
                     }
                     return Json(new
                     {
-                        ChartData = LI.GetOrgChartData(VD.UserRole, VD.Country, VD.ShowLevel, "999999", UCA.Levels, UCA.Oper, VD.VersionNo.ToString()),
+                        ChartData = LI.GetOrgChartData(VD.UserRole, VD.Country, VD.ShowLevel, "999999", 
+                                                       UCA.Levels, UCA.Oper, VD.VersionNo.ToString(),
+                                                       UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)[1],
                         UsedRole = VD.UserRole,
                         HRCoreVersion = LI.GetHRCoreVersion(VD.Country, UCA.Oper),
                     });
@@ -3064,7 +3119,9 @@ namespace REORGCHART.Controllers
                 UsedOper = myla.Oper,
                 UsedView = myla.View,
                 UsedCountry = myla.Country,
-                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
+                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                               myla.Levels, myla.Oper, myla.Version,
+                                               myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
                 ChartHRCoreData = JsonConvert.SerializeObject(""),
                 UsedRole = myla.Role,
                 HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),
@@ -3178,7 +3235,9 @@ namespace REORGCHART.Controllers
                 UsedOper = myla.Oper,
                 UsedView = myla.View,
                 UsedCountry = myla.Country,
-                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
+                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                               myla.Levels, myla.Oper, myla.Version,
+                                               myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
                 ChartHRCoreData = JsonConvert.SerializeObject(""),
                 UsedRole = myla.Role,
                 HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),
@@ -3303,7 +3362,9 @@ namespace REORGCHART.Controllers
                 UsedOper = myla.Oper,
                 UsedView = myla.View,
                 UsedCountry = myla.Country,
-                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
+                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                               myla.Levels, myla.Oper, myla.Version,
+                                               myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
                 ChartHRCoreData = JsonConvert.SerializeObject(""),
                 UsedRole = myla.Role,
                 HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),
@@ -3383,7 +3444,9 @@ namespace REORGCHART.Controllers
                             Population = VD.Population,
                             UserName = VD.UserName,
                             Version = VD.Version,
-                            ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
+                            ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                                           myla.Levels, myla.Oper, myla.Version,
+                                                           myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
                             DDL = JsonConvert.SerializeObject(lstVD)
                         });
                     }
@@ -3565,7 +3628,9 @@ namespace REORGCHART.Controllers
                                     Population = VDInf.Population,
                                     UserName = VDInf.UserName,
                                     Version = VDInf.Version,
-                                    ChartData = LI.GetOrgChartData(VDInf.UserRole, VDInf.Country, VDInf.ShowLevel, "999999", myla.Levels, myla.Oper, VDInf.VersionNo.ToString()),
+                                    ChartData = LI.GetOrgChartData(VDInf.UserRole, VDInf.Country, VDInf.ShowLevel, "999999", 
+                                                                   myla.Levels, myla.Oper, VDInf.VersionNo.ToString(),
+                                                                   myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
                                     DDL = JsonConvert.SerializeObject(lstVD)
                                 });
                             }
@@ -3867,8 +3932,10 @@ namespace REORGCHART.Controllers
                 {
                     Success = "Yes",
                     ShowMessage = (ErrorString == "" ? "Population saved" : ErrorString),
-                    Data = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
-                    HRData = LI.GetOrgChartHrCoreData(myla.Role, myla.Country, myla.ShowLevel, myla.Levels, myla.Oper, myla.Version),
+                    Data = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                              myla.Levels, myla.Oper, myla.Version,
+                                              myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType),
+                    HRData = LI.GetOrgChartHrCoreData(myla.Role, myla.Country, myla.ShowLevel, myla.Levels, myla.Oper, myla.Version, myla.SelectedFunctionalManagerType)[1],
                     DDL = JsonConvert.SerializeObject(lstVD)
                 });
             }
@@ -4129,7 +4196,8 @@ namespace REORGCHART.Controllers
                             UserName = myla.SelectedUser,
                             Version = myla.Version,
                             ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel,
-                                                               myla.Levels, myla.Oper, myla.Version),
+                                                           myla.Levels, myla.Oper, myla.Version,
+                                                           myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
                             DDL = JsonConvert.SerializeObject(lstVD)
                         });
                     }
@@ -4377,7 +4445,11 @@ namespace REORGCHART.Controllers
                                 {
                                     Success = "Success",
                                     ShowMessage = "New Position added successfully.",
-                                    Message = LI.GetOrgChartData(UserLastAction.Role, UserLastAction.Country, UserLastAction.ShowLevel, UserLastAction.ParentLevel, UserLastAction.Levels, UserLastAction.Oper, UserLastAction.Version),
+                                    Message = LI.GetOrgChartData(UserLastAction.Role, UserLastAction.Country, 
+                                                                 UserLastAction.ShowLevel, UserLastAction.ParentLevel, 
+                                                                 UserLastAction.Levels, UserLastAction.Oper, UserLastAction.Version,
+                                                                 UserLastAction.OrgChartType, UserLastAction.SelectedPortraitModeMultipleLevel, 
+                                                                 UserLastAction.SelectedFunctionalManagerType),
                                     InitialValues = JsonConvert.SerializeObject((from iv in db.InitializeTables where iv.CompanyName == UserData.CompanyName select iv).FirstOrDefault())
                                 });
                             }
@@ -4499,7 +4571,9 @@ namespace REORGCHART.Controllers
                                             UsedShowLevel = UserLastAction.ShowLevel,
                                             UsedParentLevel = UserLastAction.ParentLevel,
                                             UsedVersion = UserLastAction.Version,
-                                            ChartData = LI.GetOrgChartData(myla.Role, myla.Country, UserLastAction.ShowLevel, UserLastAction.ParentLevel, myla.Levels, myla.Oper, myla.Version)
+                                            ChartData = LI.GetOrgChartData(myla.Role, myla.Country, UserLastAction.ShowLevel, UserLastAction.ParentLevel, 
+                                                                           myla.Levels, myla.Oper, myla.Version,
+                                                                           myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1]
                                         });
 
                                     }
@@ -4521,7 +4595,9 @@ namespace REORGCHART.Controllers
                                     UsedShowLevel = UserLastAction.ShowLevel,
                                     UsedParentLevel = UserLastAction.ParentLevel,
                                     UsedVersion = UserLastAction.Version,
-                                    ChartData = LI.GetOrgChartData(myla.Role, myla.Country, UserLastAction.ShowLevel, UserLastAction.ParentLevel, myla.Levels, myla.Oper, myla.Version)
+                                    ChartData = LI.GetOrgChartData(myla.Role, myla.Country, UserLastAction.ShowLevel, UserLastAction.ParentLevel, 
+                                                                   myla.Levels, myla.Oper, myla.Version,
+                                                                   myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1]
                                 });
                             }
                         }
@@ -4533,7 +4609,9 @@ namespace REORGCHART.Controllers
             {
                 Success = "Failure",
                 ShowMessage = "Choose Finalyzer/Player role and your own version to Drag and drop and to add new position",
-                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version)
+                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                               myla.Levels, myla.Oper, myla.Version,
+                                               myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1]
             });
         }
 
@@ -4580,8 +4658,12 @@ namespace REORGCHART.Controllers
                 {
                     Success = "Yes",
                     Message = "Changes applied",
-                    Data = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
-                    IVData = LI.GetOrgChartData(myIV.UserRole, myIV.Country, myIV.ShowLevel, "999999", myla.Levels, myla.Oper, myIV.VersionNo.ToString())
+                    Data = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                              myla.Levels, myla.Oper, myla.Version,
+                                              myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
+                    IVData = LI.GetOrgChartData(myIV.UserRole, myIV.Country, myIV.ShowLevel, "999999", 
+                                                myla.Levels, myla.Oper, myIV.VersionNo.ToString(),
+                                                myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1]
                 });
             }
 
@@ -4622,7 +4704,9 @@ namespace REORGCHART.Controllers
                 {
                     Success = "Yes",
                     Message = "Changes applied",
-                    Data = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version)
+                    Data = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                              myla.Levels, myla.Oper, myla.Version,
+                                              myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1]
                 });
             }
 
@@ -4631,7 +4715,9 @@ namespace REORGCHART.Controllers
             {
                 Success = "No",
                 Message = "Choose Player role",
-                Data = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version)
+                Data = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                          myla.Levels, myla.Oper, myla.Version,
+                                          myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1]
             });
         }
 
@@ -5124,7 +5210,9 @@ namespace REORGCHART.Controllers
                 Oper = myla.Oper,
                 View = myla.View,
                 Country = myla.Country,
-                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, myla.Levels, myla.Oper, myla.Version),
+                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                               myla.Levels, myla.Oper, myla.Version,
+                                               myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
                 Role = myla.Role,
                 HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),
                 DDL = JsonConvert.SerializeObject((from vd in db.VersionDetails

@@ -933,7 +933,7 @@ $(document).ready(function () {
         DivRow += "</li>"
 
         DivRow += "<li>";
-        DivRow += "  <a data-html=\"Hierarchy\" href=\"#\"><img src=\"" + HOST_ENV + "/Content/NewTemplateUI/Images/views.svg\" width=\"25px\" alt=\"logo\"/><span class=\"sidemenu-label\">Hierarchy</span><i class=\"fas fa-angle-up control-btns\"></i><i class=\"fas fa-angle-down control-btns\"></i></a>";
+        DivRow += "  <a data-html=\"Hierarchy\" href=\"#\"><img src=\"" + HOST_ENV + "/Content/NewTemplateUI/Images/collaboration.svg\" width=\"25px\" alt=\"logo\"/><span class=\"sidemenu-label\">Managers</span><i class=\"fas fa-angle-up control-btns\"></i><i class=\"fas fa-angle-down control-btns\"></i></a>";
         DivRow += "<ul>"
         DivRow += "<li>";
         DivRow += "<div id=\"divHierarchy\" class=\"zTreeDemoBackground left\" style=\"max-height:500px;overflow:auto;\">";
@@ -1087,7 +1087,7 @@ $(document).ready(function () {
 });
 
 function ShowHierarchy() {
-    var zNodesJson = JSON.parse($("#hdnOrgChartData").val());
+    var zNodesJson = JSON.parse($("#hdnOrgTreeData").val());
     var zNodes = [];
     if (zNodesJson.length >= 1) {
         for (var Idx = 0; Idx <= zNodesJson.length - 1; Idx++) {
@@ -1108,6 +1108,12 @@ function ShowHierarchy() {
                 alert(ex);
             }
         }
+    }
+    try {
+        $.fn.zTree.destroy("treeDemo");
+    }
+    catch (ex) {
+        console.log(ex);
     }
     $.fn.zTree.init($("#treeDemo"), zTreeSettings, zNodes);
     setCheck("treeDemo");
@@ -1863,12 +1869,14 @@ function SaveScreenSettings() {
         data: JsonData,
         async: true,
         dateType: "json",
-        success: function (jsonStr) {
+        success: function (Json) {
             if ($("#hdnOrgType").val() == "OV") {
                 $("#divRightOrgChart").show();
                 $("#divShowMap").hide();
 
-                $("#hdnOrgChartData").val(jsonStr);
+                $("#hdnOrgChartData").val(Json.ChartData);
+                $("#hdnOrgTreeData").val(Json.TreeData);
+                ShowHierarchy();
                 CancelOperation();
             }
             else if ($("#hdnOrgType").val() == "LV") {

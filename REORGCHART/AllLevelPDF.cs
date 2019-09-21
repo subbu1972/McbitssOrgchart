@@ -3821,7 +3821,7 @@ namespace REORGCHART
 
             LevelInfo LI = new LevelInfo();
             MyLastAction myla = LI.GetUserCurrentAction("");
-            DataSet dtSet = LI.GetOrgChartDataTable(myla.Role, myla.Country, ShowLevel, PreviousLevel, myla.Levels, myla.Oper, myla.Version, myla.ShowLevel, "No");
+            DataSet dtSet = LI.GetOrgChartDataTable(myla.Role, myla.Country, ShowLevel, PreviousLevel, myla.Levels, myla.Oper, myla.Version, myla.ShowLevel, "No", myla.SelectedFunctionalManagerType);
             DataTable dtlbl = dtSet.Tables[0];
             foreach (DataRow dr in dtlbl.Rows)
             {

@@ -528,6 +528,7 @@ namespace REORGCHART.Models
         public string Oper { get; set; }
         public string View { get; set; }
         public string Version { get; set; }
+        public string TreeData { get; set; }
         public string ChartData { get; set; }
         public string ChartHRCoreData { get; set; }
         public string Role { get; set; }

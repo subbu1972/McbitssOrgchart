@@ -606,7 +606,7 @@ namespace REORGCHART.Helper
 
         public DataSet GetOrgChartDataTable(string UserType, string Country, string ShowLevel, string ParentLevel, 
                                             string Levels, string Oper, string Version, string CurrentLevel, 
-                                            string OneLevelUp)
+                                            string OneLevelUp, string FlagFM)
         {
             DataSet RetTable = new DataSet();
             LoginUsers UserData = GetLoginUserInfo("");
@@ -624,11 +624,14 @@ namespace REORGCHART.Helper
                 {
                     OrgChartDataFM.Columns.Add(dc.ColumnName, dc.DataType);
                 }
-                foreach (DataRow dr in OrgChartData.Rows)
+                if (FlagFM == "HideFM")
                 {
-                    if (dr["DOTTED_LINE_FLAG"].ToString() == "Y")
+                    foreach (DataRow dr in OrgChartData.Rows)
                     {
-                        OrgChartDataFM.Rows.Add(dr.ItemArray);
+                        if (dr["DOTTED_LINE_FLAG"].ToString() == "Y")
+                        {
+                            OrgChartDataFM.Rows.Add(dr.ItemArray);
+                        }
                     }
                 }
                 int COUNT = OrgChartData.Rows.Count;
@@ -694,8 +697,11 @@ namespace REORGCHART.Helper
             }
         }
 
-        public string GetOrgChartData(string UserType, string Country, string ShowLevel, string ParentLevel, string Levels, string Oper, string Version)
+        public string[] GetOrgChartData(string UserType, string Country, string ShowLevel, string ParentLevel, 
+                                      string Levels, string Oper, string Version, 
+                                      string OrgType, string PortraitModeMultipleLevel, string FlagFM)
         {
+            string[] RetOrgChart = { "", "" };
             LoginUsers UserData = GetLoginUserInfo("");
             try
             {
@@ -707,7 +713,56 @@ namespace REORGCHART.Helper
                 // Operation & Legal chart details              
                 orgChartData = GetLevelInfo(UserData.UserName, UserData.CompanyName, UserType, ShowLevel, ParentLevel, Levels, Version, Oper);
 
-                return JsonConvert.SerializeObject(orgChartData);
+                DataTable OrgTreeData = new DataTable();
+                foreach (DataColumn dc in orgChartData.Columns)
+                {
+                    OrgTreeData.Columns.Add(dc.ColumnName, dc.DataType);
+                }
+                var BreadGrams = orgChartData.AsEnumerable()
+                                .Where(r => r.Field<String>("LEVEL_ID").Contains(ShowLevel) &&
+                                            r.Field<String>("MFLAG").Contains("XXX"))
+                                .Select(c => c.Field<String>("BREAD_GRAM"));
+                foreach (string BreadGram in BreadGrams)
+                {
+                    foreach (DataRow dr in orgChartData.Rows)
+                    {
+                        if (BreadGram.Contains(dr["PARENT_LEVEL_ID"].ToString()) ||
+                            dr["PARENT_LEVEL_ID"].ToString()=="999999")
+                        {
+                            OrgTreeData.Rows.Add(dr.ItemArray);
+                        }
+                    }
+                }
+                RetOrgChart[0]= JsonConvert.SerializeObject(OrgTreeData);
+
+                if (FlagFM == "HideFM")
+                {
+                    int COUNT = orgChartData.Rows.Count;
+                    if (COUNT >= 1)
+                    {
+                        for (int Idr = COUNT - 1; Idr >= 0; Idr--)
+                        {
+                            if (orgChartData.Rows[Idr]["DOTTED_LINE_FLAG"].ToString() == "Y")
+                                orgChartData.Rows.Remove(orgChartData.Rows[Idr]);
+                        }
+                    }
+                }
+                if (OrgType == "OD" && PortraitModeMultipleLevel == "No")
+                {
+                    int COUNT = orgChartData.Rows.Count;
+                    if (COUNT >= 1)
+                    {
+                        for (int Idr = COUNT - 1; Idr >= 0; Idr--)
+                        {
+                            if (!(orgChartData.Rows[Idr]["PARENT_LEVEL_ID"].ToString() == ShowLevel ||
+                                  orgChartData.Rows[Idr]["LEVEL_ID"].ToString() == ShowLevel))
+                                orgChartData.Rows.Remove(orgChartData.Rows[Idr]);
+                        }
+                    }
+                }
+                RetOrgChart[1] = JsonConvert.SerializeObject(orgChartData);
+
+                return RetOrgChart;
             }
             catch (Exception ex)
             {
@@ -716,11 +771,14 @@ namespace REORGCHART.Helper
                 Info.Add("Message", ex.Message);
                 Info.Add("StackTrace", ex.StackTrace);
 
-                return JsonConvert.SerializeObject(Info);
+                RetOrgChart[0] = "Error";
+                RetOrgChart[1] = JsonConvert.SerializeObject(Info);
+
+                return RetOrgChart;
             }
         }
 
-        public string GetOrgChartHrCoreData(string UserType, string Country, string ShowLevel, string Levels, string Oper, string Version)
+        public string GetOrgChartHrCoreData(string UserType, string Country, string ShowLevel, string Levels, string Oper, string Version, string FlagFM)
         {
             LoginUsers UserData = GetLoginUserInfo("");
             try
@@ -741,6 +799,18 @@ namespace REORGCHART.Helper
                 {
                     // Operation chart details              
                     orgChartData = GetLevelInfo(UserData.UserName, UserData.CompanyName, "Finalyzer", VD.ShowLevel, "999999", "All", VD.VersionNo.ToString(), Oper);
+                    if (FlagFM == "HideFM")
+                    {
+                        int COUNT = orgChartData.Rows.Count;
+                        if (COUNT >= 1)
+                        {
+                            for (int Idr = COUNT - 1; Idr >= 0; Idr--)
+                            {
+                                if (orgChartData.Rows[Idr]["DOTTED_LINE_FLAG"].ToString() == "Y")
+                                    orgChartData.Rows.Remove(orgChartData.Rows[Idr]);
+                            }
+                        }
+                    }
                 }
 
                 return JsonConvert.SerializeObject(orgChartData);
