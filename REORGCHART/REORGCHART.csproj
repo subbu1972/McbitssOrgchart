@@ -1295,6 +1295,7 @@
     <Content Include="Content\Map\worldLow.js" />
     <Content Include="Content\NewTemplateUI\CSS\style.css" />
     <Content Include="Content\NewTemplateUI\Images\add-icon.png" />
+    <Content Include="Content\NewTemplateUI\Images\collaboration.svg" />
     <Content Include="Content\NewTemplateUI\Images\cost-view.svg" />
     <Content Include="Content\NewTemplateUI\Images\mcbitss-view.svg" />
     <Content Include="Content\NewTemplateUI\Images\menu-button.svg" />
