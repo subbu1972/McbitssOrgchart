@@ -64,6 +64,10 @@ namespace REORGCHART.Controllers
                        where ufh.CompanyName == UserData.CompanyName &&
                              ufh.Role == "Finalyzer"
                        select ufh).FirstOrDefault();
+
+            string[] RetValue = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel,
+                                               myla.Levels, myla.Oper, myla.Version,
+                                               myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType);
             var viewModel = new MyModel
             {
                 UserId = UserData.UserName,
@@ -95,9 +99,8 @@ namespace REORGCHART.Controllers
                 Country = myla.Country,
                 Countries = JsonConvert.SerializeObject((from co in db.LegalCountries
                                                          select co).Distinct().ToList()),
-                ChartData =LI. GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
-                                               myla.Levels, myla.Oper, myla.Version, 
-                                               myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
+                TreeData = RetValue[0],
+                ChartData = RetValue[1],
                 Role = myla.Role,
                 AssignedRole = LI.GetUserRoles(),
                 HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),

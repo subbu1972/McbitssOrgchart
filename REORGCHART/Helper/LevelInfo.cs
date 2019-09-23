@@ -1001,10 +1001,29 @@ namespace REORGCHART.Helper
                     var UserData = (from usr in db.UserRoles
                                     where usr.UserId == UserName
                                     select usr).FirstOrDefault();
-                    LoginUser.CompanyName = UserData.CompanyName;
-                    LoginUser.UserName = UserData.UserId;
-                    LoginUser.Email = UserData.Email;
-                    LoginUser.Roles = UserData.Role;
+                    if (UserData != null)
+                    {
+                        LoginUser.CompanyName = UserData.CompanyName;
+                        LoginUser.UserName = UserData.UserId;
+                        LoginUser.Email = UserData.Email;
+                        LoginUser.Roles = UserData.Role;
+                    }
+                    else
+                    {
+                        LoginUser.CompanyName = wcCompanyName;
+                        LoginUser.UserName = UserName;
+                        LoginUser.Email = UserName+"@gmail.com";
+                        LoginUser.Roles = "User,EndUser";
+
+                        UserRoles URoles = new UserRoles();
+                        URoles.CompanyName = LoginUser.CompanyName;
+                        URoles.UserId = LoginUser.UserName;
+                        URoles.Email = LoginUser.Email;
+                        URoles.Role = LoginUser.Roles;
+                        db.UserRoles.Add(URoles);
+
+                        db.SaveChanges();
+                    }
                 }
                 else
                 {

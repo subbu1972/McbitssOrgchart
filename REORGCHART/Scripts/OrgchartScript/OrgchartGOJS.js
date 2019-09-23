@@ -377,8 +377,8 @@ function init(w, h, DragDrop) {
 
     function SetParentChildRelationship(e, SelectNodeObj, NodeObj) {
 
-        alert(NodeObj.LEVEL_ID + ":" + NodeObj.PARENT_LEVEL_ID);
-        alert(SelectNodeObj.LEVEL_ID + ":" + SelectNodeObj.PARENT_LEVEL_ID);
+        //alert(NodeObj.LEVEL_ID + ":" + NodeObj.PARENT_LEVEL_ID);
+        //alert(SelectNodeObj.LEVEL_ID + ":" + SelectNodeObj.PARENT_LEVEL_ID);
 
         if (document.getElementById("hdnOrgRole").value.toUpperCase() == "PLAYER" ||
             document.getElementById("hdnOrgRole").value.toUpperCase() == "FINALYZER") {
@@ -968,7 +968,7 @@ function init(w, h, DragDrop) {
                             $(go.TextBlock, textStyle(),  // the name
                                 {
                                     row: 0, column: 0, columnSpan: 8,
-                                    font: "7pt Segoe UI,sans-serif",
+                                    font: "6pt Segoe UI,sans-serif",
                                     editable: false, isMultiline: false,
                                     minSize: new go.Size(10, 10),
                                     stroke: Settings.TextColor,
@@ -1008,7 +1008,6 @@ function init(w, h, DragDrop) {
                             $(go.TextBlock, textStyle(),
                                 {
                                     row: 4, column: 0, columnSpan: 4,
-                                    margin: new go.Margin(0, 0, 0, 3),
                                     stroke: Settings.TextColor,
                                     alignment: go.Spot.Left
                                 },
@@ -1016,7 +1015,6 @@ function init(w, h, DragDrop) {
                             $(go.TextBlock, textStyle(),
                                 {
                                     row: 4, column: 4, columnSpan: 4,
-                                    margin: new go.Margin(0, 0, 0, 3),
                                     stroke: Settings.TextColor,
                                     alignment: go.Spot.Right
                                 },
