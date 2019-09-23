@@ -60,10 +60,10 @@ namespace REORGCHART.Helper
         }
 
 
-        public DataTable GetLevelInfo(string UserId, string CompanyName, string UserType,
+        public DataSet GetLevelInfo(string UserId, string CompanyName, string UserType,
                                       string ShowLevel, string ParentLevel, string Levels, string Version, string OperType)
         {
-            DataTable retDT = null;
+            DataSet dsLI = null;
             if (ShowLevel == ParentLevel) ParentLevel = "999999";
             string BreadGram = (ParentLevel == null ? "" : ParentLevel);
             if (BreadGram == "" || BreadGram == "999999") BreadGram = ShowLevel; else BreadGram += "-->" + ShowLevel;
@@ -86,10 +86,10 @@ namespace REORGCHART.Helper
                 cmd.Parameters.Add("@OPER", SqlDbType.VarChar, 150).Value = OperType;
 
                 Common csobj = new Common();
-                retDT = csobj.SPReturnDataTable(cmd);
+                dsLI = csobj.SPReturnDataSet(cmd);
             }
 
-            return retDT;
+            return dsLI;
         }
 
         public DataTable GetVersion(string OperType, string CompanyName, string Version, string ShowLevel)
@@ -618,7 +618,7 @@ namespace REORGCHART.Helper
                 if (Levels == null || Levels == "" || Levels == " ") Levels = "1";
 
                 // Operation & Legal chart details              
-                OrgChartData = GetLevelInfo(UserData.UserName, UserData.CompanyName, UserType, ShowLevel, ParentLevel, Levels, Version, Oper);
+                OrgChartData = GetLevelInfo(UserData.UserName, UserData.CompanyName, UserType, ShowLevel, ParentLevel, Levels, Version, Oper).Tables[0];
                 DataTable OrgChartDataFM = new DataTable();
                 foreach(DataColumn dc in OrgChartData.Columns)
                 {
@@ -705,35 +705,44 @@ namespace REORGCHART.Helper
             LoginUsers UserData = GetLoginUserInfo("");
             try
             {
+                DataSet orgChartDataSet = null;
                 DataTable orgChartData = null;
 
                 if (ShowLevel == null) ShowLevel = "";
                 if (Levels == null || Levels == "" || Levels == " ") Levels = "1";
 
                 // Operation & Legal chart details              
-                orgChartData = GetLevelInfo(UserData.UserName, UserData.CompanyName, UserType, ShowLevel, ParentLevel, Levels, Version, Oper);
+                orgChartDataSet = GetLevelInfo(UserData.UserName, UserData.CompanyName, UserType, ShowLevel, ParentLevel, Levels, Version, Oper);
+                DataTable OrgTreeData = orgChartDataSet.Tables[1];
+                orgChartData= orgChartDataSet.Tables[0];
+                RetOrgChart[0] = JsonConvert.SerializeObject(OrgTreeData);
 
-                DataTable OrgTreeData = new DataTable();
-                foreach (DataColumn dc in orgChartData.Columns)
-                {
-                    OrgTreeData.Columns.Add(dc.ColumnName, dc.DataType);
-                }
-                var BreadGrams = orgChartData.AsEnumerable()
-                                .Where(r => r.Field<String>("LEVEL_ID").Contains(ShowLevel) &&
-                                            r.Field<String>("MFLAG").Contains("XXX"))
-                                .Select(c => c.Field<String>("BREAD_GRAM"));
-                foreach (string BreadGram in BreadGrams)
-                {
-                    foreach (DataRow dr in orgChartData.Rows)
-                    {
-                        if (BreadGram.Contains(dr["PARENT_LEVEL_ID"].ToString()) ||
-                            dr["PARENT_LEVEL_ID"].ToString()=="999999")
-                        {
-                            OrgTreeData.Rows.Add(dr.ItemArray);
-                        }
-                    }
-                }
-                RetOrgChart[0]= JsonConvert.SerializeObject(OrgTreeData);
+                //SET @SQLQUERY = 'SELECT LEVEL_ID, PARENT_LEVEL_ID, FULL_NAME, NOR_COUNT 
+                //                   FROM '+@COMPANYTB+' WHERE MFLAG = ''XXX'' AND PARENT_LEVEL_ID IN(SELECT * FROM dbo.fnSplit(''999999-- > '+@BREAD_GRAM+''', ''-- > '')) AND VERSION = '''+@VERSION+'''
+                //                   ORDER BY SORTNO, PARENT_LEVEL_ID, LEVEL_ID ASC';
+                //PRINT @SQLQUERY
+                //EXEC(@SQLQUERY);
+                //DataTable OrgTreeData = new DataTable();
+                //foreach (DataColumn dc in orgChartDataSet.Tables[1].Columns)
+                //{
+                //    OrgTreeData.Columns.Add(dc.ColumnName, dc.DataType);
+                //}
+                //var BreadGrams = orgChartData.AsEnumerable()
+                //                .Where(r => r.Field<String>("LEVEL_ID").Contains(ShowLevel) &&
+                //                            r.Field<String>("MFLAG").Contains("XXX"))
+                //                .Select(c => c.Field<String>("BREAD_GRAM"));
+                //foreach (string BreadGram in BreadGrams)
+                //{
+                //    foreach (DataRow dr in orgChartDataSet.Tables[1].Rows)
+                //    {
+                //        if (BreadGram.Contains(dr["PARENT_LEVEL_ID"].ToString()) ||
+                //            dr["PARENT_LEVEL_ID"].ToString()=="999999")
+                //        {
+                //            OrgTreeData.Rows.Add(dr.ItemArray);
+                //        }
+                //    }
+                //}
+                //RetOrgChart[0]= JsonConvert.SerializeObject(OrgTreeData);
 
                 if (FlagFM == "HideFM")
                 {
@@ -798,7 +807,7 @@ namespace REORGCHART.Helper
                 if (VD != null)
                 {
                     // Operation chart details              
-                    orgChartData = GetLevelInfo(UserData.UserName, UserData.CompanyName, "Finalyzer", VD.ShowLevel, "999999", "All", VD.VersionNo.ToString(), Oper);
+                    orgChartData = GetLevelInfo(UserData.UserName, UserData.CompanyName, "Finalyzer", VD.ShowLevel, "999999", "All", VD.VersionNo.ToString(), Oper).Tables[0];
                     if (FlagFM == "HideFM")
                     {
                         int COUNT = orgChartData.Rows.Count;

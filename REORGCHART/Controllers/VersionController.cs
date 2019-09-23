@@ -370,13 +370,14 @@ namespace REORGCHART.Controllers
                 db.SaveChanges();
             }
 
-            string ChangeLevelOrgChart = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
+            string[] ChangeLevelOrgChart = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
                                                             UCA.Levels, UCA.Oper, UCA.Version,
-                                                            UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)[1];
+                                                            UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType);
             if (Session.Contents["MyModel"] != null)
             {
                 MyModel MyModel = (MyModel)Session.Contents["MyModel"];
-                MyModel.ChartData = ChangeLevelOrgChart;
+                MyModel.ChartData = ChangeLevelOrgChart[1];
+                MyModel.TreeData = ChangeLevelOrgChart[0];
                 MyModel.ShowLevel = Level;
                 Session.Contents["MyModel"] = MyModel;
             }
@@ -386,7 +387,8 @@ namespace REORGCHART.Controllers
                 Message = "Success",
                 UsedDate = DateTime.Now,
                 UsedShowLevel = Level,
-                ChartData = ChangeLevelOrgChart
+                ChartData = ChangeLevelOrgChart[1],
+                TreeData = ChangeLevelOrgChart[0]
             });
         }
 

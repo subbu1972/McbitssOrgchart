@@ -42,11 +42,14 @@ var zTreeSettings = {
         enable: false
     },
     callback: {
-        onCheck: onCheck
+        onCheck: OnCheck,
+        onClick: OnClick
     },
     data: {
         simpleData: {
-            enable: true
+            enable: true,
+            idkey: "LEVEL_ID",
+            pIdkey: "PARENT_LEVEL_ID"
         }
     }
 };
@@ -70,7 +73,48 @@ function showCode(str) {
     code.append("<li>" + str + "</li>");
 }
 
-function onCheck(e, treeId, treeNode) {
+function OnCheck(e, treeId, treeNode) {
+    alert(treeNode.name.toUpperCase() + ":" + treeNode.id.toUpperCase());
+}
+
+function OnClick(e, treeId, treeNode) {
+    //alert(treeNode.name.toUpperCase() + ":" + treeNode.id.toUpperCase() + ":" + treeNode.pId.toUpperCase());
+
+    $(".overlay").show();
+
+    var JsonData = {
+        ShowLevel: treeNode.id.toUpperCase(),
+        ParentLevel: treeNode.pId.toUpperCase()
+    };
+    $.ajax({
+        type: "POST",
+        url: HOST_ENV + "/Version/ChangeShowLevel",
+        data: JsonData,
+        async: true,
+        dateType: "json",
+        success: function (Json) {
+            try {
+                $("#div_OA_ShowChart").show();
+                $("#div_OA_ShowUploadData").hide();
+            }
+            catch (ex) {
+                Console.log(ex);
+            }
+            $("#hdnOrgTreeData").val(Json.TreeData);
+            $("#hdnOrgChartData").val(Json.ChartData);
+            $("#hdnOrgChartHRCoreData").val(Json.ChartData);
+            $("#hdnOrgShowLevel").val(Json.UsedShowLevel);
+            $("#hdnOrgPartitionShowLevel").val(Json.UsedShowLevel);
+            $("#hdnOrgVersion").val(Json.UsedVersion);
+            $("#hdnOrgPartitionVersion").val(Json.UsedVersion);
+            document.getElementById("mySavedModel").value = "{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + $("#hdnOrgChartData").val() + " }";
+
+            CancelOperation();
+            $(".overlay").hide();
+        }
+    });
+
+    return false;
 }
 
 function ShowMessage(Type, Message) {
@@ -1087,6 +1131,7 @@ $(document).ready(function () {
 });
 
 function ShowHierarchy() {
+    console.log($("#hdnOrgTreeData").val());
     var zNodesJson = JSON.parse($("#hdnOrgTreeData").val());
     var zNodes = [];
     if (zNodesJson.length >= 1) {
@@ -1096,10 +1141,10 @@ function ShowHierarchy() {
                     var item = {};
                     item["id"] = zNodesJson[Idx].LEVEL_ID;
                     item["pId"] = (zNodesJson[Idx].PARENT_LEVEL_ID == "999999") ? "0" : zNodesJson[Idx].PARENT_LEVEL_ID;
-                    item["name"] = zNodesJson[Idx].NAME + "( " + zNodesJson[Idx].LEVEL_ID + " )";
+                    item["name"] = zNodesJson[Idx].FULL_NAME + "( " + zNodesJson[Idx].LEVEL_ID + " )";
                     item["obj"] = "";
                     item["checked"] = "false";
-                    item["title"] = zNodesJson[Idx].NAME + "( " + zNodesJson[Idx].LEVEL_ID + " )";
+                    item["title"] = zNodesJson[Idx].FULL_NAME + "( " + zNodesJson[Idx].LEVEL_ID + " )";
                     item["dataid"] = (Idx + 1).toString();
                     zNodes.push(item);
                 }
@@ -2360,7 +2405,9 @@ function ShowOrgChartPosition(SL, PL) {
                 $("#div_OA_ShowUploadData").hide();
             }
             catch (ex) {
+                Console.log(ex);
             }
+            $("#hdnOrgTreeData").val(Json.TreeData);
             $("#hdnOrgChartData").val(Json.ChartData);
             $("#hdnOrgChartHRCoreData").val(Json.ChartData);
             $("#hdnOrgShowLevel").val(Json.UsedShowLevel);
@@ -2396,7 +2443,9 @@ function ShowRightOrgChartPosition(SL, PL) {
                 $("#div_OA_ShowUploadData").hide();
             }
             catch (ex) {
+                Console.log(ex);
             }
+            $("#hdnOrgTreeData").val(Json.TreeData);
             $("#hdnOrgChartData").val(Json.ChartData);
             $("#hdnOrgShowLevel").val(Json.UsedShowLevel);
             $("#hdnOrgVersion").val(Json.UsedVersion);
