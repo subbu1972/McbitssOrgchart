@@ -2334,10 +2334,12 @@ function loadCustom() {
             }
         }
 
+        alert(nodeDataArray.length);
         for (var idr = nodeDataArray.length - 1; idr >= 0; idr--) {
-            if (nodeDataArray[idr].DOTTED_LINE_FLAG == "Y" || !nodeDataArray[idr].NODE_LOCATION)
+            if (nodeDataArray[idr].DOTTED_LINE_FLAG == "Y")
                 nodeDataArray.splice(idr, 1);
         }
+        alert(nodeDataArray.length);
     }
 
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);

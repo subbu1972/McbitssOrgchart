@@ -501,7 +501,7 @@ $(document).ready(function () {
         if ($("#hdnCompanyName").val().toUpperCase() != "UNHCR") {
             $("#divDownloadMLPDF").hide();
             $("#divDownloadAllPDF").hide();
-            $("#divDownloadPDF").hide();
+            $("#divDownloadPDF").show();
         }
         else if ($("#hdnCompanyName").val().toUpperCase() == "UNHCR") {
             $("#divDownloadMLPDF").hide();
