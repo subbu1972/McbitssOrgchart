@@ -373,13 +373,13 @@ namespace REORGCHART.Controllers
             string[] ChangeLevelOrgChart = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
                                                             UCA.Levels, UCA.Oper, UCA.Version,
                                                             UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType);
-            if (Session.Contents["MyModel"] != null)
+            if (Session.Contents[UserData.UserName + "_MyModel"] != null)
             {
-                MyModel MyModel = (MyModel)Session.Contents["MyModel"];
+                MyModel MyModel = (MyModel)Session.Contents[UserData.UserName + "_MyModel"];
                 MyModel.ChartData = ChangeLevelOrgChart[1];
                 MyModel.TreeData = ChangeLevelOrgChart[0];
                 MyModel.ShowLevel = Level;
-                Session.Contents["MyModel"] = MyModel;
+                Session.Contents[UserData.UserName + "_MyModel"] = MyModel;
             }
 
             return Json(new
@@ -470,11 +470,11 @@ namespace REORGCHART.Controllers
             string ChangeLevel = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
                                                     UCA.Levels, UCA.Oper, UCA.Version,
                                                     UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)[1];
-            if (Session.Contents["MyModel"] != null)
+            if (Session.Contents[UserData.UserName + "_MyModel"] != null)
             {
-                MyModel MyModel = (MyModel)Session.Contents["MyModel"];
+                MyModel MyModel = (MyModel)Session.Contents[UserData.UserName + "_MyModel"];
                 MyModel.ChartData = ChangeLevel;
-                Session.Contents["MyModel"] = MyModel;
+                Session.Contents[UserData.UserName + "_MyModel"] = MyModel;
             }
 
             return ChangeLevel;
@@ -692,22 +692,21 @@ namespace REORGCHART.Controllers
         // GET: Version
         public ActionResult EndUser()
         {
-            if (Session.Contents["MyModel"] == null)
+            LoginUsers UserData = LI.GetLoginUserInfo("EndUser");
+            if (UserData.ValidUser == "No")
             {
-                LoginUsers UserData = LI.GetLoginUserInfo("EndUser");
-                if (UserData.ValidUser == "No")
+                var UserRole = (from usr in db.UserRoles
+                                where usr.UserId == UserData.UserName
+                                select usr).FirstOrDefault();
+                if (UserRole.Role.IndexOf("EndUser") >= 0)
                 {
-                    var UserRole = (from usr in db.UserRoles
-                                    where usr.UserId == UserData.UserName
-                                    select usr).FirstOrDefault();
-                    if (UserRole.Role.IndexOf("EndUser") >= 0)
-                    {
-                        HttpContext.Session["LoginUserInf"] = null;
-                        UserData = LI.GetLoginUserInfo("EndUser");
-                    }
-                    else return RedirectToAction("NotAuthorizedPage", "Version");
+                    HttpContext.Session["LoginUserInf"] = null;
+                    UserData = LI.GetLoginUserInfo("EndUser");
                 }
-
+                else return RedirectToAction("NotAuthorizedPage", "Version");
+            }
+            if (Session.Contents[UserData.UserName+"_MyModel"] == null)
+            {
                 string Security = "No";
                 string[] AssignedView = LI.CheckUserRoles("EndUser").Split(',');
                 if (Array.IndexOf(AssignedView, "EndUser") != -1) Security = "Yes";
@@ -819,10 +818,11 @@ namespace REORGCHART.Controllers
                     ValidateSecurity = Security
 
                 };
+                Session.Contents[UserData.UserName + "_MyModel"] = viewModel;
 
                 return View(viewModel);
             }
-            MyModel MyModel = (MyModel)Session.Contents["MyModel"];
+            MyModel MyModel = (MyModel)Session.Contents[UserData.UserName + "_MyModel"];
 
             return View(MyModel);
         }
@@ -952,14 +952,13 @@ namespace REORGCHART.Controllers
         // GET: Version
         public ActionResult UploadVersion(string Search)
         {
-            if (Session.Contents["MyModel"] == null)
+            LoginUsers UserData = LI.GetLoginUserInfo("Player");
+            if (UserData.ValidUser == "No")
             {
-                LoginUsers UserData = LI.GetLoginUserInfo("Player");
-                if (UserData.ValidUser == "No")
-                {
-                    return RedirectToAction("NotAuthorizedPage", "Version", new { id = UserData.UserName });
-                }
-
+                return RedirectToAction("NotAuthorizedPage", "Version", new { id = UserData.UserName });
+            }
+            if (Session.Contents[UserData.UserName + "_MyModel"]==null)
+            {
                 string Security = "No";
                 string[] AssignedView = LI.CheckUserRoles("Player").Split(',');
                 if (Array.IndexOf(AssignedView, "Player") != -1) Security = "Yes";
@@ -1072,10 +1071,11 @@ namespace REORGCHART.Controllers
                     ValidateSecurity = Security
 
                 };
+                Session.Contents[UserData.UserName + "_MyModel"] = viewModel;
 
                 return View(viewModel);
             }
-            MyModel MyModel = (MyModel)Session.Contents["MyModel"];
+            MyModel MyModel = (MyModel)Session.Contents[UserData.UserName + "_MyModel"];
 
             return View(MyModel);
         }
@@ -1083,14 +1083,13 @@ namespace REORGCHART.Controllers
         // GET: Version
         public ActionResult UploadData(string Search)
         {
-            if (Session.Contents["MyModel"] == null)
+            LoginUsers UserData = LI.GetLoginUserInfo("Finalyzer");
+            if (UserData.ValidUser == "No")
             {
-                LoginUsers UserData = LI.GetLoginUserInfo("Finalyzer");
-                if (UserData.ValidUser == "No")
-                {
-                    return RedirectToAction("NotAuthorizedPage", "Version", new { id = UserData.UserName });
-                }
-
+                return RedirectToAction("NotAuthorizedPage", "Version", new { id = UserData.UserName });
+            }
+            if (Session.Contents[UserData.UserName + "_MyModel"] == null)
+            {
                 string Security = "No";
                 string[] AssignedView = LI.CheckUserRoles("Finalyzer").Split(',');
                 if (Array.IndexOf(AssignedView, "Finalyzer") != -1) Security = "Yes";
@@ -1213,11 +1212,11 @@ namespace REORGCHART.Controllers
                     GridDataTable = ShowGridTable,
                     ValidateSecurity = Security
                 };
-                Session.Contents["MyModel"] = viewModel;
+                Session.Contents[UserData.UserName + "_MyModel"] = viewModel;
 
                 return View(viewModel);
             }
-            MyModel MyModel = (MyModel)Session.Contents["MyModel"];
+            MyModel MyModel = (MyModel)Session.Contents[UserData.UserName + "_MyModel"];
 
             return View(MyModel);
         }
@@ -1652,7 +1651,7 @@ namespace REORGCHART.Controllers
                 db.SaveChanges();
             }
 
-            Session.Contents["MyModel"] = null;
+            Session.Contents[UserData.UserName + "_MyModel"] = null;
             if (UCA.Role == "EndUser")
                 return RedirectToAction("EndUser", "Version", new { Search = id });
             else if (UCA.Role == "SuperAdmin")
@@ -2027,14 +2026,14 @@ namespace REORGCHART.Controllers
             string FuncationalOrgChart = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
                                                             UCA.Levels, UCA.Oper, UCA.Version,
                                                             UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)[1];
-            if (Session.Contents["MyModel"] != null)
+            if (Session.Contents[UserData.UserName + "_MyModel"] != null)
             {
-                MyModel MyModel = (MyModel)Session.Contents["MyModel"];
+                MyModel MyModel = (MyModel)Session.Contents[UserData.UserName + "_MyModel"];
                 MyModel.ChartData = FuncationalOrgChart;
                 MyModel.ShowLevel = UCA.ShowLevel;
                 MyModel.ParentLevel = UCA.ParentLevel;
                 MyModel.Version = UCA.Version;
-                Session.Contents["MyModel"] = MyModel;
+                Session.Contents[UserData.UserName + "_MyModel"] = MyModel;
             }
 
             return Json(new
@@ -4588,6 +4587,20 @@ namespace REORGCHART.Controllers
 
                                 db.SaveChanges();
 
+                                string[] SaveVersion = LI.GetOrgChartData(myla.Role, myla.Country, UserLastAction.ShowLevel, UserLastAction.ParentLevel,
+                                                                   myla.Levels, myla.Oper, myla.Version,
+                                                                   myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType);
+                                if (Session.Contents[UserData.UserName + "_MyModel"] != null)
+                                {
+                                    MyModel MyModel = (MyModel)Session.Contents[UserData.UserName + "_MyModel"];
+                                    MyModel.ChartData = SaveVersion[1];
+                                    MyModel.TreeData = SaveVersion[0];
+                                    MyModel.ShowLevel = UserLastAction.ShowLevel;
+                                    MyModel.ParentLevel = UserLastAction.ParentLevel;
+                                    MyModel.Version = UserLastAction.Version;
+                                    Session.Contents[UserData.UserName + "_MyModel"] = MyModel;
+                                }
+
                                 myla = LI.GetUserCurrentAction("");
                                 return Json(new
                                 {
@@ -4597,9 +4610,8 @@ namespace REORGCHART.Controllers
                                     UsedShowLevel = UserLastAction.ShowLevel,
                                     UsedParentLevel = UserLastAction.ParentLevel,
                                     UsedVersion = UserLastAction.Version,
-                                    ChartData = LI.GetOrgChartData(myla.Role, myla.Country, UserLastAction.ShowLevel, UserLastAction.ParentLevel, 
-                                                                   myla.Levels, myla.Oper, myla.Version,
-                                                                   myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1]
+                                    ChartData = SaveVersion[1],
+                                    TreeData = SaveVersion[0]
                                 });
                             }
                         }

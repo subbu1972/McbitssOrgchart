@@ -149,6 +149,7 @@ function initOrgChartStatic(JsonData, w, h, DragDrop) {
             }).done(function (JsonString) {
                 if (JsonString.Message != "No Changes") {
                     document.getElementById("hdnOrgChartData").value = JsonString.ChartData;
+                    document.getElementById("hdnOrgTreeData").value = JsonString.TreeData;
                     document.getElementById("hdnOrgShowLevel").value = JsonString.UsedShowLevel;
                     loadJSON("{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + JsonString.ChartData + " }", JsonString.ChartData);
 
@@ -162,6 +163,7 @@ function initOrgChartStatic(JsonData, w, h, DragDrop) {
                     myDiagram.commitTransaction("properties");
 
                     BreadGram();
+                    ShowHierarchy();
                 }
                 element.style.display = 'none';
             });

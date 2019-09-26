@@ -889,6 +889,9 @@ namespace REORGCHART.Helper
                                        "", "", "", "", "", "", "", "", "", "", "", "",
                                        "", "", "", "" };
             LoginUsers UserData = GetLoginUserInfo("");
+            InitializeTables Initialize = (from ur in db.InitializeTables
+                                           where ur.CompanyName == UserData.CompanyName
+                                           select ur).FirstOrDefault();
             VersionDetails myIV = (from iv in db.VersionDetails
                                    where iv.CompanyName == UserData.CompanyName &&
                                          (iv.UserRole == "Player" || iv.UserRole == "Finalyzer") &&
@@ -921,7 +924,7 @@ namespace REORGCHART.Helper
                 }
                 else if (UserRole == "Finalyzer")
                 {
-                    if (myIV.UserName == UserData.UserName)
+                    if (myIV.UserName == UserData.UserName || Initialize.FinalyzerCanChange=="Yes")
                     {
                         GetUserResult[0] = "Success";
                         GetUserResult[1] = UserData.UserName;

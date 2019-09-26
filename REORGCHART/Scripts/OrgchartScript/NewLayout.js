@@ -1045,12 +1045,10 @@ $(document).ready(function () {
             $("#hdnOrgRole").val() == "Admin" ||
             $("#hdnOrgRole").val() == "User") {
 
-            //alert($("#hdnSelectedInitiative").val() + ":" + $("#hdnOrgDDL").val());
             SelectedInitiativeDDL($("#hdnOrgDDL").val(), $("#hdnSelectedInitiative").val(), "N");
-            if ($("#hdnOrgRole").val() == "Player" || $("#hdnOrgRole").val() == "Admin")
+            if ($("#hdnOrgRole").val() == "Player" || $("#hdnOrgRole").val() == "Finalyzer")
                 SelectedInitiativeDDL($("#hdnOrgDDL").val(), $("#hdnSelectedInitiative").val(), "Y");
 
-            //alert($("#hdnSelectedUser").val());
             $("#selInitiative").select2("val", $("#hdnSelectedInitiative").val());
             $("#selPopulation").select2("val", $("#hdnSelectedPopulation").val());
             $("#selUser").select2("val", $("#hdnSelectedUser").val());
@@ -2134,6 +2132,7 @@ function SelectedInitiativeDDL(Result, CValue, FlagPartition) {
         }
     }
 
+    //alert(FlagPartition);
     if (FlagPartition == "Y") {
         ShowDDL(AEI, AEP, AEU, AEV, FlagPartition); // Populate Options
         $('#selPartitionInitiative').select2("val", CValue);

@@ -379,7 +379,6 @@ function init(w, h, DragDrop) {
 
         //alert(NodeObj.LEVEL_ID + ":" + NodeObj.PARENT_LEVEL_ID);
         //alert(SelectNodeObj.LEVEL_ID + ":" + SelectNodeObj.PARENT_LEVEL_ID);
-
         if (document.getElementById("hdnOrgRole").value.toUpperCase() == "PLAYER" ||
             document.getElementById("hdnOrgRole").value.toUpperCase() == "FINALYZER") {
             var element = document.querySelector('.overlay');
@@ -407,10 +406,12 @@ function init(w, h, DragDrop) {
                 async: true,
                 dateType: "json",
             }).done(function (Json) {
-                if (Json.Success == "Sucess" || Json.Success == "Failure") {
+                if (Json.Success == "Success" || Json.Success == "Failure") {
                     document.getElementById("hdnOrgChartData").value = Json.ChartData;
+                    document.getElementById("hdnOrgTreeData").value = Json.TreeData;
                     document.getElementById("hdnOrgShowLevel").value = Json.UsedShowLevel;
                     document.getElementById("hdnOrgVersion").value = Json.UsedVersion;
+
                     loadJSON("{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + Json.ChartData + " }", Json.ChartData);
 
                     myDiagram.startTransaction("properties");
@@ -423,6 +424,7 @@ function init(w, h, DragDrop) {
                     myDiagram.commitTransaction("properties");
 
                     ShowMessage(Json.Success, Json.ShowMessage);
+                    ShowHierarchy();
                 }
                 element.style.display = 'none';
             });

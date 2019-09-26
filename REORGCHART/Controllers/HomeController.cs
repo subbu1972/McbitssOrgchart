@@ -38,6 +38,10 @@ namespace REORGCHART.Controllers
         {
             string Security = "No";
             string[] AssignedView = LI.GetUserRoles().Split(',');
+            if (AssignedView[0]=="NoUser")
+            {
+                return RedirectToAction("NotAuthorizedPage", "Version");
+            }
             if (Array.IndexOf(AssignedView, "User") != -1) Security = "Yes";
 
             MyLastAction myla = LI.GetUserCurrentAction("User", Search);
@@ -59,89 +63,93 @@ namespace REORGCHART.Controllers
             {
                 return RedirectToAction("NotAuthorizedPage", "Version");
             }
-
-            var UFH = (from ufh in db.UploadFilesHeaders
-                       where ufh.CompanyName == UserData.CompanyName &&
-                             ufh.Role == "Finalyzer"
-                       select ufh).FirstOrDefault();
-
-            string[] RetValue = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel,
-                                               myla.Levels, myla.Oper, myla.Version,
-                                               myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType);
-            var viewModel = new MyModel
+            if (Session.Contents[UserData.UserName + "_MyModel"] == null)
             {
-                UserId = UserData.UserName,
-                UseDate = DateTime.Now,
-                CompanyName = UserData.CompanyName,
-                KeyDate = myla.KeyDate,
-                SelectedInitiative = myla.SelectedInitiative,
-                SelectedPopulation = myla.SelectedPopulation,
-                SelectedUser = myla.SelectedUser,
-                SelectedVersion = myla.SelectedVersion,
-                SelectedShape = myla.SelectedShape,
-                SelectedSkin = myla.SelectedSkin,
-                SelectedShowPicture = myla.SelectedShowPicture,
-                SelectedSplitScreen = myla.SelectedSplitScreen,
-                SelectedSplitScreenDirection = myla.SelectedSplitScreenDirection,
-                SelectedTextColor = myla.SelectedTextColor,
-                SelectedBorderColor = myla.SelectedBorderColor,
-                SelectedBorderWidth = myla.SelectedBorderWidth,
-                SelectedLineColor = myla.SelectedLineColor,
-                SelectedBoxWidth = myla.SelectedBoxWidth,
-                OrgChartType = myla.OrgChartType,
-                ShowLevel = myla.ShowLevel,
-                Levels = myla.Levels,
-                Version = myla.Version,
-                Oper = myla.Oper,
-                View = myla.View,
-                SerialNoFlag = UFH==null?"N":UFH.SerialNoFlag,
-                CopyPaste = myla.CopyPaste,
-                Country = myla.Country,
-                Countries = JsonConvert.SerializeObject((from co in db.LegalCountries
-                                                         select co).Distinct().ToList()),
-                TreeData = RetValue[0],
-                ChartData = RetValue[1],
-                Role = myla.Role,
-                AssignedRole = LI.GetUserRoles(),
-                HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),
-                Menu = LI.GetMenuItems(myla.Role),
-                DDL = JsonConvert.SerializeObject((from vd in db.VersionDetails
-                                                   where vd.CompanyName == UserData.CompanyName && vd.ActiveVersion == "Y" && vd.OperType == myla.Oper &&
-                                                         (myla.Role == "Player" || myla.Role == "Finalyzer" || myla.Role == "User")
-                                                   select new { vd.UserName, vd.CompanyName, vd.UserRole, vd.OperType, vd.Country, vd.Initiative, vd.Population, vd.Version }).Distinct().ToList()),
-                OVDDL = JsonConvert.SerializeObject((from vd in db.VersionDetails
-                                                     where vd.CompanyName == UserData.CompanyName && vd.ActiveVersion == "Y" && vd.OperType == "OV" &&
-                                                           ((vd.UserRole == "Player" && myla.Role == "Player") || myla.Role == "Finalyzer" || myla.Role == "User")
-                                                     select new { vd.UserName, vd.CompanyName, vd.UserRole, vd.OperType, vd.Country, vd.Initiative, vd.Population, vd.Version }).Distinct().ToList()),
-                LVDDL = JsonConvert.SerializeObject((from vd in db.VersionDetails
-                                                     where vd.CompanyName == UserData.CompanyName && vd.ActiveVersion == "Y" && vd.OperType == "LV" &&
-                                                           ((vd.UserRole == "Player" && myla.Role == "Player") || myla.Role == "Finalyzer" || myla.Role == "User")
-                                                     select new { vd.UserName, vd.CompanyName, vd.UserRole, vd.OperType, vd.Country, vd.Initiative, vd.Population, vd.Version }).Distinct().ToList()),
-                SelectFields = (myla.Oper == "OV" ? JsonConvert.SerializeObject((from sf in db.LEVEL_CONFIG_INFO
-                                                                                 where sf.DOWNLOAD_TYPE == "PDF" &&
-                                                                                       sf.COMPANY_NAME == UserData.CompanyName
-                                                                                 select new
-                                                                                 {
-                                                                                     FIELD_NAME = sf.FIELD_NAME,
-                                                                                     FIELD_CAPTION = sf.FIELD_CAPTION,
-                                                                                     ACTIVE_IND = sf.ACTIVE_IND
-                                                                                 }).ToList()) : JsonConvert.SerializeObject((from sf in db.LEGAL_CONFIG_INFO
-                                                                                                                             where sf.DOWNLOAD_TYPE == "PDF" &&
-                                                                                                                                   sf.COMPANY_NAME == UserData.CompanyName
-                                                                                                                             select new
-                                                                                                                             {
-                                                                                                                                 FIELD_NAME = sf.FIELD_NAME,
-                                                                                                                                 FIELD_CAPTION = sf.FIELD_CAPTION,
-                                                                                                                                 ACTIVE_IND = sf.ACTIVE_IND
-                                                                                                                             }).ToList())),
-                SearchFields = GetSearchFields(VersionNumber),
-                InitialValues = JsonConvert.SerializeObject((from iv in db.InitializeTables where iv.CompanyName == UserData.CompanyName select iv).FirstOrDefault()),
-                FinalyzerVerion = LI.GetFinalyzerVerion(myla.Oper),
-                GridDataTable = ShowGridTable,
-                ValidateSecurity = Security
-            };
+                var UFH = (from ufh in db.UploadFilesHeaders
+                           where ufh.CompanyName == UserData.CompanyName &&
+                                 ufh.Role == "Finalyzer"
+                           select ufh).FirstOrDefault();
 
-            return View(viewModel);
+                string[] RetValue = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel,
+                                                   myla.Levels, myla.Oper, myla.Version,
+                                                   myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType);
+                var viewModel = new MyModel
+                {
+                    UserId = UserData.UserName,
+                    UseDate = DateTime.Now,
+                    CompanyName = UserData.CompanyName,
+                    KeyDate = myla.KeyDate,
+                    SelectedInitiative = myla.SelectedInitiative,
+                    SelectedPopulation = myla.SelectedPopulation,
+                    SelectedUser = myla.SelectedUser,
+                    SelectedVersion = myla.SelectedVersion,
+                    SelectedShape = myla.SelectedShape,
+                    SelectedSkin = myla.SelectedSkin,
+                    SelectedShowPicture = myla.SelectedShowPicture,
+                    SelectedSplitScreen = myla.SelectedSplitScreen,
+                    SelectedSplitScreenDirection = myla.SelectedSplitScreenDirection,
+                    SelectedTextColor = myla.SelectedTextColor,
+                    SelectedBorderColor = myla.SelectedBorderColor,
+                    SelectedBorderWidth = myla.SelectedBorderWidth,
+                    SelectedLineColor = myla.SelectedLineColor,
+                    SelectedBoxWidth = myla.SelectedBoxWidth,
+                    OrgChartType = myla.OrgChartType,
+                    ShowLevel = myla.ShowLevel,
+                    Levels = myla.Levels,
+                    Version = myla.Version,
+                    Oper = myla.Oper,
+                    View = myla.View,
+                    SerialNoFlag = UFH == null ? "N" : UFH.SerialNoFlag,
+                    CopyPaste = myla.CopyPaste,
+                    Country = myla.Country,
+                    Countries = JsonConvert.SerializeObject((from co in db.LegalCountries
+                                                             select co).Distinct().ToList()),
+                    TreeData = RetValue[0],
+                    ChartData = RetValue[1],
+                    Role = myla.Role,
+                    AssignedRole = LI.GetUserRoles(),
+                    HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),
+                    Menu = LI.GetMenuItems(myla.Role),
+                    DDL = JsonConvert.SerializeObject((from vd in db.VersionDetails
+                                                       where vd.CompanyName == UserData.CompanyName && vd.ActiveVersion == "Y" && vd.OperType == myla.Oper &&
+                                                             (myla.Role == "Player" || myla.Role == "Finalyzer" || myla.Role == "User")
+                                                       select new { vd.UserName, vd.CompanyName, vd.UserRole, vd.OperType, vd.Country, vd.Initiative, vd.Population, vd.Version }).Distinct().ToList()),
+                    OVDDL = JsonConvert.SerializeObject((from vd in db.VersionDetails
+                                                         where vd.CompanyName == UserData.CompanyName && vd.ActiveVersion == "Y" && vd.OperType == "OV" &&
+                                                               ((vd.UserRole == "Player" && myla.Role == "Player") || myla.Role == "Finalyzer" || myla.Role == "User")
+                                                         select new { vd.UserName, vd.CompanyName, vd.UserRole, vd.OperType, vd.Country, vd.Initiative, vd.Population, vd.Version }).Distinct().ToList()),
+                    LVDDL = JsonConvert.SerializeObject((from vd in db.VersionDetails
+                                                         where vd.CompanyName == UserData.CompanyName && vd.ActiveVersion == "Y" && vd.OperType == "LV" &&
+                                                               ((vd.UserRole == "Player" && myla.Role == "Player") || myla.Role == "Finalyzer" || myla.Role == "User")
+                                                         select new { vd.UserName, vd.CompanyName, vd.UserRole, vd.OperType, vd.Country, vd.Initiative, vd.Population, vd.Version }).Distinct().ToList()),
+                    SelectFields = (myla.Oper == "OV" ? JsonConvert.SerializeObject((from sf in db.LEVEL_CONFIG_INFO
+                                                                                     where sf.DOWNLOAD_TYPE == "PDF" &&
+                                                                                           sf.COMPANY_NAME == UserData.CompanyName
+                                                                                     select new
+                                                                                     {
+                                                                                         FIELD_NAME = sf.FIELD_NAME,
+                                                                                         FIELD_CAPTION = sf.FIELD_CAPTION,
+                                                                                         ACTIVE_IND = sf.ACTIVE_IND
+                                                                                     }).ToList()) : JsonConvert.SerializeObject((from sf in db.LEGAL_CONFIG_INFO
+                                                                                                                                 where sf.DOWNLOAD_TYPE == "PDF" &&
+                                                                                                                                       sf.COMPANY_NAME == UserData.CompanyName
+                                                                                                                                 select new
+                                                                                                                                 {
+                                                                                                                                     FIELD_NAME = sf.FIELD_NAME,
+                                                                                                                                     FIELD_CAPTION = sf.FIELD_CAPTION,
+                                                                                                                                     ACTIVE_IND = sf.ACTIVE_IND
+                                                                                                                                 }).ToList())),
+                    SearchFields = GetSearchFields(VersionNumber),
+                    InitialValues = JsonConvert.SerializeObject((from iv in db.InitializeTables where iv.CompanyName == UserData.CompanyName select iv).FirstOrDefault()),
+                    FinalyzerVerion = LI.GetFinalyzerVerion(myla.Oper),
+                    GridDataTable = ShowGridTable,
+                    ValidateSecurity = Security
+                };
+                Session.Contents[UserData.UserName + "_MyModel"] = viewModel;
+            }
+            MyModel MyModel = (MyModel)Session.Contents[UserData.UserName + "_MyModel"];
+
+            return View(MyModel);
         }
 
         private string GetSearchFields(int VersionNumber)
@@ -228,7 +236,7 @@ namespace REORGCHART.Controllers
                         UCA.Role = Role;
                     }
 
-                    Session.Contents["MyModel"] = null;
+                    Session.Contents[UserData.UserName + "_MyModel"] = null;
                     return Json(new
                     {
                         Success = "Yes",
@@ -270,9 +278,9 @@ namespace REORGCHART.Controllers
             string[] ChangeLevel = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
                                                     UCA.Levels, UCA.Oper, UCA.Version, 
                                                     UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType);
-            if (Session.Contents["MyModel"] != null)
+            if (Session.Contents[UserData.UserName + "_MyModel"] != null)
             {
-                MyModel MyModel = (MyModel)Session.Contents["MyModel"];
+                MyModel MyModel = (MyModel)Session.Contents[UserData.UserName + "_MyModel"];
                 MyModel.ChartData = ChangeLevel[1];
                 if (Type == "Settings")
                 {
@@ -298,7 +306,7 @@ namespace REORGCHART.Controllers
                     MyModel.Country = Country;
                     MyModel.ShowLevel = ShowLevel;
                 }
-                Session.Contents["MyModel"] = MyModel;
+                Session.Contents[UserData.UserName + "_MyModel"] = MyModel;
             }
 
             return Json(new
