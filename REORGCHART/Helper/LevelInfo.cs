@@ -717,6 +717,14 @@ namespace REORGCHART.Helper
                 orgChartData= orgChartDataSet.Tables[0];
                 RetOrgChart[0] = JsonConvert.SerializeObject(OrgTreeData);
 
+                if (orgChartData.Rows.Count >= 500)
+                {
+                    orgChartDataSet = GetLevelInfo(UserData.UserName, UserData.CompanyName, UserType, ShowLevel, ParentLevel, "One", Version, Oper);
+                    OrgTreeData = orgChartDataSet.Tables[1];
+                    orgChartData = orgChartDataSet.Tables[0];
+                    RetOrgChart[0] = JsonConvert.SerializeObject(OrgTreeData);
+                }
+
                 //SET @SQLQUERY = 'SELECT LEVEL_ID, PARENT_LEVEL_ID, FULL_NAME, NOR_COUNT 
                 //                   FROM '+@COMPANYTB+' WHERE MFLAG = ''XXX'' AND PARENT_LEVEL_ID IN(SELECT * FROM dbo.fnSplit(''999999-- > '+@BREAD_GRAM+''', ''-- > '')) AND VERSION = '''+@VERSION+'''
                 //                   ORDER BY SORTNO, PARENT_LEVEL_ID, LEVEL_ID ASC';

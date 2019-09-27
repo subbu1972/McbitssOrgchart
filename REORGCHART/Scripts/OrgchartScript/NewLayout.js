@@ -1129,37 +1129,38 @@ $(document).ready(function () {
 });
 
 function ShowHierarchy() {
-    console.log($("#hdnOrgTreeData").val());
-    var zNodesJson = JSON.parse($("#hdnOrgTreeData").val());
-    var zNodes = [];
-    if (zNodesJson.length >= 1) {
-        for (var Idx = 0; Idx <= zNodesJson.length - 1; Idx++) {
-            try {
-                if (parseInt(zNodesJson[Idx].NOR_COUNT, 10) >= 1) {
-                    var item = {};
-                    item["id"] = zNodesJson[Idx].LEVEL_ID;
-                    item["pId"] = (zNodesJson[Idx].PARENT_LEVEL_ID == "999999") ? "0" : zNodesJson[Idx].PARENT_LEVEL_ID;
-                    item["name"] = zNodesJson[Idx].FULL_NAME + "( " + zNodesJson[Idx].LEVEL_ID + " )";
-                    item["obj"] = "";
-                    item["checked"] = "false";
-                    item["title"] = zNodesJson[Idx].FULL_NAME + "( " + zNodesJson[Idx].LEVEL_ID + " )";
-                    item["dataid"] = (Idx + 1).toString();
-                    zNodes.push(item);
+    try {
+        //console.log($("#hdnOrgTreeData").val());
+        var zNodesJson = JSON.parse($("#hdnOrgTreeData").val());
+        var zNodes = [];
+        if (zNodesJson.length >= 1) {
+            for (var Idx = 0; Idx <= zNodesJson.length - 1; Idx++) {
+                try {
+                    if (parseInt(zNodesJson[Idx].NOR_COUNT, 10) >= 1) {
+                        var item = {};
+                        item["id"] = zNodesJson[Idx].LEVEL_ID;
+                        item["pId"] = (zNodesJson[Idx].PARENT_LEVEL_ID == "999999") ? "0" : zNodesJson[Idx].PARENT_LEVEL_ID;
+                        item["name"] = zNodesJson[Idx].FULL_NAME + "( " + zNodesJson[Idx].LEVEL_ID + " )";
+                        item["obj"] = "";
+                        item["checked"] = "false";
+                        item["title"] = zNodesJson[Idx].FULL_NAME + "( " + zNodesJson[Idx].LEVEL_ID + " )";
+                        item["dataid"] = (Idx + 1).toString();
+                        zNodes.push(item);
+                    }
+                }
+                catch (ex) {
+                    alert(ex);
                 }
             }
-            catch (ex) {
-                alert(ex);
-            }
         }
-    }
-    try {
+    
         $.fn.zTree.destroy("treeDemo");
+        $.fn.zTree.init($("#treeDemo"), zTreeSettings, zNodes);
+        setCheck("treeDemo");
     }
     catch (ex) {
         console.log(ex);
     }
-    $.fn.zTree.init($("#treeDemo"), zTreeSettings, zNodes);
-    setCheck("treeDemo");
 }
 
 function SearchDialogBox() {
