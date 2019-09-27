@@ -1083,7 +1083,7 @@
                                     textAlign: (Settings.SelectShape == "RoundedRectangle") ? "center" : "left",
                                     width: 280 - Settings.BoxWidth
                                 },
-                                new go.Binding("text", "POSITION_NUMBER").makeTwoWay()),
+                                new go.Binding("text", "MSRP_POSITION_NBR").makeTwoWay()),
                             $(go.TextBlock, textStyle(),
                                 {
                                     row: 2, column: 0, columnSpan: 6,
@@ -1095,7 +1095,7 @@
                                     textAlign: (Settings.SelectShape == "RoundedRectangle") ? "center" : "left",
                                     width: 280 - Settings.BoxWidth
                                 },
-                                new go.Binding("text", "TITLE").makeTwoWay()),
+                                new go.Binding("text", "MSRP_FUNC_GP_L1_DESCR").makeTwoWay()),
                             $(go.TextBlock, textStyle(),
                                 {
                                     row: 3, column: 0, columnSpan: 6,
@@ -1107,7 +1107,7 @@
                                     textAlign: (Settings.SelectShape == "RoundedRectangle") ? "center" : "left",
                                     width: 280 - Settings.BoxWidth
                                 },
-                                new go.Binding("text", "GRADE").makeTwoWay())
+                                new go.Binding("text", "MSRP_PERSONAL_GRADE").makeTwoWay())
                         )  // end Table Panel
                     ), // end Horizontal Panel
                     $(go.Picture,
