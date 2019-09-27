@@ -1916,9 +1916,9 @@ function ShowNodesInCanvas(InitialValues, nodeDataArray, OrgChartType) {
                 }
             }
         }
-    }
 
-    myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+        myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+    }
 }
 
 function loadPortrait() {
