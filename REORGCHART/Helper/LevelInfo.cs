@@ -725,33 +725,6 @@ namespace REORGCHART.Helper
                     RetOrgChart[0] = JsonConvert.SerializeObject(OrgTreeData);
                 }
 
-                //SET @SQLQUERY = 'SELECT LEVEL_ID, PARENT_LEVEL_ID, FULL_NAME, NOR_COUNT 
-                //                   FROM '+@COMPANYTB+' WHERE MFLAG = ''XXX'' AND PARENT_LEVEL_ID IN(SELECT * FROM dbo.fnSplit(''999999-- > '+@BREAD_GRAM+''', ''-- > '')) AND VERSION = '''+@VERSION+'''
-                //                   ORDER BY SORTNO, PARENT_LEVEL_ID, LEVEL_ID ASC';
-                //PRINT @SQLQUERY
-                //EXEC(@SQLQUERY);
-                //DataTable OrgTreeData = new DataTable();
-                //foreach (DataColumn dc in orgChartDataSet.Tables[1].Columns)
-                //{
-                //    OrgTreeData.Columns.Add(dc.ColumnName, dc.DataType);
-                //}
-                //var BreadGrams = orgChartData.AsEnumerable()
-                //                .Where(r => r.Field<String>("LEVEL_ID").Contains(ShowLevel) &&
-                //                            r.Field<String>("MFLAG").Contains("XXX"))
-                //                .Select(c => c.Field<String>("BREAD_GRAM"));
-                //foreach (string BreadGram in BreadGrams)
-                //{
-                //    foreach (DataRow dr in orgChartDataSet.Tables[1].Rows)
-                //    {
-                //        if (BreadGram.Contains(dr["PARENT_LEVEL_ID"].ToString()) ||
-                //            dr["PARENT_LEVEL_ID"].ToString()=="999999")
-                //        {
-                //            OrgTreeData.Rows.Add(dr.ItemArray);
-                //        }
-                //    }
-                //}
-                //RetOrgChart[0]= JsonConvert.SerializeObject(OrgTreeData);
-
                 if (FlagFM == "HideFM")
                 {
                     int COUNT = orgChartData.Rows.Count;

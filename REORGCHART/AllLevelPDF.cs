@@ -4939,6 +4939,7 @@ namespace REORGCHART
 
             RetValue[0] = CurrentCol+50; RetValue[1] = CurrentRow;
             PageMaxWidth = (PageMaxWidth >= CurrentCol+50) ? PageMaxWidth : CurrentCol+50;
+            if (PageMaxHeight <= CurrentRow) PageMaxHeight = CurrentRow;
 
             return RetValue;
 
