@@ -737,6 +737,7 @@ namespace REORGCHART.Helper
                         }
                     }
                 }
+
                 if (OrgType == "OD" && PortraitModeMultipleLevel == "No")
                 {
                     int COUNT = orgChartData.Rows.Count;
@@ -750,6 +751,7 @@ namespace REORGCHART.Helper
                         }
                     }
                 }
+
                 RetOrgChart[1] = JsonConvert.SerializeObject(orgChartData);
 
                 return RetOrgChart;

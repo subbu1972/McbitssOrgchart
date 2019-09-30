@@ -640,6 +640,8 @@
                         SelectedPopulationDDL(Json.DDL, $("#txtPopulationName").val(), $("#selInitiative").val(), "N");
                         $("#hdnOrgDDL").val(Json.DDL);
                         loadJSON("{ \"class\": \"go.TreeModel\",  \"nodeDataArray\":" + Json.Data + " }", Json.Data);
+
+                        window.location.href = HOST_ENV + "/Version/UploadVersion/?Search=Refresh";
                     }
                     else if (Json.Success == "No") $("#divRepPopulationError").html(Json.ShowMessage);
 

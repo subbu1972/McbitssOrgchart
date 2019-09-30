@@ -104,7 +104,7 @@ namespace REORGCHART.Controllers
                 if (item.CompanyName.ToString()==wcCompanyName || wcCompanyName=="")
                     listIT.Add(new SelectListItem() { Value = item.CompanyName.ToString(), Text = item.CompanyName });
             }
-            ViewData["CompanyName"] = listIT;
+            ViewBag.LstCompanyName = listIT;
 
             ViewBag.Title = "Login";
             HttpContext.Session["LoginUserInf"] = null;

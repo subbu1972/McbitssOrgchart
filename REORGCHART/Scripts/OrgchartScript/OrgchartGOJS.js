@@ -1103,7 +1103,12 @@ function init(w, h, DragDrop) {
                             source: Settings.UpArrow,
                             visible: false
                         },
-                        new go.Binding("visible", "key", isFirstElement)),
+                        new go.Binding("visible", "key", function (key) {
+                            if (key == document.getElementById("hdnOrgShowLevel").value && myDiagram.model.findNodeDataForKey(key).parent != "999999")
+                                return true;
+                            else
+                                return false;
+                        })),
                     $(go.Panel, "Vertical",
                        // define the panel where the text will appear
                         $(go.Panel, "Table",
@@ -1248,7 +1253,12 @@ function init(w, h, DragDrop) {
                             source: Settings.UpArrow,
                             visible: false
                         },
-                        new go.Binding("visible", "key", isFirstElement)),
+                        new go.Binding("visible", "key", function (key) {
+                            if (key == document.getElementById("hdnOrgShowLevel").value && myDiagram.model.findNodeDataForKey(key).parent != "999999")
+                                return true;
+                            else
+                                return false;
+                        })),
                     $(go.Panel, "Horizontal",
                         // define the panel where the text will appear
                         $(go.Panel, "Table",

@@ -36,7 +36,7 @@ namespace REORGCHART.Controllers
 
         public ActionResult Index(string Search)
         {
-            string Security = "No";
+            string Security = "No", Refresh="No";
             string[] AssignedView = LI.GetUserRoles().Split(',');
             if (AssignedView[0]=="NoUser")
             {
@@ -44,6 +44,11 @@ namespace REORGCHART.Controllers
             }
             if (Array.IndexOf(AssignedView, "User") != -1) Security = "Yes";
 
+            if (Search == "Refresh")
+            {
+                Refresh = "Yes";
+                Search = null;
+            }
             MyLastAction myla = LI.GetUserCurrentAction("User", Search);
             int VersionNumber = myla.Version == "" ? 0 : Convert.ToInt32(myla.Version);
 
@@ -54,16 +59,18 @@ namespace REORGCHART.Controllers
             ShowGridTable.Rows.Add(dr);
             Session["SourceTable"] = ShowGridTable;
 
+            LoginUsers UserData = LI.GetLoginUserInfo("User");
+            if (Refresh == "Yes") Session.Contents[UserData.UserName + "_MyModel"] = null;
             if (AssignedView[0] == "Player")
                 return RedirectToAction("UploadVersion", "Version", new { area = "" });
             else if (AssignedView[0] == "Finalyzer")
                 return RedirectToAction("UploadData", "Version", new { area = "" });
-            LoginUsers UserData = LI.GetLoginUserInfo("User");
             if (UserData.ValidUser == "No")
             {
                 return RedirectToAction("NotAuthorizedPage", "Version");
             }
-            if (Session.Contents[UserData.UserName + "_MyModel"] == null)
+            if (Session.Contents[UserData.UserName + "_MyModel"] == null ||
+                Refresh == "Yes")
             {
                 var UFH = (from ufh in db.UploadFilesHeaders
                            where ufh.CompanyName == UserData.CompanyName &&

@@ -50,7 +50,7 @@
             </div>
             <div class="form-group">
                 @*<select class="form-control" id="CompanyName" name="CompanyName" placeholder="Company Name" value="@Model.CompanyName"></select>*@
-                @Html.DropDownList("CompanyName", ViewData["CompanyName"] as List<SelectListItem>, new { @class = "form-control CompanyName" })
+                @Html.DropDownList("CompanyName", ViewBag.LstCompanyName as List<SelectListItem>, new { @class = "form-control CompanyName" })
                 @Html.ValidationMessageFor(m => m.CompanyName, "", new { @class = "text-danger" })
             </div>
             <div class="form-group">

@@ -953,6 +953,14 @@ namespace REORGCHART.Controllers
         public ActionResult UploadVersion(string Search)
         {
             LoginUsers UserData = LI.GetLoginUserInfo("Player");
+            if (Search != null)
+            {
+                if (Search == "Refresh")
+                {
+                    Session.Contents[UserData.UserName + "_MyModel"] = null;
+                    Search = null;
+                }
+            }
             if (UserData.ValidUser == "No")
             {
                 return RedirectToAction("NotAuthorizedPage", "Version", new { id = UserData.UserName });
@@ -1084,6 +1092,14 @@ namespace REORGCHART.Controllers
         public ActionResult UploadData(string Search)
         {
             LoginUsers UserData = LI.GetLoginUserInfo("Finalyzer");
+            if (Search != null)
+            {
+                if (Search == "Refresh")
+                {
+                    Session.Contents[UserData.UserName + "_MyModel"] = null;
+                    Search = null;
+                }
+            }
             if (UserData.ValidUser == "No")
             {
                 return RedirectToAction("NotAuthorizedPage", "Version", new { id = UserData.UserName });
@@ -3348,6 +3364,28 @@ namespace REORGCHART.Controllers
             SaveDBChanges();
 
             MyLastAction myla = LI.GetUserCurrentAction("");
+            string HRCV = LI.GetHRCoreVersion(myla.Country, myla.Oper);
+            string[] SelectedChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
+                                                            myla.Levels, myla.Oper, myla.Version,
+                                                            myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType);
+            if (Session.Contents[UserData.UserName + "_MyModel"] != null)
+            {
+                MyModel MyModel = (MyModel)Session.Contents[UserData.UserName + "_MyModel"];
+                MyModel.ChartData = SelectedChartData[1];
+                MyModel.TreeData = SelectedChartData[0];
+                MyModel.ShowLevel = myla.ShowLevel;
+                MyModel.ParentLevel = myla.ParentLevel;
+                MyModel.Levels = myla.Levels;
+                MyModel.SelectedInitiative = myla.SelectedInitiative;
+                MyModel.SelectedPopulation = myla.SelectedPopulation;
+                MyModel.SelectedUser = myla.SelectedUser;
+                MyModel.SelectedVersion = myla.SelectedVersion;
+                MyModel.FinalyzerVerion = FinalyzerVersion;
+                MyModel.HRCoreVersion = HRCV;
+
+                Session.Contents[UserData.UserName + "_MyModel"] = MyModel;
+            }
+
             return Json(new
             {
                 UsedDate = DateTime.Now,
@@ -3363,12 +3401,11 @@ namespace REORGCHART.Controllers
                 UsedOper = myla.Oper,
                 UsedView = myla.View,
                 UsedCountry = myla.Country,
-                ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
-                                               myla.Levels, myla.Oper, myla.Version,
-                                               myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
+                ChartData = SelectedChartData[1],
+                TreeData = SelectedChartData[0],
                 ChartHRCoreData = JsonConvert.SerializeObject(""),
                 UsedRole = myla.Role,
-                HRCoreVersion = LI.GetHRCoreVersion(myla.Country, myla.Oper),
+                HRCoreVersion = HRCV,
                 FV= FinalyzerVersion,
                 DDL = JsonConvert.SerializeObject("")
             });

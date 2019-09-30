@@ -928,7 +928,7 @@ $(document).ready(function () {
         DivRow += "<div>";
         DivRow += "<ul id=\"nav\">";
         if ($("#hdnOrgRole").val() != "EndUser") {
-            DivRow += "<li><a data-html=\"Home\" href=\"" + (HOST_ENV == "" ? "/" : HOST_ENV + "/") + "\"><i class=\"fas fa-home menu-icon\"></i> <span class=\"sidemenu-label\">Home</span></a></li>";
+            DivRow += "<li><a data-html=\"Home\" href=\"" + (HOST_ENV == "" ? "/?Search=Refresh" : HOST_ENV + "/?Search=Refresh") + "\"><i class=\"fas fa-home menu-icon\"></i> <span class=\"sidemenu-label\">Home</span></a></li>";
             DivRow += "<li>";
             DivRow += "<a href=\"#\"><i class=\"fas fa-users-cog menu-icon\"></i><span class=\"sidemenu-label\">Roles</span> <i class=\"fas fa-angle-down control-btns\"></i><i class=\"fas fa-angle-up control-btns\"></i></a>";
             DivRow += "<ul>";
@@ -974,18 +974,18 @@ $(document).ready(function () {
         }
         $("#selView").html(Options);
         DivRow += "</ul>";
-        DivRow += "</li>"
+        DivRow += "</li>";
 
         DivRow += "<li>";
         DivRow += "  <a data-html=\"Hierarchy\" href=\"#\"><img src=\"" + HOST_ENV + "/Content/NewTemplateUI/Images/collaboration.svg\" width=\"25px\" alt=\"logo\"/><span class=\"sidemenu-label\">Managers</span><i class=\"fas fa-angle-up control-btns\"></i><i class=\"fas fa-angle-down control-btns\"></i></a>";
-        DivRow += "<ul>"
+        DivRow += "<ul>";
         DivRow += "<li>";
         DivRow += "<div id=\"divHierarchy\" class=\"zTreeDemoBackground left\" style=\"max-height:500px;overflow:auto;\">";
         DivRow += "<ul id=\"treeDemo\" class=\"ztree clsHier1\"></ul>";
         DivRow += "</div>";
         DivRow += "</li>";
         DivRow += "</ul>";
-        DivRow += "</li>"
+        DivRow += "</li>";
         DivRow += "</ul>";
         DivRow += "</div>";
 
@@ -2560,6 +2560,7 @@ function LoadSelectedVersion() {
             }
 
             $("#hdnOrgChartData").val(Json.ChartData);
+            $("#hdnOrgTreeData").val(Json.TreeData);
             $("#hdnOrgChartHRCoreData").val(Json.ChartData);
             $("#hdnOrgShowLevel").val(Json.UsedShowLevel);
             $("#hdnOrgPartitionShowLevel").val(Json.UsedShowLevel);
@@ -2578,6 +2579,7 @@ function LoadSelectedVersion() {
                     $(".saveversion").show();
                 }
             }
+            ShowHierarchy();
             $(".overlay").hide();
         }
     });
