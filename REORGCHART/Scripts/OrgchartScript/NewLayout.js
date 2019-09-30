@@ -2368,6 +2368,13 @@ function SaveVersionTitle() {
                     $("#hdnOrgVersion").val(Json.UsedVersion);
                     $("#hdnOrgPartitionVersion").val(Json.UsedVersion);
 
+                    try {
+                        $("#div_OA_ShowChart").show();
+                        $("#div_OA_ShowUploadData").hide();
+                    }
+                    catch (ex) {
+                        Console.log(ex);
+                    }
                     CancelOperation();
                     $(".overlay").hide();
                 }

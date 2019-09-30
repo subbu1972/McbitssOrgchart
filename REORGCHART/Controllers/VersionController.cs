@@ -3471,6 +3471,27 @@ namespace REORGCHART.Controllers
                                             myla.Role == "User" || 
                                             myla.Role == "EndUser")
                                      select new { vd.UserName, vd.CompanyName, vd.UserRole, vd.OperType, vd.Country, vd.Initiative, vd.Population, vd.Version }).Distinct().ToList();
+
+                        string[] SelectedChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel,
+                                                           myla.Levels, myla.Oper, myla.Version,
+                                                           myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType);
+                        if (Session.Contents[UserData.UserName + "_MyModel"] != null)
+                        {
+                            MyModel MyModel = (MyModel)Session.Contents[UserData.UserName + "_MyModel"];
+                            MyModel.ChartData = SelectedChartData[1];
+                            MyModel.TreeData = SelectedChartData[0];
+                            MyModel.ShowLevel = VD.ShowLevel;
+                            MyModel.ParentLevel = "999999";
+                            MyModel.Levels = myla.Levels;
+                            MyModel.SelectedInitiative = VD.Initiative;
+                            MyModel.SelectedPopulation = VD.Population;
+                            MyModel.SelectedUser = VD.UserName;
+                            MyModel.SelectedVersion = VD.Version;
+                            MyModel.Version = VD.VersionNo.ToString();
+                            MyModel.DDL = JsonConvert.SerializeObject(lstVD);
+
+                            Session.Contents[UserData.UserName + "_MyModel"] = MyModel;
+                        }
                         return Json(new
                         {
                             Success = "Yes",
@@ -3482,9 +3503,8 @@ namespace REORGCHART.Controllers
                             Population = VD.Population,
                             UserName = VD.UserName,
                             Version = VD.Version,
-                            ChartData = LI.GetOrgChartData(myla.Role, myla.Country, myla.ShowLevel, myla.ParentLevel, 
-                                                           myla.Levels, myla.Oper, myla.Version,
-                                                           myla.OrgChartType, myla.SelectedPortraitModeMultipleLevel, myla.SelectedFunctionalManagerType)[1],
+                            ChartData = SelectedChartData[1],
+                            TreeData = SelectedChartData[0],
                             DDL = JsonConvert.SerializeObject(lstVD)
                         });
                     }
