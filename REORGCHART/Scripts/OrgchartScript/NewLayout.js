@@ -980,7 +980,7 @@ $(document).ready(function () {
         DivRow += "  <a data-html=\"Hierarchy\" href=\"#\"><img src=\"" + HOST_ENV + "/Content/NewTemplateUI/Images/collaboration.svg\" width=\"25px\" alt=\"logo\"/><span class=\"sidemenu-label\">Managers</span><i class=\"fas fa-angle-up control-btns\"></i><i class=\"fas fa-angle-down control-btns\"></i></a>";
         DivRow += "<ul>";
         DivRow += "<li>";
-        DivRow += "<div id=\"divHierarchy\" class=\"zTreeDemoBackground left\" style=\"max-height:500px;overflow:auto;\">";
+        DivRow += "<div id=\"divHierarchy\" class=\"zTreeDemoBackground left scrollbar-width-thin\" style=\"max-height:470px;overflow:auto;\">";
         DivRow += "<ul id=\"treeDemo\" class=\"ztree clsHier1\"></ul>";
         DivRow += "</div>";
         DivRow += "</li>";
@@ -2376,6 +2376,7 @@ function SaveVersionTitle() {
                         Console.log(ex);
                     }
                     CancelOperation();
+                    ShowHierarchy();
                     $(".overlay").hide();
                 }
                 else if (Json.Success == "No") {
