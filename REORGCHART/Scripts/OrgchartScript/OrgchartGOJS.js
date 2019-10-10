@@ -173,14 +173,14 @@ function init(w, h, DragDrop) {
         dia.div.style.height = (dia.documentBounds.height + 24) + "px";
     });
 
-    var levelColors = ["#FFFFFF/#FFFFFF", "#FFFFFF/#FFFFFF", "#FFFFFF/#FFFFFF", "#FFFFFF/#FFFFFF", "#FFFFFF/#FFFFFF", "#A0A0A0/#A0A0A0", "#D3D3D3/#D3D3D3", "#FFF44F/#FFF44F"];
+    var levelColors = ["#FFFFFF/#FFFFFF", "#FFFFFF/#FFFFFF", "#FFFFFF/#FFFFFF", "#FFFFFF/#FFFFFF", "#FFFFFF/#FFFFFF", "#A0A0A0/#A0A0A0", "#D3D3D3/#D3D3D3", "#FFF44F/#FFF44F", "#ec8026/#ec8026"];
     Settings.TextColor = "black";
     Settings.UpArrow = HOST_ENV + "/Content/Images/uparrow.jpg";
     Settings.DownArrow = HOST_ENV + "/Content/Images/downarrow.jpg";
     Settings.BorderWidth = 3;
     if (Settings.Skin) {
         if (Settings.Skin.toUpperCase() == "BROWN") {
-            levelColors = ["#634329/#634329", "#923222/#923222", "#e44c16/#e44c16", "#ec8026/#ec8026", "#fcaf17/#fcaf17", "#fed300/#fed300", "#D3D3D3/#D3D3D3", "#FFF44F/#FFF44F"];
+            levelColors = ["#634329/#634329", "#923222/#923222", "#e44c16/#e44c16", "#ec8026/#ec8026", "#fcaf17/#fcaf17", "#fed300/#fed300", "#D3D3D3/#D3D3D3", "#FFF44F/#FFF44F", "#ec8026/#ec8026"];
             Settings.TextColor = "white";
             Settings.UpArrow = HOST_ENV + "/Content/Images/uparroww.png";
             Settings.DownArrow = HOST_ENV + "/Content/Images/downarrow.ico";
@@ -201,22 +201,32 @@ function init(w, h, DragDrop) {
                 var shape = v.node.findObject("SHAPE");
 
                 if (shape) {
-                    if (v.node.data.LEVEL_ID) {
-                        if (v.node.data.LEVEL_ID == document.getElementById("hdnQueryStringSearchValue").value) {
-                            colors = levelColors[7].split("/");
+                    try {
+                        if (v.node.data.MSRP_EMPLOYEE_TYPE) {
+                            if (v.node.data.MSRP_EMPLOYEE_TYPE.toUpperCase() == "AFFILIATE") {
+                                colors = levelColors[8].split("/");
+                            }
                         }
-                    }
-                    if (v.node.data.FULL_NAME) {
-                        if (v.node.data.FULL_NAME.toUpperCase().indexOf("VACANT")!=-1) {
-                            colors = levelColors[6].split("/");
+                        if (v.node.data.LEVEL_ID) {
+                            if (v.node.data.LEVEL_ID == document.getElementById("hdnQueryStringSearchValue").value) {
+                                colors = levelColors[7].split("/");
+                            }
                         }
-                    }
-                    if (v.node.data.GRAY_COLORED_FLAG) {
-                        if (v.node.data.GRAY_COLORED_FLAG == "Y") {
-                            colors = levelColors[5].split("/");
+                        if (v.node.data.FULL_NAME) {
+                            if (v.node.data.FULL_NAME.toUpperCase().indexOf("VACANT") != -1) {
+                                colors = levelColors[6].split("/");
+                            }
                         }
+                        if (v.node.data.GRAY_COLORED_FLAG) {
+                            if (v.node.data.GRAY_COLORED_FLAG == "Y") {
+                                colors = levelColors[5].split("/");
+                            }
+                        }
+                        shape.fill = $(go.Brush, "Linear", { 0: colors[0], 1: colors[1], start: go.Spot.Left, end: go.Spot.Right });
                     }
-                    shape.fill = $(go.Brush, "Linear", { 0: colors[0], 1: colors[1], start: go.Spot.Left, end: go.Spot.Right });
+                    catch (ex) {
+                        console.log(ex);
+                    }
                 }
             }
         });

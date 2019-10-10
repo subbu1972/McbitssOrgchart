@@ -1664,6 +1664,7 @@
     <Content Include="SPs\PROC_SAVE_PLAYER_COMPLETED_VERSION.sql" />
     <Content Include="SPs\PROC_SAVE_PLAYER_VERSION_TREE_OPERATIONALCHART.sql" />
     <Content Include="SPs\UNHCR_SQL_20190930_V5.sql" />
+    <Content Include="SPs\UNHCR_SQL_20191009_V6.sql" />
     <Content Include="SPs\UNHCR_SQL_RECUSIVE_REDUNDANT_RECORD.sql" />
     <Content Include="Views\Version\LegalView.cshtml" />
     <Content Include="Web.config">

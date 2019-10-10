@@ -111,6 +111,7 @@ namespace REORGCHART
         [DataMember]
         public int NodeIndex { get; set; }
 
+
         public ObjectInfPDF()
         {
         }

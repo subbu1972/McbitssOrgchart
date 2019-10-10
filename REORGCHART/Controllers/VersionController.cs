@@ -2228,7 +2228,7 @@ namespace REORGCHART.Controllers
                 UsedVersion = UCA.Version,
                 ChartData = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
                                                UCA.Levels, UCA.Oper, UCA.Version,
-                                               UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)
+                                               UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)[1]
             });
         }
 
@@ -2239,7 +2239,7 @@ namespace REORGCHART.Controllers
             string[] sTableName = LI.GetFinalyzerTable(myla.Version, myla.Oper);
             DataTable ShowTable = ComClass.SQLReturnDataTable("SELECT * FROM " + "[" + sTableName[0] + "] " +
                                                               "     WHERE PARENT_LEVEL_ID='" + ShowLevel + "' AND VERSION='" + myla.Version.ToString() + "' " +
-                                                              "     ORDER BY SORTNO, PARENT_LEVEL_ID, LEVEL_ID");
+                                                              "     ORDER BY CAST(SORTNO AS INT), PARENT_LEVEL_ID, LEVEL_ID");
 
             return Json(new
             {

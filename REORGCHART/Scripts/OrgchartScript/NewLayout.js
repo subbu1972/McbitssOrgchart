@@ -3415,7 +3415,7 @@ function ChangeSortOrder(LevelID) {
             var OrgData = JSON.parse(json.IB);
             $.each(OrgData, function (key, item) {
                 var Caption = item.LEVEL_ID + "[ " + item.FULL_NAME + " ]";
-                LI += "<li class=\"ui-state-default\" data-id=\"" + item.LEVEL_ID + "\" data-parent=\"" + item.PARENT_LEVEL_ID + "\"><span class=\"ui-icon ui-icon-arrowthick-2-n-s\"></span>" + Caption + "</li>";
+                LI += "<li class=\"ui-state-default\" data-id=\"" + item.LEVEL_ID + "\" data-parent=\"" + item.PARENT_LEVEL_ID + "\"><span class=\"ui-icon ui-icon-arrowthick-2-n-s\"></span><div style=\"display: inline-block!important;word-break: break-all!important;font-size:9px!important;\">" + Caption + "</div></li>";
             });
             $("#sortable").html(LI);
             $(".overlay").hide();
