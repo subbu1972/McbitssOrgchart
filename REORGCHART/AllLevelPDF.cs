@@ -4841,7 +4841,7 @@ namespace REORGCHART
             {
                 if (OI.Flag == "N")
                 {
-                    if (OI.Id == "10027875")
+                    if (OI.Id == "20000000")
                         OI.Flag = OI.Flag;
                     if (OI.NOR.ToString() != "0" && OI.DottedLineFlag=="N")
                     {
@@ -4865,13 +4865,13 @@ namespace REORGCHART
                         {
                             RetValue = BottomUpApproachWH(OI.Id);
                             OI.Owidth = (OI.Width >= RetValue[0] ? OI.Width : RetValue[0]);
-                            OI.Oheight = OI.Height + RetValue[1];
+                            OI.Oheight = RetValue[1] + 130;
                             OI.Cwidth = (OI.Width >= RetValue[0] ? OI.Width : RetValue[0]);
                             OI.Cheight = OI.Height + 130;
                         }
 
                         CurrentCol += OI.Owidth;
-                        CurrentRow += OI.Oheight;
+                        CurrentRow =  (OI.Oheight >= CurrentRow)?OI.Oheight: CurrentRow;
                     }
                     else
                     {
@@ -6001,7 +6001,7 @@ namespace REORGCHART
             DataRow[] OrgFirstRow = OrgDataTable.Select("LEVEL_ID='" + Level + "'");
             if (OrgFirstRow.Length >= 1)
             {
-                int[] RetValue = { 0, 0 };
+                int[] RetValue1 = { 0, 0 };
                 lstObjectPDF.Clear();
                 if (ViewFlag == "Horizontal")
                 {
@@ -6040,7 +6040,7 @@ namespace REORGCHART
                     OrgDataRow = OrgDataTable.Select("LEVEL_NO='" + OrgFirstRow[0]["LEVEL_NO"].ToString() + "'");
                     foreach (DataRow drLevel2 in OrgDataRow)
                     {
-                        RetValue = BottomUpApproachWH("-1");
+                        RetValue1 = BottomUpApproachWH("-1");
                     }
                     OrgDataRow = OrgDataTable.Select("LEVEL_NO='" + OrgFirstRow[0]["LEVEL_NO"].ToString() + "'");
                     foreach (DataRow drLevel2 in OrgDataRow)
@@ -6104,59 +6104,64 @@ namespace REORGCHART
                 string LogPDFFlag = ConfigurationManager.AppSettings["LogPDFFlag"].ToString();
                 if (LogPDFFlag == "Yes")
                 {
-                    Models.DBContext db = new Models.DBContext();
-                    List<Models.ObjectInfPDFs> PDF = (from pdf in db.ObjectInfPDFs select pdf).ToList();
-                    if (PDF != null)
+                    
+                    using (SqlConnection SqlDelCon = new SqlConnection(OrgConnection))
                     {
-                        foreach (Models.ObjectInfPDFs pdf in PDF)
-                            db.ObjectInfPDFs.Remove(pdf);
-                        db.SaveChanges();
+                        SqlDelCon.Open();
+                        csobj.ExecuteQuery("DELETE FROM ObjectInfPDFs", SqlDelCon);
                     }
 
-                    //Models.DBContext db = new Models.DBContext();
+                    string InsertSQL = "";
+                    int Index = 0;
                     List<ObjectInfPDF> theSelectedObjectInf = (from SO in lstObjectPDF select SO).ToList();
                     foreach (ObjectInfPDF OI in theSelectedObjectInf)
                     {
-                        REORGCHART.Models.ObjectInfPDFs ObjPDF = new REORGCHART.Models.ObjectInfPDFs();
+                        try
+                        {
+                            if (Index % 100 == 0 && Index!=0)
+                            {
+                                using (SqlConnection SqlCon = new SqlConnection(OrgConnection))
+                                {
+                                    SqlCon.Open();
+                                    csobj.ExecuteQuery(InsertSQL, SqlCon);
+                                    InsertSQL = "";
+                                }
+                            }
+                            InsertSQL += "INSERT INTO ObjectInfPDFs VALUES(\'" + OI.Id.ToString() + "\',";
+                            InsertSQL += "\'" + OI.Title.Replace("'", "''") + "\',";
+                            InsertSQL += "\'" + OI.PId + "\',";
+                            InsertSQL += "\'" + OI.Level + "\',";
+                            InsertSQL += "\'" + OI.Row.ToString() + "\',";
+                            InsertSQL += "\'" + OI.Col.ToString() + "\',";
+                            InsertSQL += "\'" + OI.Height.ToString() + "\',";
+                            InsertSQL += "\'" + OI.Width.ToString() + "\',";
+                            InsertSQL += "\'" + OI.Cwidth.ToString() + "\',";
+                            InsertSQL += "\'" + OI.Cheight.ToString() + "\',";
+                            InsertSQL += "\'" + OI.Owidth.ToString() + "\',";
+                            InsertSQL += "\'" + OI.Oheight.ToString() + "\',";
+                            InsertSQL += "\'" + OI.NextLevelFlag + "\',";
+                            InsertSQL += "\'" + OI.GrayColourFlag + "\',";
+                            InsertSQL += "\'" + OI.DottedLineFlag + "\',";
+                            InsertSQL += "\'" + OI.ShowFullBox + "\',";
+                            InsertSQL += "\'" + OI.Language + "\',";
+                            InsertSQL += "\'" + OI.SortNo + "\',";
+                            InsertSQL += "\'" + OI.NOR.ToString() + "\',";
+                            InsertSQL += "\'" + OI.SOC.ToString() + "\',";
+                            InsertSQL += "\'" + OI.PositionFlag + "\',";
+                            InsertSQL += "\'" + OI.ColorFlag + "\',";
+                            InsertSQL += "\'" + OI.BackColor + "\',";
+                            InsertSQL += "\'" + OI.Flag + "\',";
+                            InsertSQL += "\'" + OI.BreadGram + "\',";
+                            InsertSQL += "\'" + OI.RealRow.ToString() + "\',";
+                            InsertSQL += "\'" + OI.RealCol.ToString() + "\',";
+                            InsertSQL += "\'" + OI.RealBoxHeight.ToString() + "\',";
+                            InsertSQL += "\'" + OI.RealBoxWidth.ToString() + "\');";
 
-                        ObjPDF.Id = OI.Id.ToString();
-                        ObjPDF.Title = OI.Title;
-                        ObjPDF.PId = OI.PId;
-                        ObjPDF.Level = OI.Level;
-                        ObjPDF.Row = OI.Row;
-                        ObjPDF.Col = OI.Col;
-                        ObjPDF.Height = OI.Height;
-                        ObjPDF.Width = OI.Width;
-                        ObjPDF.Cheight = OI.Cheight;
-                        ObjPDF.Cwidth = OI.Cwidth;
-                        ObjPDF.Oheight = OI.Oheight;
-                        ObjPDF.Owidth = OI.Owidth;
-                        ObjPDF.NextLevelFlag = OI.NextLevelFlag;
-                        ObjPDF.GrayColourFlag = OI.GrayColourFlag;
-                        ObjPDF.DottedLineFlag = OI.DottedLineFlag;
-                        ObjPDF.ShowFullBox = OI.ShowFullBox;
-                        ObjPDF.Language = OI.Language;
-                        ObjPDF.SortNo = OI.SortNo;
-                        ObjPDF.NOR = OI.NOR;
-                        ObjPDF.SOC = OI.SOC;
-                        ObjPDF.PositionFlag = OI.PositionFlag;
-                        ObjPDF.ColorFlag = OI.ColorFlag;
-                        ObjPDF.BackColor = OI.BackColor;
-                        ObjPDF.Flag = OI.Flag;
-                        ObjPDF.BreadGram = OI.BreadGram;
-                        ObjPDF.RealRow = OI.RealRow;
-                        ObjPDF.RealCol = OI.RealCol;
-                        ObjPDF.RealBoxHeight = OI.RealBoxHeight;
-                        ObjPDF.RealBoxWidth = OI.RealBoxWidth;
-
-                        db.ObjectInfPDFs.Add(ObjPDF);
-                    }
-                    try
-                    {
-                        db.SaveChanges();
-                    }
-                    catch (Exception ex)
-                    {
+                            Index++;
+                        }
+                        catch (Exception ex)
+                        {
+                        }
                     }
                 }
 
