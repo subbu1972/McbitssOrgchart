@@ -9,6 +9,7 @@ using System.Data;
 using OrgChartModelling;
 
 using OrgChartModelling.Utils;
+using System.Configuration;
 
 namespace REORGCHART.Data
 {
@@ -324,6 +325,29 @@ namespace REORGCHART.Data
             {
                 sqlcmd.Dispose();
                 sqlcmd = null;
+            }
+        }
+
+        // https://www.c-sharpcorner.com/UploadFile/sourabh_mishra1/sqlbulkcopy-in-C-Sharp/
+        public void BulkCopySQL(DataTable SourceTable, string TableName)
+        {
+            try
+            {
+                string cs = ConfigurationManager.ConnectionStrings["DBContextOrgchart"].ConnectionString;
+                using (SqlConnection sqlConn = new SqlConnection(cs))
+                {
+                    DataTable dtStudentMaster = SourceTable;
+                    sqlConn.Open();
+                    using (SqlBulkCopy sqlbc = new SqlBulkCopy(sqlConn))
+                    {
+                        sqlbc.DestinationTableName = TableName;
+                        sqlbc.WriteToServer(dtStudentMaster);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
 

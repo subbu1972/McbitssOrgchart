@@ -297,25 +297,31 @@ function ShowSelectFields(Obj) {
         $("#divFields").html("");
 
         var PDFTemplateView =
-            "<div class=\"col-md-12\" style=\"margin:10px;\">" +
-            "  <div class=\"row\">" +
+            "<div class=\"col-md-12\" style=\"margin:10px 0;\">" +
+            "  <div class=\"row\" style=\"margin:0px 0p 10px 0;\">" +
             "    <div class=\"col-md-2\">" +
             "       <input type=\"radio\" id=\"rdoPDFHorizontal\" name=\"PDFView\" value=\"Horizontal\" />" +
             "       <label for=\"rdoPDFHorizontal\">Horizantal<label/>" +
+            "    </div>" +
+            "    <div class=\"col-md-4\">" +
+            "       <input type=\"radio\" id=\"rdoPDFA0PageSizeHorizontal\" name=\"PDFView\" value=\"Horizontal(A0 Page Size)\" />" +
+            "       <label for=\"rdoPDFA0PageSizeHorizontal\">Horizontal(A0 Page Size)<label/>" +
             "    </div>" +
             "    <div class=\"col-md-2\">" +
             "       <input type=\"radio\" id=\"rdoPDFVertical\" name=\"PDFView\" value=\"Vertical\" />" +
             "       <label for=\"rdoPDFVertical\">Vertical<label/>" +
             "    </div>" +
-            "    <div class=\"col-md-3\">" +
+            "    <div class=\"col-md-4\">" +
             "       <input type=\"radio\" id=\"rdoPDFVerticalSL\" name=\"PDFView\" value=\"Multiple Pages\" />" +
             "       <label for=\"rdoPDFVerticalSL\">Multiple Pages<label/>" +
             "    </div>" +
+            "  </div>" +
+            "  <div class=\"row\">" +
             "    <div class=\"col-md-2\">" +
             "       <input type=\"checkbox\" id=\"chkPDFOneLevelUp\" name=\"PDFViewOLU\" value=\"One Level Up\" />" +
             "       <label for=\"chkPDFOneLevelUp\">One Level Up<label/>" +
             "    </div>" +
-            "    <div class=\"col-md-2\">" +
+            "    <div class=\"col-md-4\">" +
             "       <input type=\"checkbox\" id=\"chkPDFCurrentLevel\" name=\"PDFViewCL\" value=\"Current Level\" />" +
             "       <label for=\"chkPDFCurrentLevel\">Current Level<label/>" +
             "    </div>" +
@@ -428,13 +434,13 @@ function SaveSelectedFields() {
                         $("#hdnOrgSelectFields").val(Json.SelectFields);
 
                         if (DownLoadId == "divDownloadMLPDF") {
-                            window.location.href = HOST_ENV + '/Version/DownloadMLPDF'
+                            window.location.href = HOST_ENV + '/Version/DownloadMLPDF';
                         }
                         else if (DownLoadId == "divDownloadPDF") {
-                            window.location.href = HOST_ENV + '/Version/DownloadPDF'
+                            window.location.href = HOST_ENV + '/Version/DownloadPDF';
                         }
                         else if (DownLoadId == "divDownloadPPT") {
-                            window.location.href = HOST_ENV + '/Version/DownloadPPT'
+                            window.location.href = HOST_ENV + '/Version/DownloadPPT';
                         }
                     }
                     $(".overlay").hide();
@@ -451,6 +457,11 @@ function SaveSelectedFields() {
             }
         });
         if ($("#rdoPDFHorizontal").prop("checked")) {
+            window.location.href = HOST_ENV + '/Version/DownloadAllPDF?ViewFlag=' + SelectedFields +
+                '&LevelUp=' + ($("#chkPDFOneLevelUp").prop("checked") ? "Yes" : "No") +
+                '&CurrentLevel=' + ($("#chkPDFCurrentLevel").prop("checked") ? "Yes" : "No");
+        }
+        else if ($("#rdoPDFA0PageSizeHorizontal").prop("checked")) {
             window.location.href = HOST_ENV + '/Version/DownloadAllPDF?ViewFlag=' + SelectedFields +
                 '&LevelUp=' + ($("#chkPDFOneLevelUp").prop("checked") ? "Yes" : "No") +
                 '&CurrentLevel=' + ($("#chkPDFCurrentLevel").prop("checked") ? "Yes" : "No");

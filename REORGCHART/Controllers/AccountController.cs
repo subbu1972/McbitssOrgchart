@@ -120,6 +120,17 @@ namespace REORGCHART.Controllers
         {
             returnUrl = "/";
             HttpContext.Session["LoginUserInf"] = null;
+
+            string wcCompanyName = ConfigurationManager.AppSettings["wcCompanyName"].ToString();
+            List<InitializeTables> INI = (from ini in db.InitializeTables select ini).ToList();
+            List<SelectListItem> listIT = new List<SelectListItem>();
+            foreach (var item in INI)
+            {
+                if (item.CompanyName.ToString() == wcCompanyName || wcCompanyName == "")
+                    listIT.Add(new SelectListItem() { Value = item.CompanyName.ToString(), Text = item.CompanyName });
+            }
+            ViewBag.LstCompanyName = listIT;
+
             if (cbxDataPrivacy == "on")
             {
                 if (ModelState.IsValid)
@@ -151,15 +162,6 @@ namespace REORGCHART.Controllers
 
             }
 
-            string wcCompanyName = ConfigurationManager.AppSettings["wcCompanyName"].ToString();
-            List<InitializeTables> INI = (from ini in db.InitializeTables select ini).ToList();
-            List<SelectListItem> listIT = new List<SelectListItem>();
-            foreach (var item in INI)
-            {
-                if (item.CompanyName.ToString() == wcCompanyName || wcCompanyName == "")
-                    listIT.Add(new SelectListItem() { Value = item.CompanyName.ToString(), Text = item.CompanyName });
-            }
-            ViewBag.LstCompanyName = listIT;
 
             // If we got this far, something failed, redisplay form
             return View(model);

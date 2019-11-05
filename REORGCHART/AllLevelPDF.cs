@@ -110,7 +110,10 @@ namespace REORGCHART
         public int RealBoxHeight { get; set; }
         [DataMember]
         public int NodeIndex { get; set; }
-
+        [DataMember]
+        public int NewRow { get; set; }
+        [DataMember]
+        public int NewPage { get; set; }
 
         public ObjectInfPDF()
         {
@@ -155,6 +158,41 @@ namespace REORGCHART
             RealBoxWidth = RBW;
             RealBoxHeight = RBH;
             NodeIndex = NI;
+            NewRow = 0;
+            NewPage = 0;
+        }
+    }
+
+    [DataContract]
+    public class ObjectIWPDF
+    {
+        [DataMember]
+        public string Id { get; set; }
+        [DataMember]
+        public string PId { get; set; }
+        [DataMember]
+        public int Width { get; set; }
+        [DataMember]
+        public int Height { get; set; }
+        [DataMember]
+        public float TotalWidth { get; set; }
+        [DataMember]
+        public float TotalHeight { get; set; }
+        [DataMember]
+        public string UsedFlag { get; set; }
+
+        public ObjectIWPDF()
+        {
+        }
+
+        public ObjectIWPDF(string pId, string pPId,
+                         int pWidth, int pHeight, string pUsedFlag)
+        {
+            Id = pId;
+            PId = pPId;
+            Width = pWidth;
+            Height = pHeight;
+            UsedFlag = pUsedFlag;
         }
     }
 
@@ -4252,14 +4290,14 @@ namespace REORGCHART
         // Put All Level information in PDF
         private int PutFieldInfoPDF(ObjectInfPDF OI, string Info, int CurrentCol, int CurrentRow, int Width, int Height, int BottomHeight, Page MyPage, string ConnectorLineType)
         {
-            int Idx = 0, Idy=0, StartCol=0;
+            int Idx = 0, Idy=0, StartCol=0, CurrentA0PageRow=CurrentRow+A0StartHeight;
             string[] LabelInfo = Info.Replace("&amp;", "&").Split(';');
             string FontName = "", FontSize = "", FontColor = "", FontStyle = "", FontFloat = "", FontWidth = "", Adjustment = "";
             DataTable dtFieldInf = dtFieldActive;
 
             if (LabelInfo.Length >= 1)
             {
-                MyRect = new ceTe.DynamicPDF.PageElements.Rectangle(CurrentCol, CurrentRow, Width, Height);
+                MyRect = new ceTe.DynamicPDF.PageElements.Rectangle(CurrentCol, CurrentA0PageRow, Width, Height);
                 if (OI.GrayColourFlag=="Y")
                     MyRect.BorderColor = ShowPDFBoxColor("#000000");
                 else if (OI.DottedLineFlag=="N")
@@ -4277,31 +4315,31 @@ namespace REORGCHART
                 if (ConnectorLineType == "V")
                 {
                     StartCol = CurrentCol - 30;
-                    MyLine = new ceTe.DynamicPDF.PageElements.Line(CurrentCol - 30, CurrentRow + 60, CurrentCol - 1, CurrentRow + 60, ShowPDFLineColor(LineColor));
+                    MyLine = new ceTe.DynamicPDF.PageElements.Line(CurrentCol - 30, CurrentA0PageRow + 60, CurrentCol - 1, CurrentA0PageRow + 60, ShowPDFLineColor(LineColor));
                     MyLine.Width = 2;
                     MyPage.Elements.Add(MyLine);
                 }
                 else if (ConnectorLineType == "H")
                 {
                     StartCol = CurrentCol + 100;
-                    MyLine = new ceTe.DynamicPDF.PageElements.Line(CurrentCol+100, CurrentRow-30, CurrentCol+100, CurrentRow, ShowPDFLineColor(LineColor));
+                    MyLine = new ceTe.DynamicPDF.PageElements.Line(CurrentCol+100, CurrentA0PageRow - 30, CurrentCol+100, CurrentA0PageRow, ShowPDFLineColor(LineColor));
                     MyLine.Width = 2;
                     MyPage.Elements.Add(MyLine);
                 }
                 else if (ConnectorLineType == "HB")
                 {
                     StartCol = CurrentCol + 100;
-                    MyLine = new ceTe.DynamicPDF.PageElements.Line(CurrentCol + 100, CurrentRow - 30, CurrentCol + 100, CurrentRow, ShowPDFLineColor(LineColor));
+                    MyLine = new ceTe.DynamicPDF.PageElements.Line(CurrentCol + 100, CurrentA0PageRow - 30, CurrentCol + 100, CurrentA0PageRow, ShowPDFLineColor(LineColor));
                     MyLine.Width = 2;
                     MyPage.Elements.Add(MyLine);
-                    MyLine = new ceTe.DynamicPDF.PageElements.Line(CurrentCol + 100, CurrentRow + 80, CurrentCol + 100, CurrentRow + 100 + BottomHeight, ShowPDFLineColor(LineColor));
+                    MyLine = new ceTe.DynamicPDF.PageElements.Line(CurrentCol + 100, CurrentA0PageRow + 80, CurrentCol + 100, CurrentA0PageRow + 100 + BottomHeight, ShowPDFLineColor(LineColor));
                     MyLine.Width = 2;
                     MyPage.Elements.Add(MyLine);
                 }
                 else if (ConnectorLineType == "B")
                 {
                     StartCol = CurrentCol + 100;
-                    MyLine = new ceTe.DynamicPDF.PageElements.Line(CurrentCol + 100, CurrentRow+80, CurrentCol + 100, CurrentRow + 100 + BottomHeight, ShowPDFLineColor(LineColor));
+                    MyLine = new ceTe.DynamicPDF.PageElements.Line(CurrentCol + 100, CurrentA0PageRow + 80, CurrentCol + 100, CurrentA0PageRow + 100 + BottomHeight, ShowPDFLineColor(LineColor));
                     MyLine.Width = 2;
                     MyPage.Elements.Add(MyLine);
                 }
@@ -4321,7 +4359,7 @@ namespace REORGCHART
                             FontWidth = drFI["FIELD_WIDTH"].ToString();
                             Adjustment = drFI["ADJUSTMENT"].ToString();
 
-                            MyLabel = new ceTe.DynamicPDF.PageElements.Label(LabelText[0].ToString(), CurrentCol, CurrentRow+((Idy-1)*18)+10, Width, Height, 
+                            MyLabel = new ceTe.DynamicPDF.PageElements.Label(LabelText[0].ToString(), CurrentCol, CurrentA0PageRow + ((Idy-1)*18)+10, Width, Height, 
                                                                              ceTe.DynamicPDF.Font.HelveticaBold, 8, 
                                                                              ceTe.DynamicPDF.TextAlign.Center);
                             MyPage.Elements.Add(MyLabel);
@@ -4341,7 +4379,7 @@ namespace REORGCHART
         // Put All Level information(Assistance) in PDF
         private int[] PutAssistanceFieldInfoPDF(int LevelId, int CurrentCol, int CurrentRow, int Width, int Height, Page MyPage, string Type)
         {
-            int Idx = 0, Idy=0, Index=0, AssistanceCol=CurrentCol+300, AssistanceRow=CurrentRow;
+            int Idx = 0, Idy=0, Index=0, AssistanceCol=CurrentCol+300, AssistanceRow=CurrentRow+A0StartHeight;
             int[] retValue = { 0, 0 };
             string FontName = "", FontSize = "", FontColor = "", FontStyle = "", FontFloat = "", FontWidth = "", Adjustment = "";
             string[] LabelInfo=null;
@@ -4372,7 +4410,7 @@ namespace REORGCHART
                             MyPage.Elements.Add(MyLine);
 
                             OI.RealCol = AssistanceCol;
-                            OI.RealRow = AssistanceRow;
+                            OI.RealRow = AssistanceRow - A0StartHeight;
                             OI.RealBoxWidth = Width;
                             OI.RealBoxHeight = Height;
 
@@ -4415,7 +4453,7 @@ namespace REORGCHART
             if (Idy >= 1)
             {
                 retValue[0] = AssistanceCol + 300;
-                retValue[1] = AssistanceRow;
+                retValue[1] = AssistanceRow - A0StartHeight;
             }
 
             return retValue;
@@ -4662,7 +4700,7 @@ namespace REORGCHART
                     {
                         if (NodePDF.BreadGram == CheckBreadGram)
                         {
-                            CurrentRow += NodePDF.Cheight;
+                            CurrentRow += 130;
                             break;
                         }
                     }
@@ -4691,13 +4729,16 @@ namespace REORGCHART
 
             foreach (ObjectInfPDF NodePDF in theSelectedObjectInfRC)
             {
-                if (NodePDF.Flag == "N")
+                if (ShowFitInAssociates(NodePDF.Id) == "Yes")
                 {
-                    if ((Convert.ToInt32(NodePDF.SortNo)) <= (Convert.ToInt32(SortNo)-1))
-                        CurrentCol += NodePDF.Cwidth;
-                    if (Convert.ToInt32(NodePDF.SortNo) == Convert.ToInt32(SortNo))
-                        CurrentRow = GetNodeHorizantalHeight(NodePDF.BreadGram);
-                    PID = NodePDF.PId;
+                    if (NodePDF.Flag == "N")
+                    {
+                        if ((Convert.ToInt32(NodePDF.SortNo)) <= (Convert.ToInt32(SortNo) - 1))
+                            CurrentCol += NodePDF.Owidth;
+                        if (Convert.ToInt32(NodePDF.SortNo) == Convert.ToInt32(SortNo))
+                            CurrentRow = GetNodeHorizantalHeight(NodePDF.BreadGram);
+                        PID = NodePDF.PId;
+                    }
                 }
             }
 
@@ -4832,6 +4873,190 @@ namespace REORGCHART
             }
         }
 
+        DataTable NodeWH = null;
+        DataRow NodeRow = null;
+        List<ObjectIWPDF> lstObjectWHPDF = new List<ObjectIWPDF>();
+        int NewA0PageRow = 0, NewA0PageNo=0;
+        public int[] A0PageSizeBottomUpApproachWH(string LevelId, string ShowLevel, string UpdateFlag)
+        {
+            int CurrentCol = 0, CurrentRow = 0, TempNewA0PageRow = 0;
+            int[] AssistanceInf = null, RetValue = { 0, 0, 0, 0 };
+            List<ObjectInfPDF> theObjectInf = (from SO in lstObjectPDF where SO.PId == LevelId select SO).ToList();
+            foreach (ObjectInfPDF OI in theObjectInf)
+            {
+                if (OI.Flag == "N")
+                {
+                    if (LevelId == "20000000")
+                        LevelId = "20000000";
+
+                    string DoOperation = "Y";
+                    List<ObjectIWPDF> lstCheckWHPDF = (from SO in lstObjectWHPDF
+                                                         where SO.PId == LevelId
+                                                         select SO).ToList();
+                    foreach (ObjectIWPDF OS in lstCheckWHPDF)
+                    {
+                        if (UpdateFlag == "N" && OS.Id == OI.Id)
+                        {
+                            DoOperation = "Y";
+                            break;
+                        }
+                        else if (OS.UsedFlag == "Y" && UpdateFlag == "Y" && OS.Id == OI.Id)
+                        {
+                            DoOperation = "Y";
+                            break;
+                        }
+                        else if (OS.UsedFlag == "N" && UpdateFlag == "U" && OS.Id == OI.Id)
+                        {
+                            DoOperation = "Y";
+                            break;
+                        }
+                        DoOperation = "N";
+                    }
+                    if (DoOperation == "Y" || OI.NOR.ToString()=="0")
+                    {
+                        if (OI.NOR.ToString() != "0" && OI.DottedLineFlag == "N")
+                        {
+                            AssistanceInf = GetAllLevelAssistance(Convert.ToInt32(OI.Id));
+                            OI.Width = AssistanceInf[0];
+                            OI.Height = AssistanceInf[1];
+                            OI.NewRow = NewA0PageRow;
+                            OI.NewPage = NewA0PageNo;
+
+                            if (OI.NOR == OI.SOC)
+                            {
+                                RetValue[0] = 350;
+                                RetValue[1] = (OI.NOR + 1) * 130;
+
+                                OI.Owidth = (OI.Width >= RetValue[0] ? OI.Width : RetValue[0]);
+                                OI.Oheight = OI.Height + RetValue[1];
+                                OI.Cwidth = (OI.Width >= RetValue[0] ? OI.Width : RetValue[0]);
+                                OI.Cheight = OI.Height + 130;
+
+                                RetValue = A0PageSizeBottomUpApproachWH(OI.Id, ShowLevel, UpdateFlag);
+
+                                CurrentCol += OI.Owidth;
+                                CurrentRow = (OI.Oheight >= CurrentRow) ? OI.Oheight : CurrentRow;
+                            }
+                            else
+                            {
+                                RetValue = A0PageSizeBottomUpApproachWH(OI.Id, ShowLevel, UpdateFlag);
+                                OI.Owidth = (OI.Width >= RetValue[0] ? OI.Width : RetValue[0]);
+                                OI.Oheight = RetValue[1] + 130;
+                                OI.Cwidth = (OI.Width >= RetValue[0] ? OI.Width : RetValue[0]);
+                                OI.Cheight = OI.Height + 130;
+
+                                CurrentCol += OI.Owidth;
+                                CurrentRow = (OI.Oheight >= CurrentRow) ? OI.Oheight : CurrentRow;
+                            }
+                        }
+                        else
+                        {
+                            OI.Width = 0;
+                            OI.Height = 0;
+                            OI.Owidth = 250;
+                            OI.Oheight = 130;
+                            OI.Cwidth = 250;
+                            OI.Cheight = 130;
+
+                            CurrentCol += OI.Owidth;
+                        }
+                        OI.Cwidth = CurrentCol;
+                        OI.Cheight = CurrentRow;
+                    }
+                }
+            }
+
+            if (LevelId == "10001339")
+                LevelId = "10001339";
+
+            // Summation of width
+            int SWidth = 0;
+            foreach (ObjectInfPDF OI in theObjectInf)
+            {
+                if (OI.Flag == "N")
+                {
+                    if (OI.NOR.ToString() != "0" && OI.DottedLineFlag == "N")
+                    {
+                        if (UpdateFlag == "N")
+                        {
+                            SWidth += OI.Owidth;
+                            if (OI.NOR >= 1)
+                            {
+                                ObjectIWPDF IWPDF = (from SO in lstObjectWHPDF where SO.Id == OI.Id select SO).FirstOrDefault();
+                                if (IWPDF == null) {
+                                    lstObjectWHPDF.Add(new ObjectIWPDF(OI.Id.ToString(),
+                                                                       OI.PId,
+                                                                       OI.Owidth,
+                                                                       OI.Oheight,
+                                                                       "Y"));
+                                }
+                            }
+                        }
+                        else if (UpdateFlag == "Y")
+                        {
+                            List<ObjectIWPDF> lstSortingWHPDF = (from SO in lstObjectWHPDF
+                                                                 where SO.Id == OI.Id
+                                                                 select SO).ToList();
+                            foreach (ObjectIWPDF OS in lstSortingWHPDF)
+                            {
+                                if (OS.UsedFlag == "Y") SWidth += OI.Owidth;
+                            }
+                        }
+                        else if (UpdateFlag == "U")
+                        {
+                            List<ObjectIWPDF> lstSortingWHPDF = (from SO in lstObjectWHPDF
+                                                                 where SO.Id == OI.Id
+                                                                 select SO).ToList();
+                            foreach (ObjectIWPDF OS in lstSortingWHPDF)
+                            {
+                                if (OS.UsedFlag == "N") SWidth += OI.Owidth;
+                            }
+                        }
+                    }
+                    else SWidth += 250;
+                }
+            }
+
+            if (SWidth >= 14000)
+            {
+                List<ObjectIWPDF> lstSortingWHPDF = (from SO in lstObjectWHPDF
+                                                     where SO.PId==LevelId
+                                                     orderby SO.Width descending select SO).ToList();
+                foreach (ObjectIWPDF OS in lstSortingWHPDF)
+                {
+                    if (SWidth >= 14001)
+                    {
+                        OS.UsedFlag = "N";
+                        SWidth = SWidth - OS.Width;
+                    }
+                }
+
+                CurrentCol = 0; CurrentRow = 0; TempNewA0PageRow = NewA0PageRow;
+                foreach (ObjectIWPDF OS in lstSortingWHPDF)
+                {
+                    if (OS.UsedFlag == "N")
+                    {
+                        NewA0PageRow++; CurrentCol = 0; CurrentRow = 0;
+                        A0PageSizeBottomUpApproachWH(OS.Id, OS.Id, "U");
+                    }
+                }
+
+                NewA0PageRow = TempNewA0PageRow;
+                RetValue = A0PageSizeBottomUpApproachWH(LevelId, ShowLevel, "Y");
+                foreach (ObjectIWPDF OS in lstSortingWHPDF)
+                {
+                    if (OS.UsedFlag == "N") NewA0PageRow++;
+                }
+            }
+            else
+            {
+                RetValue[0] = CurrentCol;
+                RetValue[1] = CurrentRow;
+            }
+
+            return RetValue;
+        }
+
         public int[] BottomUpApproachWH(string LevelId)
         {
             int CurrentCol = 0, CurrentRow = 0;
@@ -4841,8 +5066,17 @@ namespace REORGCHART
             {
                 if (OI.Flag == "N")
                 {
-                    if (OI.Id == "20000000")
-                        OI.Flag = OI.Flag;
+                    if (LevelId == "-1")
+                    {
+                        NodeWH = new DataTable();
+                        NodeWH.Columns.Add("LevelId", typeof(string));
+                        NodeWH.Columns.Add("ParentLevelId", typeof(string));
+                        NodeWH.Columns.Add("Owidth", typeof(string));
+                        NodeWH.Columns.Add("Oheight", typeof(string));
+                        NodeWH.Columns.Add("CurrentCol", typeof(string));
+                        NodeWH.Columns.Add("CurrentRow", typeof(string));
+                        NodeWH.Columns.Add("BreadGram", typeof(string));
+                    }
                     if (OI.NOR.ToString() != "0" && OI.DottedLineFlag=="N")
                     {
                         AssistanceInf = GetAllLevelAssistance(Convert.ToInt32(OI.Id));
@@ -4860,6 +5094,9 @@ namespace REORGCHART
                             OI.Cheight = OI.Height + 130;
 
                             RetValue = BottomUpApproachWH(OI.Id);
+
+                            CurrentCol += OI.Owidth;
+                            CurrentRow = (OI.Oheight >= CurrentRow) ? OI.Oheight : CurrentRow;
                         }
                         else
                         {
@@ -4868,10 +5105,10 @@ namespace REORGCHART
                             OI.Oheight = RetValue[1] + 130;
                             OI.Cwidth = (OI.Width >= RetValue[0] ? OI.Width : RetValue[0]);
                             OI.Cheight = OI.Height + 130;
-                        }
 
-                        CurrentCol += OI.Owidth;
-                        CurrentRow =  (OI.Oheight >= CurrentRow)?OI.Oheight: CurrentRow;
+                            CurrentCol += OI.Owidth;
+                            CurrentRow = (OI.Oheight >= CurrentRow) ? OI.Oheight : CurrentRow;
+                        }
                     }
                     else
                     {
@@ -4883,6 +5120,23 @@ namespace REORGCHART
                         OI.Cheight = 130;
 
                         CurrentCol += OI.Owidth;
+                    }
+                    OI.Cwidth = CurrentCol;
+                    OI.Cheight = CurrentRow;
+
+                    if (OI.BreadGram.Contains("10001339"))
+                    {
+                        NodeRow = NodeWH.NewRow();
+
+                        NodeRow["LevelId"] = OI.Id;
+                        NodeRow["ParentLevelId"] = OI.PId;
+                        NodeRow["Owidth"] = OI.Owidth.ToString();
+                        NodeRow["Oheight"] = OI.Oheight.ToString();
+                        NodeRow["CurrentCol"] = CurrentCol.ToString();
+                        NodeRow["CurrentRow"] = CurrentRow.ToString();
+                        NodeRow["BreadGram"] = OI.BreadGram;
+
+                        NodeWH.Rows.Add(NodeRow);
                     }
                 }
             }
@@ -4930,11 +5184,11 @@ namespace REORGCHART
                     OI.Row = CurrentRow + 100;
 
                     // Puts the data in the required area.
-                    PutFieldInfoPDF(OI, OI.Title, StartCol + 50, CurrentRow+100, 200, 80, OI.Cheight, MyPage, "V");
+                    PutFieldInfoPDF(OI, OI.Title, StartCol + 50, CurrentRow+100, 200, 80, 130, MyPage, "V");
                     CurrentRow = CurrentRow + 100;
                 }
             }
-            MyLine = new ceTe.DynamicPDF.PageElements.Line(StartCol + 20, StartRow + 80, StartCol + 20, CurrentRow+60, ShowPDFLineColor(LineColor));
+            MyLine = new ceTe.DynamicPDF.PageElements.Line(StartCol + 20, StartRow + A0StartHeight + 80, StartCol + 20, CurrentRow + A0StartHeight + 60, ShowPDFLineColor(LineColor));
             MyLine.Width = 2;
             MyPage.Elements.Add(MyLine);
 
@@ -5314,9 +5568,53 @@ namespace REORGCHART
             return "Yes";
         }
 
+        // Populates the left assocaites
+        Page[] MyListPage = new Page[100];
+        int PageIndex = 0;
+        public string OmmitExcessAssociates(Document MyDocument, FormattedTextAreaStyle style, string CurrentLevel, string ShowLevel)
+        {
+            List<ObjectIWPDF> lstSortingWHPDF = (from SO in lstObjectWHPDF
+                                                 where SO.Id == CurrentLevel
+                                                 orderby SO.Width descending
+                                                 select SO).ToList();
+            foreach (ObjectIWPDF OS in lstSortingWHPDF)
+            {
+                if (OS.UsedFlag == "N")
+                {
+                    PageDimensions MyPageDimensions = new PageDimensions(14300F, 9000F);
+                    MyListPage[PageIndex] = new ceTe.DynamicPDF.Page(MyPageDimensions);
+
+                    SelectTopLevelHorizantal(OS.Id, style, MyListPage[PageIndex], MyDocument, "Y", "Yes", ShowLevel);
+                    PageIndex++;
+
+                    return "No";
+                }
+            }
+
+            return "Yes";
+        }
+
+        public string ShowFitInAssociates(string CurrentLevel)
+        {
+            List<ObjectIWPDF> lstSortingWHPDF = (from SO in lstObjectWHPDF
+                                                 where SO.Id == CurrentLevel
+                                                 orderby SO.Width descending
+                                                 select SO).ToList();
+            foreach (ObjectIWPDF OS in lstSortingWHPDF)
+            {
+                if (OS.UsedFlag == "N")
+                {
+                    return "No";
+                }
+            }
+
+            return "Yes";
+        }
+
         // Recursive call(Horizantal Positions)
         float PageMaxWidth = 0, PageMaxHeight = 0;
-        public int[] SelectTopLevelHorizantal(string LevelId, FormattedTextAreaStyle style, Page MyPage, string TopNodeFlag, string LevelUp, string ShowLevel)
+        int A0StartHeight=0;
+        public int[] SelectTopLevelHorizantal(string LevelId, FormattedTextAreaStyle style, Page MyPage, Document MyDocument, string TopNodeFlag, string LevelUp, string ShowLevel)
         {
             int NodeIndex = 1;
             ObjectInfPDF TopNode = null, RealTopNode = null, LastNode=null;
@@ -5325,7 +5623,7 @@ namespace REORGCHART
             List<ObjectInfPDF> theSelectedObjectInf = (from SO in lstObjectPDF where SO.PId == LevelId select SO).OrderBy(x => Convert.ToInt32(x.SortNo)).ToList();
             foreach (ObjectInfPDF OI in theSelectedObjectInf)
             {
-                if (OI.PId != "-1" && OI.Flag == "N")
+                if (OI.PId != "-1" && OI.Flag == "N" && ShowFitInAssociates(OI.Id)=="Yes")
                 {
                     if (OI.Id == "10027875")
                         OI.Flag = OI.Flag;
@@ -5339,7 +5637,7 @@ namespace REORGCHART
 
                     if (StartCol==0 && StartRow==0)
                     {
-                        StartRow = RetValue[1];
+                        StartRow = RetValue[1] + A0StartHeight;
                     }
 
                     // Puts the data in the required area.
@@ -5353,7 +5651,7 @@ namespace REORGCHART
                             Column = PutFieldInfoPDF(OI, OI.Title, CurrentCol + ((OI.Owidth / 2) - 100), CurrentRow, 200, 80, OI.Height, MyPage, "HB");
                             AssistanceInf = PutAssistanceFieldInfoPDF(Convert.ToInt32(OI.Id), CurrentCol + ((OI.Owidth / 2) - 100), CurrentRow+100, 200, 80, MyPage, "H");
                         }
-                        RetValue = SelectTopLevelHorizantal(OI.Id, style, MyPage, "N", LevelUp, ShowLevel);
+                        RetValue = SelectTopLevelHorizantal(OI.Id, style, MyPage, MyDocument, "N", LevelUp, ShowLevel);
                     }
                     else if (OI.NOR == OI.SOC || OI.DottedLineFlag == "Y")
                     {
@@ -5941,9 +6239,11 @@ namespace REORGCHART
 
         // All Level PDF in single 
         int CurrentRow = 100;
+        string A0PageSizeFlag = "Y";
         DataTable dtLevel1 = null, dtLevel2 = null;
         public void CreateAllLevelPDF(DataSet OrgDataSet, string DownloadType, string CompanyName, string View, string ViewFlag, string FP, string LevelUp, string ShowLevel)
         {
+            if (ViewFlag == "Horizontal(A0 Page Size)") A0PageSizeFlag = "Y"; else A0PageSizeFlag = "N";
             DataTable OrgDataTable = OrgDataSet.Tables[0];
             DataTable OrgDataTableFM = OrgDataSet.Tables[1];
 
@@ -6003,7 +6303,106 @@ namespace REORGCHART
             {
                 int[] RetValue1 = { 0, 0 };
                 lstObjectPDF.Clear();
-                if (ViewFlag == "Horizontal")
+                lstObjectWHPDF.Clear();
+                if (ViewFlag == "Horizontal(A0 Page Size)")
+                {
+                    string LastLevel = OrgFirstRow[0]["LEVEL_NO"].ToString();
+                    switch (LevelUpto)
+                    {
+                        case "One":
+                            LastLevel = (Convert.ToInt32(OrgFirstRow[0]["LEVEL_NO"].ToString()) + 1).ToString();
+                            break;
+                        case "Two":
+                            LastLevel = (Convert.ToInt32(OrgFirstRow[0]["LEVEL_NO"].ToString()) + 2).ToString();
+                            break;
+                        case "Three":
+                            LastLevel = (Convert.ToInt32(OrgFirstRow[0]["LEVEL_NO"].ToString()) + 3).ToString();
+                            break;
+                        case "Four":
+                            LastLevel = (Convert.ToInt32(OrgFirstRow[0]["LEVEL_NO"].ToString()) + 4).ToString();
+                            break;
+                        case "Five":
+                            LastLevel = (Convert.ToInt32(OrgFirstRow[0]["LEVEL_NO"].ToString()) + 5).ToString();
+                            break;
+                        case "All":
+                            LastLevel = "All";
+                            break;
+                    }
+
+                    PageMaxWidth = 0; PageMaxHeight = 0;
+                    DataRow[] OrgDataRow = OrgDataTable.Select("LEVEL_NO='" + OrgFirstRow[0]["LEVEL_NO"].ToString() + "'");
+                    foreach (DataRow drLevel2 in OrgDataRow)
+                    {
+                        if (LastLevel == "All")
+                            SetParentChildRelationship(drLevel2["LEVEL_ID"].ToString(), 6);
+                        else
+                            SetParentChildRelationship(drLevel2["LEVEL_ID"].ToString(), Convert.ToInt32(LastLevel));
+                    }
+                    string SortOrder = "PARENT_LEVEL_ID ASC";
+                    string Filter = "LEVEL_NO='" + OrgFirstRow[0]["LEVEL_NO"].ToString() + "'";
+                    OrgDataRow = OrgDataTable.Select(Filter, SortOrder);
+                    foreach (DataRow drLevel2 in OrgDataRow)
+                    {
+                        RetValue1 = A0PageSizeBottomUpApproachWH("-1", drLevel2["LEVEL_ID"].ToString(), "N");
+                    }
+                    
+                    OrgDataRow = OrgDataTable.Select("LEVEL_NO='" + OrgFirstRow[0]["LEVEL_NO"].ToString() + "'");
+                    foreach (DataRow drLevel2 in OrgDataRow)
+                    {
+                        SelectTopLevelHorizantal(drLevel2["LEVEL_ID"].ToString(), style, MyPage, MyDocument, "Y", LevelUp, ShowLevel);
+                    }
+
+                    // Left associates
+                    int PageHeight = 0;
+                    A0StartHeight = (int)PageMaxHeight+200;
+                    List<ObjectIWPDF> lstMissedWHPDF = (from SO in lstObjectWHPDF
+                                                         where SO.UsedFlag=="N"
+                                                         orderby SO.Width descending
+                                                         select SO).ToList();
+                    foreach(ObjectIWPDF IWPDF in lstMissedWHPDF)
+                    {
+                        //MyListPage[PageIndex] = new ceTe.DynamicPDF.Page(MyPageDimensions);
+                        //PageMaxWidth = 0; PageMaxHeight = 0;
+                        //SelectTopLevelHorizantal(IWPDF.Id, style, MyListPage[PageIndex], MyDocument, "Y", "Yes", IWPDF.Id);
+                        //IWPDF.TotalWidth = PageMaxWidth;
+                        //IWPDF.TotalHeight = PageMaxHeight;
+                        //PageIndex++;
+
+                        PageHeight += IWPDF.Height;
+                        if (PageHeight >= 8500)
+                        {
+                            MyDocument.Pages.Add(MyPage);
+                            MyPage = new ceTe.DynamicPDF.Page(MyPageDimensions);
+                            A0StartHeight = 0;
+                            PageHeight = IWPDF.Height;
+                        }
+                        PageHeight += 200;
+                        PageMaxWidth = 0; PageMaxHeight = 0;
+                        SelectTopLevelHorizantal(IWPDF.Id, style, MyPage, MyDocument, "Y", "Yes", IWPDF.Id);
+                        IWPDF.TotalWidth = PageMaxWidth;
+                        IWPDF.TotalHeight = PageMaxHeight;
+                        A0StartHeight += IWPDF.Height + 200;
+                    }
+                    MyDocument.Pages.Add(MyPage);
+                    MyDocument.Draw(FP);
+
+                    List<ObjectIWPDF> lstAddedWHPDF = (from SO in lstObjectWHPDF
+                                                        where SO.UsedFlag == "Y"
+                                                        orderby SO.Width descending
+                                                        select SO).ToList();
+
+                    ////Outputs the MyDocument to the current web MyPage
+                    //MyDocument.Pages.Add(MyPage);
+                    //if (PageIndex >= 1)
+                    //{
+                    //    for(int Idx=0; Idx<=PageIndex-1; Idx++)
+                    //    {
+                    //        if (MyListPage[Idx]!=null) MyDocument.Pages.Add(MyListPage[Idx]);
+                    //    }
+                    //}
+                    //MyDocument.Draw(FP);
+                }
+                else if (ViewFlag == "Horizontal")
                 {
                     string LastLevel = OrgFirstRow[0]["LEVEL_NO"].ToString();
                     switch (LevelUpto)
@@ -6037,15 +6436,22 @@ namespace REORGCHART
                         else
                             SetParentChildRelationship(drLevel2["LEVEL_ID"].ToString(), Convert.ToInt32(LastLevel));
                     }
-                    OrgDataRow = OrgDataTable.Select("LEVEL_NO='" + OrgFirstRow[0]["LEVEL_NO"].ToString() + "'");
+                    string SortOrder = "PARENT_LEVEL_ID ASC";
+                    string Filter = "LEVEL_NO='" + OrgFirstRow[0]["LEVEL_NO"].ToString() + "'";
+                    OrgDataRow = OrgDataTable.Select(Filter, SortOrder);
                     foreach (DataRow drLevel2 in OrgDataRow)
                     {
                         RetValue1 = BottomUpApproachWH("-1");
                     }
+                    Common ComClass = new Common();
+                    ComClass.ExecuteQuery("DELETE FROM [dbo].[NodeInfo]");
+                    ComClass.BulkCopySQL(NodeWH, "NodeInfo");
+                    HttpContext.Current.Response.Write("Bulk data stored successfully");
+
                     OrgDataRow = OrgDataTable.Select("LEVEL_NO='" + OrgFirstRow[0]["LEVEL_NO"].ToString() + "'");
                     foreach (DataRow drLevel2 in OrgDataRow)
                     {
-                        SelectTopLevelHorizantal(drLevel2["LEVEL_ID"].ToString(), style, MyPage, "Y", LevelUp, ShowLevel);
+                        SelectTopLevelHorizantal(drLevel2["LEVEL_ID"].ToString(), style, MyPage, MyDocument, "Y", LevelUp, ShowLevel);
                     }
 
                     // Functional Manager Line
