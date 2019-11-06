@@ -1414,14 +1414,14 @@ function initOrgChartStatic(JsonData, w, h, DragDrop) {
                 new go.Binding("visible", "key", isBothRole)
             ));
 
-    var levelColors = ["#FFFFFF/#FFFFFF", "#FFFFFF/#FFFFFF", "#FFFFFF/#FFFFFF", "#FFFFFF/#FFFFFF", "#FFFFFF/#FFFFFF", "#C0C0C0/#C0C0C0", "#D3D3D3/#D3D3D3", "#FFF44F/#FFF44F"];
+    var levelColors = ["#FFFFFF/#FFFFFF", "#FFFFFF/#FFFFFF", "#FFFFFF/#FFFFFF", "#FFFFFF/#FFFFFF", "#FFFFFF/#FFFFFF", "#C0C0C0/#C0C0C0", "#D3D3D3/#D3D3D3", "#FFF44F/#FFF44F", "#ec9026/#ec9026"];
     Settings.TextColor = "black";
     Settings.UpArrow = HOST_ENV + "/Content/Images/uparrow.jpg";
     Settings.DownArrow = HOST_ENV + "/Content/Images/downarrow.jpg";
     Settings.BorderWidth = 3;
     if (Settings.Skin) {
         if (Settings.Skin.toUpperCase() == "BROWN") {
-            levelColors = ["#634329/#634329", "#923222/#923222", "#e44c16/#e44c16", "#ec8026/#ec8026", "#fcaf17/#fcaf17", "#fed300/#fed300", "#D3D3D3/#D3D3D3", "#FFF44F/#FFF44F"];
+            levelColors = ["#634329/#634329", "#923222/#923222", "#e44c16/#e44c16", "#ec8026/#ec8026", "#fcaf17/#fcaf17", "#fed300/#fed300", "#D3D3D3/#D3D3D3", "#FFF44F/#FFF44F", "#ec9026/#ec9026"];
             Settings.TextColor = "white";
             Settings.UpArrow = HOST_ENV + "/Content/Images/uparroww.png";
             Settings.DownArrow = HOST_ENV + "/Content/Images/downarrow.ico";

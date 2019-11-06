@@ -99,6 +99,8 @@ namespace REORGCHART
         [DataMember]
         public string BreadGram { get; set; }
         [DataMember]
+        public string BreadGramName { get; set; }
+        [DataMember]
         public int ActualLevelNo { get; set; }
         [DataMember]
         public int RealCol { get; set; }
@@ -124,7 +126,7 @@ namespace REORGCHART
                          int pWidth, int pHeight, int pCwidth, int pCheight, int pOwidth, int pOheight,
                          string pNLF, string pGCF, string pDLF, string pSFB,
                          string pLN, string pSortNo, string NOR_COUNT, string SOC_COUNT, string pPositionFlag,
-                         string pColorFlag, string pBackColor, string pFlag, string pBreadGram, int pActualLevelNo,
+                         string pColorFlag, string pBackColor, string pFlag, string pBreadGram, string pBreaGramName, int pActualLevelNo,
                          int RC, int RR, int RBW, int RBH, int NI)
         {
             Id = pId;
@@ -152,6 +154,7 @@ namespace REORGCHART
             NOR = Convert.ToInt32(NOR_COUNT);
             SOC = Convert.ToInt32(SOC_COUNT);
             BreadGram = pBreadGram;
+            BreadGramName = pBreaGramName;
             ActualLevelNo = pActualLevelNo;
             RealCol = RC;
             RealRow = RR;
@@ -2554,6 +2557,7 @@ namespace REORGCHART
                                                         sBackColor,
                                                         dr["FLAG"].ToString(),
                                                         dr["BREAD_GRAM"].ToString(),
+                                                        dr["BREAD_GRAM_NAME"].ToString(),
                                                         Convert.ToInt32(dr["LEVEL_NO"].ToString()), 
                                                         0, 0, 0, 0, 0));
                 }
@@ -2591,6 +2595,7 @@ namespace REORGCHART
                                                         sBackColor,
                                                         dr["FLAG"].ToString(),
                                                         dr["BREAD_GRAM"].ToString(),
+                                                        dr["BREAD_GRAM_NAME"].ToString(),
                                                         Convert.ToInt32(dr["LEVEL_NO"].ToString()), 
                                                         0, 0, 0, 0, 0));
                 }
@@ -4515,6 +4520,7 @@ namespace REORGCHART
                                                           OI.BackColor,
                                                           OI.Flag,
                                                           OI.BreadGram,
+                                                          OI.BreadGramName,
                                                           OI.ActualLevelNo,
                                                           0, 0, 0, 0, 0));
 
@@ -4613,6 +4619,7 @@ namespace REORGCHART
                                                           OI.BackColor,
                                                           OI.Flag,
                                                           OI.BreadGram,
+                                                          OI.BreadGramName,
                                                           OI.ActualLevelNo,
                                                           0, 0, 0, 0, 0));
 
@@ -4827,6 +4834,7 @@ namespace REORGCHART
                                                           OI.BackColor,
                                                           OI.Flag,
                                                           OI.BreadGram,
+                                                          OI.BreadGramName,
                                                           OI.ActualLevelNo,
                                                           0, 0, 0, 0, 0));
 
@@ -4865,6 +4873,7 @@ namespace REORGCHART
                                                               OI.BackColor,
                                                               OI.Flag,
                                                               OI.BreadGram,
+                                                              OI.BreadGramName,
                                                               OI.ActualLevelNo,
                                                               0, 0, 0, 0, 0));
                         }
@@ -4966,8 +4975,8 @@ namespace REORGCHART
                 }
             }
 
-            if (LevelId == "10001339")
-                LevelId = "10001339";
+            if (LevelId == "20000000")
+                LevelId = "20000000";
 
             // Summation of width
             int SWidth = 0;
@@ -5036,8 +5045,8 @@ namespace REORGCHART
                 {
                     if (OS.UsedFlag == "N")
                     {
-                        NewA0PageRow++; CurrentCol = 0; CurrentRow = 0;
-                        A0PageSizeBottomUpApproachWH(OS.Id, OS.Id, "U");
+                        //NewA0PageRow++; CurrentCol = 0; CurrentRow = 0;
+                        //A0PageSizeBottomUpApproachWH(OS.Id, OS.Id, "U");
                     }
                 }
 
@@ -5584,7 +5593,7 @@ namespace REORGCHART
                     PageDimensions MyPageDimensions = new PageDimensions(14300F, 9000F);
                     MyListPage[PageIndex] = new ceTe.DynamicPDF.Page(MyPageDimensions);
 
-                    SelectTopLevelHorizantal(OS.Id, style, MyListPage[PageIndex], MyDocument, "Y", "Yes", ShowLevel);
+                    SelectTopLevelHorizantal(OS.Id, style, MyListPage[PageIndex], MyDocument, "Y", "Yes", ShowLevel, "Y");
                     PageIndex++;
 
                     return "No";
@@ -5614,10 +5623,11 @@ namespace REORGCHART
         // Recursive call(Horizantal Positions)
         float PageMaxWidth = 0, PageMaxHeight = 0;
         int A0StartHeight=0;
-        public int[] SelectTopLevelHorizantal(string LevelId, FormattedTextAreaStyle style, Page MyPage, Document MyDocument, string TopNodeFlag, string LevelUp, string ShowLevel)
+        public int[] SelectTopLevelHorizantal(string LevelId, FormattedTextAreaStyle style, Page MyPage, Document MyDocument, 
+                                              string TopNodeFlag, string LevelUp, string ShowLevel, string A0PageSizeFlag)
         {
             int NodeIndex = 1;
-            ObjectInfPDF TopNode = null, RealTopNode = null, LastNode=null;
+            ObjectInfPDF TopNode = null, RealTopNode = null, LastNode=null, OneLevelUpNode=null;
             int StartCol = 0, StartRow = 0, CurrentCol=0, CurrentRow=0, Column=0;
             int[] AssistanceInf = null, RetValue = { 0, 0 };
             List<ObjectInfPDF> theSelectedObjectInf = (from SO in lstObjectPDF where SO.PId == LevelId select SO).OrderBy(x => Convert.ToInt32(x.SortNo)).ToList();
@@ -5651,7 +5661,7 @@ namespace REORGCHART
                             Column = PutFieldInfoPDF(OI, OI.Title, CurrentCol + ((OI.Owidth / 2) - 100), CurrentRow, 200, 80, OI.Height, MyPage, "HB");
                             AssistanceInf = PutAssistanceFieldInfoPDF(Convert.ToInt32(OI.Id), CurrentCol + ((OI.Owidth / 2) - 100), CurrentRow+100, 200, 80, MyPage, "H");
                         }
-                        RetValue = SelectTopLevelHorizantal(OI.Id, style, MyPage, MyDocument, "N", LevelUp, ShowLevel);
+                        RetValue = SelectTopLevelHorizantal(OI.Id, style, MyPage, MyDocument, "N", LevelUp, ShowLevel, A0PageSizeFlag);
                     }
                     else if (OI.NOR == OI.SOC || OI.DottedLineFlag == "Y")
                     {
@@ -5677,10 +5687,35 @@ namespace REORGCHART
                 if (LevelUp == "Yes")
                 {
                     RealTopNode = (from SO in lstObjectPDF where SO.Id == ShowLevel select SO).FirstOrDefault();
-                    TopNode.RealCol = RealTopNode.RealCol;
-                    TopNode.RealRow = RealTopNode.RealRow-(TopNode.Height+100);
-                    TopNode.RealBoxWidth = RealTopNode.RealBoxWidth;
-                    TopNode.RealBoxHeight = RealTopNode.RealBoxHeight;
+                    if (!(A0PageSizeFlag=="Y"))
+                    {
+                        TopNode.RealCol = RealTopNode.RealCol;
+                        TopNode.RealRow = RealTopNode.RealRow - (TopNode.Height + 100);
+                        TopNode.RealBoxWidth = RealTopNode.RealBoxWidth;
+                        TopNode.RealBoxHeight = RealTopNode.RealBoxHeight;
+                    }
+                    else
+                    {
+                        TopNode.RealCol = (RealTopNode.Owidth / 2) - 200;
+                        TopNode.RealRow =  StartRow - A0StartHeight-110;
+                        TopNode.RealBoxWidth = RealTopNode.RealBoxWidth;
+                        TopNode.RealBoxHeight = RealTopNode.RealBoxHeight;
+
+                        MyLabel = new ceTe.DynamicPDF.PageElements.Label(TopNode.BreadGramName, 3, (TopNode.RealRow + A0StartHeight) - 175, 14000, 20,
+                                                                                                     ceTe.DynamicPDF.Font.HelveticaBold, 20,
+                                                                                                     ceTe.DynamicPDF.TextAlign.Left);
+                        MyPage.Elements.Add(MyLabel);
+                        MyLine = new ceTe.DynamicPDF.PageElements.Line(0, (TopNode.RealRow + A0StartHeight) - 150, 14000, (TopNode.RealRow + A0StartHeight) - 150, ShowPDFLineColor("#ffb266"));
+                        MyLine.Width = 2;
+                        MyPage.Elements.Add(MyLine);
+
+
+                        if (TopNode.PId != "999999")
+                        {
+                            OneLevelUpNode = (from SO in lstObjectPDF where SO.Id == TopNode.PId select SO).FirstOrDefault();
+                            PutFieldInfoPDF(OneLevelUpNode, OneLevelUpNode.Title, TopNode.RealCol, TopNode.RealRow - 120, 200, 80, TopNode.Height, MyPage, "B");
+                        }
+                    }
 
                     PutFieldInfoPDF(TopNode, TopNode.Title, TopNode.RealCol, TopNode.RealRow-20, 200, 80, TopNode.Height, MyPage, "B");
                     PutAssistanceFieldInfoPDF(Convert.ToInt32(TopNode.Id), (TopNode.RealCol + (TopNode.RealBoxWidth / 2) - 100), (TopNode.RealRow + TopNode.RealBoxHeight + 20), 200, 80, MyPage, "H");
@@ -5994,6 +6029,7 @@ namespace REORGCHART
                                                           OI.BackColor,
                                                           OI.Flag,
                                                           OI.BreadGram,
+                                                          OI.BreadGramName,
                                                           OI.ActualLevelNo,
                                                           0, 0, 0, 0, 0));
 
@@ -6093,6 +6129,7 @@ namespace REORGCHART
                                                           OI.BackColor,
                                                           OI.Flag,
                                                           OI.BreadGram,
+                                                          OI.BreadGramName,
                                                           OI.ActualLevelNo,
                                                           0, 0, 0, 0, 0));
 
@@ -6171,6 +6208,7 @@ namespace REORGCHART
                                   OI.BackColor,
                                   OI.Flag,
                                   OI.BreadGram,
+                                  OI.BreadGramName,
                                   OI.ActualLevelNo,
                                   0, 0, 0, 0, 0));
 
@@ -6349,7 +6387,7 @@ namespace REORGCHART
                     OrgDataRow = OrgDataTable.Select("LEVEL_NO='" + OrgFirstRow[0]["LEVEL_NO"].ToString() + "'");
                     foreach (DataRow drLevel2 in OrgDataRow)
                     {
-                        SelectTopLevelHorizantal(drLevel2["LEVEL_ID"].ToString(), style, MyPage, MyDocument, "Y", LevelUp, ShowLevel);
+                        SelectTopLevelHorizantal(drLevel2["LEVEL_ID"].ToString(), style, MyPage, MyDocument, "Y", LevelUp, ShowLevel, "N");
                     }
 
                     // Left associates
@@ -6361,13 +6399,6 @@ namespace REORGCHART
                                                          select SO).ToList();
                     foreach(ObjectIWPDF IWPDF in lstMissedWHPDF)
                     {
-                        //MyListPage[PageIndex] = new ceTe.DynamicPDF.Page(MyPageDimensions);
-                        //PageMaxWidth = 0; PageMaxHeight = 0;
-                        //SelectTopLevelHorizantal(IWPDF.Id, style, MyListPage[PageIndex], MyDocument, "Y", "Yes", IWPDF.Id);
-                        //IWPDF.TotalWidth = PageMaxWidth;
-                        //IWPDF.TotalHeight = PageMaxHeight;
-                        //PageIndex++;
-
                         PageHeight += IWPDF.Height;
                         if (PageHeight >= 8500)
                         {
@@ -6378,7 +6409,8 @@ namespace REORGCHART
                         }
                         PageHeight += 200;
                         PageMaxWidth = 0; PageMaxHeight = 0;
-                        SelectTopLevelHorizantal(IWPDF.Id, style, MyPage, MyDocument, "Y", "Yes", IWPDF.Id);
+                        Level = IWPDF.Id;
+                        SelectTopLevelHorizantal(IWPDF.Id, style, MyPage, MyDocument, "Y", "Yes", IWPDF.Id, A0PageSizeFlag);
                         IWPDF.TotalWidth = PageMaxWidth;
                         IWPDF.TotalHeight = PageMaxHeight;
                         A0StartHeight += IWPDF.Height + 200;
@@ -6390,17 +6422,6 @@ namespace REORGCHART
                                                         where SO.UsedFlag == "Y"
                                                         orderby SO.Width descending
                                                         select SO).ToList();
-
-                    ////Outputs the MyDocument to the current web MyPage
-                    //MyDocument.Pages.Add(MyPage);
-                    //if (PageIndex >= 1)
-                    //{
-                    //    for(int Idx=0; Idx<=PageIndex-1; Idx++)
-                    //    {
-                    //        if (MyListPage[Idx]!=null) MyDocument.Pages.Add(MyListPage[Idx]);
-                    //    }
-                    //}
-                    //MyDocument.Draw(FP);
                 }
                 else if (ViewFlag == "Horizontal")
                 {
@@ -6451,7 +6472,7 @@ namespace REORGCHART
                     OrgDataRow = OrgDataTable.Select("LEVEL_NO='" + OrgFirstRow[0]["LEVEL_NO"].ToString() + "'");
                     foreach (DataRow drLevel2 in OrgDataRow)
                     {
-                        SelectTopLevelHorizantal(drLevel2["LEVEL_ID"].ToString(), style, MyPage, MyDocument, "Y", LevelUp, ShowLevel);
+                        SelectTopLevelHorizantal(drLevel2["LEVEL_ID"].ToString(), style, MyPage, MyDocument, "Y", LevelUp, ShowLevel, A0PageSizeFlag);
                     }
 
                     // Functional Manager Line
