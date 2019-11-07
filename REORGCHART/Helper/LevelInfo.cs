@@ -187,6 +187,7 @@ namespace REORGCHART.Helper
                 uca.SelectedLineColor = "#634329";
                 uca.SelectedPortraitModeMultipleLevel = "Yes";
                 uca.SelectedFunctionalManagerType = "ShowFM";
+                uca.SelectedFMLine = "PN";
                 uca.OrgChartType = "OD";
                 uca.CopyPaste = "";
                 db.UserLastActions.Add(uca);
@@ -218,6 +219,7 @@ namespace REORGCHART.Helper
                 viewModel.SelectedLineColor = "#634329";
                 viewModel.SelectedPortraitModeMultipleLevel = "Yes";
                 viewModel.SelectedFunctionalManagerType = "ShowFM";
+                viewModel.SelectedFMLine = "PN";
                 viewModel.OrgChartType = "OD";
                 viewModel.CopyPaste = "";
                 viewModel.Role = RoleMethod;
@@ -240,6 +242,7 @@ namespace REORGCHART.Helper
                 viewModel.SelectedLineColor = UCA.SelectedLineColor;
                 viewModel.SelectedPortraitModeMultipleLevel = UCA.SelectedPortraitModeMultipleLevel;
                 viewModel.SelectedFunctionalManagerType = UCA.SelectedFunctionalManagerType;
+                viewModel.SelectedFMLine = UCA.SelectedFMLine;
                 viewModel.OrgChartType = UCA.OrgChartType;
                 viewModel.Levels = UCA.Levels;
                 viewModel.Oper = UCA.Oper;
@@ -316,6 +319,7 @@ namespace REORGCHART.Helper
                         UCA.SelectedLineColor = "#634329";
                         UCA.SelectedPortraitModeMultipleLevel = "Yes";
                         UCA.SelectedFunctionalManagerType = "ShowFM";
+                        UCA.SelectedFMLine = "PN";
                         UCA.OrgChartType = "OD";
                         UCA.CopyPaste = "";
 
@@ -346,6 +350,7 @@ namespace REORGCHART.Helper
                         viewModel.SelectedLineColor = "#634329";
                         viewModel.SelectedPortraitModeMultipleLevel = "Yes";
                         viewModel.SelectedFunctionalManagerType = "ShowFM";
+                        viewModel.SelectedFMLine = "PN";
                         viewModel.OrgChartType = "OD";
                         viewModel.CopyPaste = "";
                         viewModel.Role = RoleMethod;
@@ -393,6 +398,7 @@ namespace REORGCHART.Helper
                 uca.SelectedLineColor = "#634329";
                 uca.SelectedPortraitModeMultipleLevel = "Yes";
                 uca.SelectedFunctionalManagerType = "ShowFM";
+                uca.SelectedFMLine = "PN";
                 uca.OrgChartType = "OD";
                 uca.CopyPaste = "";
                 db.UserLastActions.Add(uca);
@@ -422,6 +428,7 @@ namespace REORGCHART.Helper
                 viewModel.SelectedLineColor = "#634329";
                 viewModel.SelectedPortraitModeMultipleLevel = "Yes";
                 viewModel.SelectedFunctionalManagerType = "ShowFM";
+                viewModel.SelectedFMLine = "PN";
                 viewModel.OrgChartType = "OD";
                 viewModel.CopyPaste = "";
                 viewModel.Role = RoleMethod;
@@ -444,6 +451,7 @@ namespace REORGCHART.Helper
                 viewModel.SelectedLineColor = UCA.SelectedLineColor;
                 viewModel.SelectedPortraitModeMultipleLevel = UCA.SelectedPortraitModeMultipleLevel;
                 viewModel.SelectedFunctionalManagerType = UCA.SelectedFunctionalManagerType;
+                viewModel.SelectedFMLine = UCA.SelectedFMLine;
                 viewModel.OrgChartType = UCA.OrgChartType;
                 viewModel.Levels = UCA.Levels;
                 viewModel.Oper = UCA.Oper;
@@ -515,6 +523,7 @@ namespace REORGCHART.Helper
                         UCA.SelectedLineColor = "#634329";
                         UCA.SelectedPortraitModeMultipleLevel = "Yes";
                         UCA.SelectedFunctionalManagerType = "ShowFM";
+                        UCA.SelectedFMLine = "PN";
                         UCA.OrgChartType = "OD";
                         UCA.CopyPaste = "";
 
@@ -543,6 +552,7 @@ namespace REORGCHART.Helper
                         viewModel.SelectedLineColor = "#634329";
                         viewModel.SelectedPortraitModeMultipleLevel = "Yes";
                         viewModel.SelectedFunctionalManagerType = "ShowFM";
+                        viewModel.SelectedFMLine = "PN";
                         viewModel.OrgChartType = "OD";
                         viewModel.CopyPaste = "";
                         viewModel.Role = RoleMethod;
@@ -624,7 +634,7 @@ namespace REORGCHART.Helper
                 {
                     OrgChartDataFM.Columns.Add(dc.ColumnName, dc.DataType);
                 }
-                if (FlagFM == "HideFM")
+                if (FlagFM == "ShowFM")
                 {
                     foreach (DataRow dr in OrgChartData.Rows)
                     {

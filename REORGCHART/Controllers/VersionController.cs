@@ -252,7 +252,7 @@ namespace REORGCHART.Controllers
                         DataSet OrgDataSet = LI.GetOrgChartDataTable(UCA.Role, UCA.Country, ShowLevelPDF, "999999", CurrentLevelPDF, UCA.Oper, UCA.Version, UCA.ShowLevel, LevelUp, UCA.SelectedFunctionalManagerType);
                         AllPDF.CreateAllLevelPDFIntermediateResults(OrgDataSet, UCA.Oper.ToUpper(), VD.VersionNo.ToString(), "", "PDF");
                         OrgDataSet = LI.GetOrgChartDataTable(UCA.Role, UCA.Country, ShowLevelPDF, "999999", CurrentLevelPDF, UCA.Oper, UCA.Version, UCA.ShowLevel, LevelUp, UCA.SelectedFunctionalManagerType);
-                        AllPDF.CreateAllLevelPDF(OrgDataSet, "PDF", UCA.Company, UCA.Oper, ViewFlag, FileNameWithPath, LevelUp, UCA.ShowLevel);
+                        AllPDF.CreateAllLevelPDF(OrgDataSet, "PDF", UCA.Company, UCA.UserId, UCA.Oper, UCA.SelectedFMLine, ViewFlag, FileNameWithPath, LevelUp, UCA.ShowLevel);
                     }
                 }
             }
@@ -750,6 +750,7 @@ namespace REORGCHART.Controllers
                     SelectedLineColor = myla.SelectedLineColor,
                     SelectedBoxWidth = myla.SelectedBoxWidth,
                     SelectedFunctionalManagerType = myla.SelectedFunctionalManagerType,
+                    SelectedFMLine = myla.SelectedFMLine,
                     SelectedPortraitModeMultipleLevel = myla.SelectedPortraitModeMultipleLevel,
                     OrgChartType = myla.OrgChartType,
                     SerialNoFlag = UFH == null ? "N" : UFH.SerialNoFlag,
@@ -878,6 +879,7 @@ namespace REORGCHART.Controllers
                 SelectedLineColor = myla.SelectedLineColor,
                 SelectedBoxWidth = myla.SelectedBoxWidth,
                 SelectedFunctionalManagerType = myla.SelectedFunctionalManagerType,
+                SelectedFMLine = myla.SelectedFMLine,
                 SelectedPortraitModeMultipleLevel = myla.SelectedPortraitModeMultipleLevel,
                 OrgChartType = myla.OrgChartType,
                 SerialNoFlag = UFH == null ? "N" : UFH.SerialNoFlag,
@@ -1011,6 +1013,7 @@ namespace REORGCHART.Controllers
                     SelectedLineColor = myla.SelectedLineColor,
                     SelectedBoxWidth = myla.SelectedBoxWidth,
                     SelectedFunctionalManagerType = myla.SelectedFunctionalManagerType,
+                    SelectedFMLine = myla.SelectedFMLine,
                     SelectedPortraitModeMultipleLevel = myla.SelectedPortraitModeMultipleLevel,
                     OrgChartType = myla.OrgChartType,
                     SerialNoFlag = UFH == null ? "N" : UFH.SerialNoFlag,
@@ -1161,6 +1164,7 @@ namespace REORGCHART.Controllers
                     SelectedLineColor = myla.SelectedLineColor,
                     SelectedBoxWidth = myla.SelectedBoxWidth,
                     SelectedFunctionalManagerType = myla.SelectedFunctionalManagerType,
+                    SelectedFMLine = myla.SelectedFMLine,
                     SelectedPortraitModeMultipleLevel = myla.SelectedPortraitModeMultipleLevel,
                     OrgChartType = myla.OrgChartType,
                     SerialNoFlag = UFH == null ? "N" : UFH.SerialNoFlag,

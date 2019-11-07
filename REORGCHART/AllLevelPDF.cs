@@ -4293,7 +4293,9 @@ namespace REORGCHART
         }
 
         // Put All Level information in PDF
-        private int PutFieldInfoPDF(ObjectInfPDF OI, string Info, int CurrentCol, int CurrentRow, int Width, int Height, int BottomHeight, Page MyPage, string ConnectorLineType)
+        private int PutFieldInfoPDF(ObjectInfPDF OI, string Info,
+                                    int CurrentCol, int CurrentRow, int Width, int Height, int BottomHeight, 
+                                    Page MyPage, string ConnectorLineType)
         {
             int Idx = 0, Idy=0, StartCol=0, CurrentA0PageRow=CurrentRow+A0StartHeight;
             string[] LabelInfo = Info.Replace("&amp;", "&").Split(';');
@@ -4374,6 +4376,18 @@ namespace REORGCHART
                     catch (Exception)
                     {
 
+                    }
+                }
+                if (FMLineFlag == "PN")
+                {
+                    DataRow[] Rows = OrgDataTableFM.Select("LEVEL_ID='" + OI.Id + "'");
+                    foreach (DataRow dr in Rows)
+                    {
+                        DataRow[] PositionRows = OrgDataTable.Select("LEVEL_ID='" + dr["PARENT_LEVEL_ID"].ToString() + "'");
+                        MyLabel = new ceTe.DynamicPDF.PageElements.Label(PositionRows[0]["MSRP_POSITION_NBR"].ToString(), 
+                                                                         CurrentCol, (CurrentA0PageRow + Height - 10), Width, Height,
+                                                                         ceTe.DynamicPDF.Font.HelveticaBold, 8, ceTe.DynamicPDF.TextAlign.Right);
+                        MyPage.Elements.Add(MyLabel);
                     }
                 }
             }
@@ -5554,23 +5568,29 @@ namespace REORGCHART
             return "Yes";
         }
 
-        private string ShowFunctionalManager(DataTable OrgDataTableFM, string PDFType, Page MyPage)
+        private string ShowFunctionalManager(DataTable OrgDataTableFM, string PDFType, string FMLine, Page MyPage)
         {
-            if (lstObjLine.Count >= 1) lstObjLine.Clear();
-            List<ObjectInfPDF> theSelectedObjectInf = (from SO in lstObjectPDF where SO.PId == Level select SO).OrderBy(x => Convert.ToInt32(x.SortNo)).ToList();
-            foreach(DataRow dr in OrgDataTableFM.Rows)
+            if (PDFType == "HORIZONTAL" || PDFType == "VERTICAL")
             {
-                lstObjLine.Clear();
-                lstObjStraightLine.Clear();
-
-                DrawLineFunctionalManager(dr["LEVEL_ID"].ToString(), dr["PARENT_LEVEL_ID"].ToString(), PDFType);
-                foreach (ObjectLine OL in lstObjLine)
+                if (FMLine == "DL")
                 {
-                    MyLine = new ceTe.DynamicPDF.PageElements.Line(OL.NodeLineStartCol, OL.NodeLineStartRow, OL.NodeLineEndCol, OL.NodeLineEndRow);
-                    MyLine.Width = 2;
-                    MyLine.Style = LineStyle.Dash;
-                    MyLine.Color = ShowPDFBoxColor(BoxColor);
-                    MyPage.Elements.Add(MyLine);
+                    if (lstObjLine.Count >= 1) lstObjLine.Clear();
+                    List<ObjectInfPDF> theSelectedObjectInf = (from SO in lstObjectPDF where SO.PId == Level select SO).OrderBy(x => Convert.ToInt32(x.SortNo)).ToList();
+                    foreach (DataRow dr in OrgDataTableFM.Rows)
+                    {
+                        lstObjLine.Clear();
+                        lstObjStraightLine.Clear();
+
+                        DrawLineFunctionalManager(dr["LEVEL_ID"].ToString(), dr["PARENT_LEVEL_ID"].ToString(), PDFType);
+                        foreach (ObjectLine OL in lstObjLine)
+                        {
+                            MyLine = new ceTe.DynamicPDF.PageElements.Line(OL.NodeLineStartCol, OL.NodeLineStartRow, OL.NodeLineEndCol, OL.NodeLineEndRow);
+                            MyLine.Width = 2;
+                            MyLine.Style = LineStyle.Dash;
+                            MyLine.Color = ShowPDFBoxColor(BoxColor);
+                            MyPage.Elements.Add(MyLine);
+                        }
+                    }
                 }
             }
 
@@ -6277,13 +6297,15 @@ namespace REORGCHART
 
         // All Level PDF in single 
         int CurrentRow = 100;
-        string A0PageSizeFlag = "Y";
-        DataTable dtLevel1 = null, dtLevel2 = null;
-        public void CreateAllLevelPDF(DataSet OrgDataSet, string DownloadType, string CompanyName, string View, string ViewFlag, string FP, string LevelUp, string ShowLevel)
+        string A0PageSizeFlag = "Y", FMLineFlag="PN";
+        DataTable dtLevel1 = null, dtLevel2 = null, OrgDataTable=null, OrgDataTableFM=null;
+        public void CreateAllLevelPDF(DataSet OrgDataSet, string DownloadType, string CompanyName, string UserName,
+                                      string View, string FMLine, string ViewFlag, string FP, string LevelUp, string ShowLevel)
         {
+            FMLineFlag = FMLine;
             if (ViewFlag == "Horizontal(A0 Page Size)") A0PageSizeFlag = "Y"; else A0PageSizeFlag = "N";
-            DataTable OrgDataTable = OrgDataSet.Tables[0];
-            DataTable OrgDataTableFM = OrgDataSet.Tables[1];
+            OrgDataTable = OrgDataSet.Tables[0];
+            OrgDataTableFM = OrgDataSet.Tables[1];
 
             dtHD_DIRECT_REPORT = CompanyName.ToUpper() + "_" + FinalyzerVersion.ToString() + "_DIRECT_REPORT";
             dtHD_DIRECT_REPORT_DATA = CompanyName.ToUpper() + "_" + FinalyzerVersion.ToString() + "_DIRECT_REPORT_DATA";
@@ -6390,6 +6412,9 @@ namespace REORGCHART
                         SelectTopLevelHorizantal(drLevel2["LEVEL_ID"].ToString(), style, MyPage, MyDocument, "Y", LevelUp, ShowLevel, "N");
                     }
 
+                    // Functional Manager Line
+                    ShowFunctionalManager(OrgDataTableFM, ViewFlag.ToUpper(), FMLine, MyPage);
+
                     // Left associates
                     int PageHeight = 0;
                     A0StartHeight = (int)PageMaxHeight+200;
@@ -6476,7 +6501,7 @@ namespace REORGCHART
                     }
 
                     // Functional Manager Line
-                    ShowFunctionalManager(OrgDataTableFM, "HORIZANTAL", MyPage);
+                    ShowFunctionalManager(OrgDataTableFM, ViewFlag.ToUpper(), FMLine, MyPage);
 
                     //Outputs the MyDocument to the current web MyPage
                     MyPage.Dimensions.Width = PageMaxWidth + 300;

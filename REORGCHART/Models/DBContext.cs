@@ -120,6 +120,7 @@ namespace REORGCHART.Models
         public string SelectedBoxWidth { get; set; }
         public string SelectedPortraitModeMultipleLevel { get; set; }
         public string SelectedFunctionalManagerType { get; set; }
+        public string SelectedFMLine { get; set; }
         public string OrgChartType { get; set; }
         public string ShowLevel { get; set; }
         public string ParentLevel { get; set; }
@@ -519,6 +520,7 @@ namespace REORGCHART.Models
         public string SelectedLineColor { get; set; }
         public string SelectedPortraitModeMultipleLevel { get; set; }
         public string SelectedFunctionalManagerType { get; set; }
+        public string SelectedFMLine { get; set; }
         public string OrgChartType { get; set; }
         public string SerialNoFlag { get; set; }
         public string CopyPaste { get; set; }
@@ -568,6 +570,7 @@ namespace REORGCHART.Models
         public string SelectedBoxWidth { get; set; }
         public string SelectedPortraitModeMultipleLevel { get; set; }
         public string SelectedFunctionalManagerType { get; set; }
+        public string SelectedFMLine { get; set; }
         public string OrgChartType { get; set; }
         public string CopyPaste { get; set; }
         public string ShowLevel { get; set; }

@@ -594,6 +594,10 @@ $(document).ready(function () {
             Settings.FunctionalManagerType = $("#hdnSelectedFunctionalManagerType").val();
             ShowSettingsValue('functionalmanagertype', $("#hdnSelectedFunctionalManagerType").val());
         }
+        if ($("#hdnSelectedFMLine").val()) {
+            Settings.FunctionalManagerLine = $("#hdnSelectedFMLine").val();
+            $("#selFMLine").val($("#hdnSelectedFMLine").val());
+        }
         if ($("#hdnSelectedPortraitModeMultipleLevel").val()) {
             Settings.PortraitModeMultipleLevel = $("#hdnSelectedPortraitModeMultipleLevel").val();
             $("#selPortraitModeMultipleLevel").val(Settings.PortraitModeMultipleLevel);
@@ -1872,6 +1876,8 @@ function SaveScreenSettings() {
     $("#hdnSelectedPortraitModeMultipleLevel").val(Settings.PortraitModeMultipleLevel);
     Settings.FunctionalManagerType = $("input[name='functionalmanagertype']:checked").val();
     $("#hdnSelectedFunctionalManagerType").val(Settings.FunctionalManagerType);
+    Settings.FunctionalManagerLine = $("#selFMLine").val();
+    $("#hdnSelectedFMLine").val(Settings.FunctionalManagerLine);
 
     switch ($("#myLevel").val()) {
         case "1":
@@ -1915,6 +1921,7 @@ function SaveScreenSettings() {
         SelectedBoxWidth: $("#hdnSelectedBoxWidth").val(),
         SelectedPortraitModeMultipleLevel: $("#hdnSelectedPortraitModeMultipleLevel").val(),
         SelectedFunctionalManagerType: $("#hdnSelectedFunctionalManagerType").val(),
+        SelectedFMLine: $("#hdnSelectedFMLine").val(),
         OrgChartType: $("#hdnOrgChartType").val(),
         Type: "Settings"
     };
@@ -4096,6 +4103,7 @@ function SetSelectedValues(Obj, sType) {
             SelectedLineColor: $("#hdnSelectedLineColor").val(),
             SelectedPortraitModeMultipleLevel: $("#hdnSelectedPortraitModeMultipleLevel").val(),
             SelectedFunctionalManagerType: $("#hdnSelectedFunctionalManagerType").val(),
+            SelectedFMLine: $("#hdnSelectedFMLine").val(),
             Type: sType
         };
         $.ajax({

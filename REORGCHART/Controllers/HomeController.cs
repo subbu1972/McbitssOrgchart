@@ -100,6 +100,9 @@ namespace REORGCHART.Controllers
                     SelectedBorderWidth = myla.SelectedBorderWidth,
                     SelectedLineColor = myla.SelectedLineColor,
                     SelectedBoxWidth = myla.SelectedBoxWidth,
+                    SelectedFunctionalManagerType = myla.SelectedFunctionalManagerType,
+                    SelectedFMLine = myla.SelectedFMLine,
+                    SelectedPortraitModeMultipleLevel = myla.SelectedPortraitModeMultipleLevel,
                     OrgChartType = myla.OrgChartType,
                     ShowLevel = myla.ShowLevel,
                     Levels = myla.Levels,
@@ -197,7 +200,8 @@ namespace REORGCHART.Controllers
         public JsonResult SetSelectedValues(string KeyDate, string UsedView, string Country, string ShowLevel, string Levels, string Oper, string Version, string Role,
                                         string SelectedShape, string SelectedSkin, string SelectedShowPicture, string SelectedSplitScreen, string SelectedSplitScreenDirection,
                                         string SelectedTextColor, string SelectedBorderColor, string SelectedBorderWidth, string SelectedLineColor, string SelectedBoxWidth,
-                                        string SelectedPortraitModeMultipleLevel, string SelectedFunctionalManagerType, string OrgChartType, string Type)
+                                        string SelectedPortraitModeMultipleLevel, string SelectedFunctionalManagerType, string SelectedFMLine, 
+                                        string OrgChartType, string Type)
         {
             LoginUsers UserData = LI.GetLoginUserInfo("");
             var UCA = (from uca in db.UserLastActions
@@ -269,6 +273,7 @@ namespace REORGCHART.Controllers
                     UCA.SelectedBoxWidth = SelectedBoxWidth;
                     UCA.SelectedPortraitModeMultipleLevel = SelectedPortraitModeMultipleLevel;
                     UCA.SelectedFunctionalManagerType = SelectedFunctionalManagerType;
+                    UCA.SelectedFMLine = SelectedFMLine;
                     UCA.OrgChartType = OrgChartType;
                     UCA.Levels = Levels;
                 }
@@ -304,6 +309,7 @@ namespace REORGCHART.Controllers
                     MyModel.SelectedLineColor = SelectedLineColor;
                     MyModel.SelectedPortraitModeMultipleLevel = SelectedPortraitModeMultipleLevel;
                     MyModel.SelectedFunctionalManagerType = SelectedFunctionalManagerType;
+                    MyModel.SelectedFMLine = SelectedFMLine;
                     MyModel.OrgChartType = OrgChartType;
                     MyModel.Levels = Levels;
                 }
