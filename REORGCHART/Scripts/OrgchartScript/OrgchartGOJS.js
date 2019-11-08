@@ -61,7 +61,7 @@ function init(w, h, DragDrop) {
                     $(SideTreeLayout,
                         {
                             treeStyle: go.TreeLayout.StyleLastParents,
-                            arrangement: go.TreeLayout.ArrangementVertical,
+                            arrangement: go.TreeLayout.ArrangementHorizontal,
                             // properties for most of the tree:
                             angle: 90,
                             layerSpacing: 35,
@@ -71,6 +71,18 @@ function init(w, h, DragDrop) {
                             alternateLayerSpacing: 35,
                             alternateAlignment: go.TreeLayout.AlignmentBus,
                             alternateNodeSpacing: 20
+
+                            //treeStyle: go.TreeLayout.StyleLastParents,
+                            //arrangement: go.TreeLayout.ArrangementVertical,
+                            //// properties for most of the tree:
+                            //angle: 90,
+                            //layerSpacing: 35,
+                            //breadthLimit: w,
+                            //// properties for the "last parents":
+                            //alternateAngle: 90,
+                            //alternateLayerSpacing: 35,
+                            //alternateAlignment: go.TreeLayout.AlignmentBus,
+                            //alternateNodeSpacing: 20
 
                             //treeStyle: go.TreeLayout.StyleLastParents,
                             //arrangement: go.TreeLayout.ArrangementVertical,
@@ -1625,7 +1637,7 @@ function init(w, h, DragDrop) {
         } else if (v.node == null && v.childrenCount > 0) {
             // found the substitute parent for non-assistant children
             v.alignment = go.TreeLayout.AlignmentCenterChildren;
-            v.breadthLimit = 9000;
+            v.breadthLimit = w;
             v.layerSpacing = 0;
         }
     };

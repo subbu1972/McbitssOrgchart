@@ -2143,7 +2143,7 @@ namespace REORGCHART.Controllers
                 UsedVersion = UCA.Version,
                 ChartData = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
                                                UCA.Levels, UCA.Oper, UCA.Version,
-                                               UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)
+                                               UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)[1]
             });
         }
 
@@ -2181,7 +2181,7 @@ namespace REORGCHART.Controllers
                 UsedVersion = UCA.Version,
                 ChartData = LI.GetOrgChartData(UCA.Role, UCA.Country, UCA.ShowLevel, UCA.ParentLevel, 
                                                UCA.Levels, UCA.Oper, UCA.Version,
-                                               UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)
+                                               UCA.OrgChartType, UCA.SelectedPortraitModeMultipleLevel, UCA.SelectedFunctionalManagerType)[1]
             });
         }
 
