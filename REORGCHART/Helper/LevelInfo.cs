@@ -634,7 +634,7 @@ namespace REORGCHART.Helper
                 {
                     OrgChartDataFM.Columns.Add(dc.ColumnName, dc.DataType);
                 }
-                if (FlagFM == "ShowFM")
+                if (FlagFM == "HideFM")
                 {
                     foreach (DataRow dr in OrgChartData.Rows)
                     {

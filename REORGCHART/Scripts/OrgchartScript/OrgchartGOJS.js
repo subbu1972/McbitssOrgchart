@@ -1325,7 +1325,19 @@ function init(w, h, DragDrop) {
                                     textAlign: (Settings.SelectShape == "RoundedRectangle") ? "center" : "left",
                                     width: 280 - Settings.BoxWidth
                                 },
-                                new go.Binding("text", "MSRP_PERSONAL_GRADE").makeTwoWay())
+                                new go.Binding("text", "MSRP_PERSONAL_GRADE").makeTwoWay()),
+                            $(go.TextBlock, textStyle(),
+                                {
+                                    row: 3, column: 0, columnSpan: 6,
+                                    editable: false, isMultiline: false,
+                                    margin: new go.Margin(0, 0, 0, 3),
+                                    stroke: "red",
+                                    overflow: go.TextBlock.OverflowEllipsis,
+                                    maxLines: 1,
+                                    textAlign: "right",
+                                    width: 270 - Settings.BoxWidth
+                                },
+                                new go.Binding("text", "REPORTING_TO_FM", function (v) { if (v == "0") return ""; else return v; }).makeTwoWay())
                         )  // end Table Panel
                     ), // end Horizontal Panel
                     $(go.Picture,

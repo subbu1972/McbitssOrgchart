@@ -1484,7 +1484,7 @@ namespace REORGCHART.Controllers
                                  ufh.VersionNo == Version
                            select ufh).FirstOrDefault();
 
-                if (UFH != null) ShowTableFM = ComClass.SQLReturnDataTable("SELECT LEVEL_ID, MFLAG" + UFH.ExcelDownLoadFields + " " +
+                if (UFH != null) ShowTableFM = ComClass.SQLReturnDataTable("SELECT LEVEL_ID, FULL_NAME, MFLAG" + UFH.ExcelDownLoadFields + " " +
                     "                                                           FROM " + "[" + sTableName[0] + "] " +
                     "                                                           WHERE NOR_COUNT >= 1 AND DOTTED_LINE_FLAG = 'N' AND VERSION = '"+ myla.Version + "'" +
                     "                                                           ORDER BY PARENT_LEVEL_ID;");
@@ -1586,7 +1586,7 @@ namespace REORGCHART.Controllers
                                  ufh.VersionNo == Version
                            select ufh).FirstOrDefault();
 
-                if (UFH != null) ShowTable = ComClass.SQLReturnDataTable("SELECT LEVEL_ID, MFLAG" + UFH.ExcelDownLoadFields + " FROM " + "[" + sTableName[0] + "]");
+                if (UFH != null) ShowTable = ComClass.SQLReturnDataTable("SELECT LEVEL_ID, FULL_NAME, MFLAG" + UFH.ExcelDownLoadFields + " FROM " + "[" + sTableName[0] + "]");
             }
             Session.Add("ShowTable", ShowTable);
             if (ShowTable == null)
@@ -1629,7 +1629,7 @@ namespace REORGCHART.Controllers
                        select ufh).FirstOrDefault();
 
             DataTable ShowTable = null;
-            ShowTable = ComClass.SQLReturnDataTable("SELECT LEVEL_ID, MFLAG" + UFH.ExcelDownLoadFields + " FROM " + "[" + sTableName[0] + "] " + WhereCondition + "");
+            ShowTable = ComClass.SQLReturnDataTable("SELECT LEVEL_ID, FULL_NAME, MFLAG" + UFH.ExcelDownLoadFields + " FROM " + "[" + sTableName[0] + "] " + WhereCondition + "");
             Session.Add("ShowTable", ShowTable);
             if (ShowTable == null)
             {
