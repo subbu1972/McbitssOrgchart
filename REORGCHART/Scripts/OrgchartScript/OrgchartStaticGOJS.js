@@ -203,8 +203,8 @@ function initOrgChartStatic(JsonData, w, h, DragDrop) {
             ObjChangeType = [];
             ObjChange = [];
 
-            var Obj = myDiagram.findNodeForKey(SelectNodeObj.parent);
-            SelectNodeObj.SUP_DISPLAY_NAME = Obj.data.FULL_NAME;
+            //var Obj = myDiagram.findNodeForKey(SelectNodeObj.parent);
+            //SelectNodeObj.SUP_DISPLAY_NAME = Obj.data.FULL_NAME;
             ObjChange.push(SelectNodeObj);
             ObjChangeType.push("C");
 
@@ -1125,7 +1125,19 @@ function initOrgChartStatic(JsonData, w, h, DragDrop) {
                                     textAlign: (Settings.SelectShape == "RoundedRectangle") ? "center" : "left",
                                     width: 280 - Settings.BoxWidth
                                 },
-                                new go.Binding("text", "MSRP_PERSONAL_GRADE").makeTwoWay())
+                                new go.Binding("text", "MSRP_PERSONAL_GRADE").makeTwoWay()),
+                            $(go.TextBlock, textStyle(),
+                                {
+                                    row: 3, column: 0, columnSpan: 6,
+                                    editable: false, isMultiline: false,
+                                    margin: new go.Margin(0, 0, 0, 3),
+                                    stroke: "red",
+                                    overflow: go.TextBlock.OverflowEllipsis,
+                                    maxLines: 1,
+                                    textAlign: "right",
+                                    width: 270 - Settings.BoxWidth
+                                },
+                                new go.Binding("text", "REPORTING_TO_FM", function (v) { if (v == "0") return ""; else return v; }).makeTwoWay())
                         )  // end Table Panel
                     ), // end Horizontal Panel
                     $(go.Picture,
@@ -1223,59 +1235,79 @@ function initOrgChartStatic(JsonData, w, h, DragDrop) {
                             $(go.TextBlock, textStyle(),  // the name
                                 {
                                     row: 0, column: 0, columnSpan: 6,
-                                    font: "12pt Segoe UI,sans-serif",
-                                    editable: true, isMultiline: false,
-                                    minSize: new go.Size(10, 16),
+                                    font: "9pt Segoe UI,sans-serif",
+                                    editable: false, isMultiline: true,
                                     stroke: Settings.TextColor,
-                                    textAlign: "center"
+                                    overflow: go.TextBlock.OverflowEllipsis,
+                                    maxLines: 2,
+                                    textAlign: (Settings.SelectShape == "RoundedRectangle") ? "center" : "left",
+                                    width: 280 - Settings.BoxWidth
                                 },
                                 new go.Binding("text", "FULL_NAME").makeTwoWay()),
                             $(go.TextBlock, textStyle(),
                                 {
                                     row: 1, column: 0, columnSpan: 6,
-                                    editable: true, isMultiline: false,
-                                    minSize: new go.Size(10, 14),
+                                    editable: false, isMultiline: false,
+                                    margin: new go.Margin(0, 0, 0, 3),
                                     stroke: Settings.TextColor,
-                                    alignment: go.Spot.TopCenter
+                                    overflow: go.TextBlock.OverflowEllipsis,
+                                    maxLines: 1,
+                                    textAlign: (Settings.SelectShape == "RoundedRectangle") ? "center" : "left",
+                                    width: 280 - Settings.BoxWidth
                                 },
-                                new go.Binding("text", "TITLE").makeTwoWay()),
+                                new go.Binding("text", "MSRP_POSITION_NBR").makeTwoWay()),
                             $(go.TextBlock, textStyle(),
                                 {
                                     row: 2, column: 0, columnSpan: 6,
-                                    editable: true, isMultiline: false,
-                                    minSize: new go.Size(10, 14),
+                                    editable: false, isMultiline: true,
+                                    margin: new go.Margin(0, 0, 0, 3),
                                     stroke: Settings.TextColor,
-                                    alignment: go.Spot.TopCenter
+                                    overflow: go.TextBlock.OverflowEllipsis,
+                                    maxLines: 2,
+                                    textAlign: (Settings.SelectShape == "RoundedRectangle") ? "center" : "left",
+                                    width: 280 - Settings.BoxWidth
                                 },
-                                new go.Binding("text", "GRADE").makeTwoWay()),
+                                new go.Binding("text", "MSRP_FUNC_GP_L1_DESCR").makeTwoWay()),
                             $(go.TextBlock, textStyle(),
                                 {
-                                    row: 3, column: 0, columnSpan: 3,
-                                    alignment: go.Spot.Left,
-                                    stroke: Settings.TextColor
+                                    row: 3, column: 0, columnSpan: 6,
+                                    editable: false, isMultiline: false,
+                                    margin: new go.Margin(0, 0, 0, 3),
+                                    stroke: Settings.TextColor,
+                                    overflow: go.TextBlock.OverflowEllipsis,
+                                    maxLines: 1,
+                                    textAlign: (Settings.SelectShape == "RoundedRectangle") ? "center" : "left",
+                                    width: 280 - Settings.BoxWidth
                                 },
-                                new go.Binding("text", "BUDGET_SALARY", function (v) { return "" + addCommas(parseFloat(v).toFixed(2).toLocaleString()); })),
+                                new go.Binding("text", "MSRP_PERSONAL_GRADE").makeTwoWay()),
                             $(go.TextBlock, textStyle(),
                                 {
-                                    row: 3, column: 4, columnSpan: 3,
-                                    alignment: go.Spot.Right,
+                                    row: 3, column: 0, columnSpan: 6,
+                                    editable: false, isMultiline: false,
+                                    margin: new go.Margin(0, 0, 0, 3),
+                                    stroke: "red",
+                                    overflow: go.TextBlock.OverflowEllipsis,
+                                    maxLines: 1,
+                                    textAlign: "right",
+                                    width: 270 - Settings.BoxWidth
+                                },
+                                new go.Binding("text", "REPORTING_TO_FM", function (v) { if (v == "0") return ""; else return v; }).makeTwoWay()),
+                            $(go.TextBlock, textStyle(),
+                                {
+                                    row: 4, column: 0, columnSpan: 6,
+                                    textAlign: (Settings.SelectShape == "RoundedRectangle") ? "center" : "left",
                                     stroke: Settings.TextColor,
+                                    width: 270 - Settings.BoxWidth
+                                },
+                                new go.Binding("text", "MSRP_UN_INDEX_NBR", function (v) { return "" + addCommas(parseFloat(v).toFixed(2).toLocaleString()); })),
+                            $(go.TextBlock, textStyle(),
+                                {
+                                    row: 4, column: 3, columnSpan: 6,
+                                    textAlign: "right",
+                                    stroke: Settings.TextColor,
+                                    width: 270 - Settings.BoxWidth
                                 }, // we include a name so we can access this TextBlock when deleting Nodes/Links
-                                new go.Binding("text", "POSITION_CALCULATED_COST", function (v) { return "" + addCommas(parseFloat(v).toFixed(2).toLocaleString()); })),
-                            $(go.TextBlock, textStyle(),
-                                {
-                                    row: 4, column: 0, columnSpan: 3,
-                                    alignment: go.Spot.Left,
-                                    stroke: Settings.TextColor
-                                },
-                                new go.Binding("text", "SOC_COUNT", function (v) { return "SOC: " + v; })),
-                            $(go.TextBlock, textStyle(),
-                                {
-                                    row: 4, column: 4, columnSpan: 3,
-                                    alignment: go.Spot.Right,
-                                    stroke: Settings.TextColor
-                                },
-                                new go.Binding("text", "NOR_COUNT", function (v) { return "NOR: " + v; }))
+                                new go.Binding("text", "POSITION_CALCULATED_COST", function (v) { return "" + addCommas(parseFloat(v).toFixed(2).toLocaleString()); }))
                         )  // end Table Panel
                     ), // end Horizontal Panel
 

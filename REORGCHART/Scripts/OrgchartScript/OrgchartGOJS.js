@@ -318,6 +318,15 @@ function init(w, h, DragDrop) {
         return EmployeeName;
     };
 
+    function isFuncionalReporter(key) {
+        var ReportingToFM = myDiagram.model.findNodeDataForKey(key).REPORTING_TO_FM;
+        if (ReportingToFM != "0") {
+            return true;
+        }
+
+        return false;
+    }
+
     var nodeIdCounter = -1; // use a sequence to guarantee key uniqueness as we add/remove/modify nodes
 
     // when a node is double-clicked
@@ -401,6 +410,7 @@ function init(w, h, DragDrop) {
 
         //alert(NodeObj.LEVEL_ID + ":" + NodeObj.PARENT_LEVEL_ID);
         //alert(SelectNodeObj.LEVEL_ID + ":" + SelectNodeObj.PARENT_LEVEL_ID);
+        //alert(SelectNodeObj.parent);
         if (document.getElementById("hdnOrgRole").value.toUpperCase() == "PLAYER" ||
             document.getElementById("hdnOrgRole").value.toUpperCase() == "FINALYZER") {
             var element = document.querySelector('.overlay');
@@ -409,8 +419,8 @@ function init(w, h, DragDrop) {
             ObjChangeType = [];
             ObjChange = [];
 
-            var Obj = myDiagram.findNodeForKey(SelectNodeObj.parent);
-            SelectNodeObj.SUP_DISPLAY_NAME = Obj.data.FULL_NAME;
+            //var Obj = myDiagram.findNodeForKey(SelectNodeObj.parent);
+            //SelectNodeObj.SUP_DISPLAY_NAME = Obj.data.FULL_NAME;
             ObjChange.push(SelectNodeObj);
             ObjChangeType.push("C");
 
@@ -1446,12 +1456,12 @@ function init(w, h, DragDrop) {
                             $(go.TextBlock, textStyle(),  // the name
                                 {
                                     row: 0, column: 0, columnSpan: 6,
-                                    font: "12pt Segoe UI,sans-serif",
-                                    editable: false, isMultiline: false,
+                                    font: "9pt Segoe UI,sans-serif",
+                                    editable: false, isMultiline: true,
                                     stroke: Settings.TextColor,
                                     overflow: go.TextBlock.OverflowEllipsis,
-                                    maxLines: 1,
-                                    textAlign: "center",
+                                    maxLines: 2,
+                                    textAlign: (Settings.SelectShape == "RoundedRectangle") ? "center" : "left",
                                     width: 280 - Settings.BoxWidth
                                 },
                                 new go.Binding("text", "FULL_NAME").makeTwoWay()),
@@ -1459,63 +1469,74 @@ function init(w, h, DragDrop) {
                                 {
                                     row: 1, column: 0, columnSpan: 6,
                                     editable: false, isMultiline: false,
+                                    margin: new go.Margin(0, 0, 0, 3),
                                     stroke: Settings.TextColor,
                                     overflow: go.TextBlock.OverflowEllipsis,
                                     maxLines: 1,
-                                    textAlign: "center",
+                                    textAlign: (Settings.SelectShape == "RoundedRectangle") ? "center" : "left",
                                     width: 280 - Settings.BoxWidth
                                 },
-                                new go.Binding("text", "POSITION_NUMBER").makeTwoWay()),
+                                new go.Binding("text", "MSRP_POSITION_NBR").makeTwoWay()),
                             $(go.TextBlock, textStyle(),
                                 {
                                     row: 2, column: 0, columnSpan: 6,
-                                    editable: false, isMultiline: false,
+                                    editable: false, isMultiline: true,
+                                    margin: new go.Margin(0, 0, 0, 3),
                                     stroke: Settings.TextColor,
                                     overflow: go.TextBlock.OverflowEllipsis,
-                                    maxLines: 1,
-                                    textAlign: "center",
+                                    maxLines: 2,
+                                    textAlign: (Settings.SelectShape == "RoundedRectangle") ? "center" : "left",
                                     width: 280 - Settings.BoxWidth
                                 },
-                                new go.Binding("text", "TITLE").makeTwoWay()),
+                                new go.Binding("text", "MSRP_FUNC_GP_L1_DESCR").makeTwoWay()),
                             $(go.TextBlock, textStyle(),
                                 {
                                     row: 3, column: 0, columnSpan: 6,
                                     editable: false, isMultiline: false,
+                                    margin: new go.Margin(0, 0, 0, 3),
                                     stroke: Settings.TextColor,
                                     overflow: go.TextBlock.OverflowEllipsis,
                                     maxLines: 1,
-                                    textAlign: "center",
+                                    textAlign: (Settings.SelectShape == "RoundedRectangle") ? "center" : "left",
                                     width: 280 - Settings.BoxWidth
                                 },
-                                new go.Binding("text", "GRADE").makeTwoWay()),
+                                new go.Binding("text", "MSRP_PERSONAL_GRADE").makeTwoWay()),
+                            $(go.TextBlock, textStyle(),
+                                {
+                                    row: 3, column: 0, columnSpan: 6,
+                                    editable: false, isMultiline: false,
+                                    margin: new go.Margin(0, 0, 0, 3),
+                                    stroke: "red",
+                                    overflow: go.TextBlock.OverflowEllipsis,
+                                    maxLines: 1,
+                                    textAlign: "right",
+                                    width: 270 - Settings.BoxWidth
+                                },
+                                new go.Binding("text", "REPORTING_TO_FM", function (v) { if (v == "0") return ""; else return v; }).makeTwoWay()),
                             $(go.TextBlock, textStyle(),
                                 {
                                     row: 4, column: 0, columnSpan: 6,
-                                    alignment: go.Spot.Left,
-                                    stroke: Settings.TextColor
+                                    isMultiline: false,
+                                    margin: new go.Margin(0, 0, 0, 3),
+                                    overflow: go.TextBlock.OverflowEllipsis,
+                                    maxLines: 1,
+                                    textAlign: "left",
+                                    stroke: Settings.TextColor,
+                                    width: 280 - Settings.BoxWidth
                                 },
-                                new go.Binding("text", "BUDGET_SALARY", function (v) { return "" + addCommas(parseFloat(v).toFixed(2).toLocaleString()); })),
+                                new go.Binding("text", "MSRP_UN_INDEX_NBR", function (v) { return "" + addCommas(parseFloat(v).toFixed(2).toLocaleString()); })),
                             $(go.TextBlock, textStyle(),
                                 {
                                     row: 4, column: 3, columnSpan: 6,
-                                    alignment: go.Spot.Right,
+                                    isMultiline: false,
+                                    margin: new go.Margin(0, 0, 0, 3),
+                                    overflow: go.TextBlock.OverflowEllipsis,
+                                    maxLines: 1,
+                                    textAlign: "right",
                                     stroke: Settings.TextColor,
+                                    width: 270 - Settings.BoxWidth
                                 }, // we include a name so we can access this TextBlock when deleting Nodes/Links
-                                new go.Binding("text", "POSITION_CALCULATED_COST", function (v) { return "" + addCommas(parseFloat(v).toFixed(2).toLocaleString()); })),
-                            $(go.TextBlock, textStyle(),
-                                {
-                                    row: 5, column: 0, columnSpan: 6,
-                                    stroke: Settings.TextColor,
-                                    alignment: go.Spot.Left
-                                },
-                                new go.Binding("text", "NOR_COUNT", function (v) { return "NOR : " + v; })),
-                            $(go.TextBlock, textStyle(),
-                                {
-                                    row: 5, column: 3, columnSpan: 6,
-                                    stroke: Settings.TextColor,
-                                    alignment: go.Spot.Right
-                                },
-                                new go.Binding("text", "SOC_COUNT", function (v) { return "SOC :" + v; }))
+                                new go.Binding("text", "POSITION_CALCULATED_COST", function (v) { return "" + addCommas(parseFloat(v).toFixed(2).toLocaleString()); }))
                         )  // end Table Panel
                     ), // end Horizontal Panel
 
@@ -1712,6 +1733,20 @@ function init(w, h, DragDrop) {
                     visible: false
                 },
                 new go.Binding("visible", "key", isBothRole)
+            ),
+            $("ContextMenuButton",
+                $(go.TextBlock, "Show Functional Manager"),
+                {
+                    click: function (e, obj) {
+                        var node = obj.part.adornedPart;
+                        if (node !== null) {
+                            var thisemp = node.data;
+                            window.location.href = HOST_ENV + "/Version/ShowSearchPosition/" + thisemp.SHOW_REPORTING_TO_FM;
+                        }
+                    },
+                    visible: false
+                },
+                new go.Binding("visible", "key", isFuncionalReporter)
             ),
             $("ContextMenuButton",
                 $(go.TextBlock, "Outside Legal Entity"),

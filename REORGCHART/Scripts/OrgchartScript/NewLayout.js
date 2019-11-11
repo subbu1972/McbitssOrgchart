@@ -262,7 +262,7 @@ function RemoveVersion(Obj, Value) {
 }
 
 function DownAllLevelPDF() {
-    window.location.href = HOST_ENV + '/Version/DownloadAllPDF'
+    window.location.href = HOST_ENV + '/Version/DownloadAllPDF';
 }
 
 var DownLoadId = "";

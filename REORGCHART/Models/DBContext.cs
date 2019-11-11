@@ -52,6 +52,7 @@ namespace REORGCHART.Models
         public string CompanyRoles { get; set; }
         public string FinalyzerCanChange { get; set; }
         public string FuntionalManagerDottedLines { get; set; }
+        public string FunctionalManagerKey { get; set; }
     }
 
     public class PPTXTemplateFields

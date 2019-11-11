@@ -139,6 +139,11 @@ namespace REORGCHART.Helper
                     retDT.Columns.Remove("POSITIONFLAG");
                     retDT.Columns.Remove("FLAG");
                     retDT.Columns.Remove("MFLAG");
+                    retDT.Columns.Remove("SHOW_REPORTING_TO_FM");
+                    retDT.Columns.Remove("REPORTING_TO_FM");
+                    retDT.Columns.Remove("NODE_LOCATION_COL");
+                    retDT.Columns.Remove("NODE_LOCATION_ROW");
+                    retDT.Columns.Remove("NODE_LOCATION");
                 }
                 catch (Exception ex)
                 {

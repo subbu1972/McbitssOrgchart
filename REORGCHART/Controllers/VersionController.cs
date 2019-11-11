@@ -1355,6 +1355,8 @@ namespace REORGCHART.Controllers
                         retDT.Columns.Remove("POSITIONFLAG");
                         retDT.Columns.Remove("FLAG");
                         retDT.Columns.Remove("MFLAG");
+                        retDT.Columns.Remove("SHOW_REPORTING_TO_FM");
+                        retDT.Columns.Remove("REPORTING_TO_FM");
                         retDT.Columns.Remove("NODE_LOCATION_COL");
                         retDT.Columns.Remove("NODE_LOCATION_ROW");
                         retDT.Columns.Remove("NODE_LOCATION");
@@ -2008,10 +2010,15 @@ namespace REORGCHART.Controllers
                                 foreach (DataColumn dr in dtQuery.Columns)
                                 {
                                     FieldName += "," + dr.ColumnName;
-                                    InsertData += ",'" + dtQuery.Rows[0][dr.ColumnName] + "'";
+                                    InsertData += ",'" + dtQuery.Rows[0][dr.ColumnName].ToString().Replace("'", "''") + "'";
                                 }
 
+                                InitializeTables InitializeTables = (from iv in db.InitializeTables where iv.CompanyName == UserData.CompanyName select iv).FirstOrDefault();
                                 Query += "INSERT INTO " + sTableName[0] + " (" + FieldName.Substring(1) + ") VALUES(" + InsertData.Substring(1) + ");";
+                                Query += "UPDATE " + sTableName[0] + 
+                                         " SET REPORTING_TO_FM='" + ShowTable.Rows[0][InitializeTables.FunctionalManagerKey].ToString() + "' ," +
+                                         "     SHOW_REPORTING_TO_FM='"+ ShowTable.Rows[0]["LEVEL_ID"].ToString() + "'"+
+                                         " WHERE LEVEL_ID='"+ dtQuery.Rows[0]["LEVEL_ID"].ToString() + "' AND VERSION='" + UCA.Version.ToString() + "';";
                                 ComClass.ExecuteQuery(Query);
                             }
                             catch (Exception ex)
@@ -2802,6 +2809,8 @@ namespace REORGCHART.Controllers
                         else if (strField == "POSITIONFLAG") AddProperty(DyObj, strField, "0");
                         else if (strField == "FLAG") AddProperty(DyObj, strField, "N");
                         else if (strField == "MFLAG") AddProperty(DyObj, strField, "XXX");
+                        else if (strField == "REPORTING_TO_FM") AddProperty(DyObj, strField, "0");
+                        else if (strField == "SHOW_REPORTING_TO_FM") AddProperty(DyObj, strField, "0");
                         else if (strField == "NODE_LOCATION_COL") AddProperty(DyObj, strField, "0");
                         else if (strField == "NODE_LOCATION_ROW") AddProperty(DyObj, strField, "0");
                         else if (strField == "NODE_LOCATION") AddProperty(DyObj, strField, "");
@@ -2904,6 +2913,8 @@ namespace REORGCHART.Controllers
                     retDT.Columns.Remove("POSITIONFLAG");
                     retDT.Columns.Remove("FLAG");
                     retDT.Columns.Remove("MFLAG");
+                    retDT.Columns.Remove("REPORTING_TO_FM");
+                    retDT.Columns.Remove("SHOW_REPORTING_TO_FM");
                     retDT.Columns.Remove("NODE_LOCATION_COL");
                     retDT.Columns.Remove("NODE_LOCATION_ROW");
                     retDT.Columns.Remove("NODE_LOCATION");
@@ -4246,6 +4257,7 @@ namespace REORGCHART.Controllers
                                              myla.Role == "EndUser")
                                      select new { vd.UserName, vd.CompanyName, vd.UserRole, vd.OperType, vd.Country, vd.Initiative, vd.Population, vd.Version }).Distinct().ToList();
 
+                        Session.Contents[UserData.UserName + "_MyModel"] = null;
                         return Json(new
                         {
                             Success = "Success",
@@ -4409,6 +4421,8 @@ namespace REORGCHART.Controllers
                                     else if (strField == "POSITIONFLAG") UpdateFieldAE += "," + strField + "='0'";
                                     else if (strField == "FLAG") UpdateFieldAE += "," + strField + "=''";
                                     else if (strField == "MFLAG") UpdateFieldAE += "," + strField + "=''";
+                                    else if (strField == "REPORTING_TO_FM") UpdateFieldAE += "," + strField + "='0'";
+                                    else if (strField == "SHOW_REPORTING_TO_FM") UpdateFieldAE += "," + strField + "='0'";
                                     else if (strField == "NODE_LOCATION_COL") UpdateFieldAE += "," + strField + "='0'";
                                     else if (strField == "NODE_LOCATION_ROW") UpdateFieldAE += "," + strField + "='0'";
                                     else if (strField == "NODE_LOCATION") UpdateFieldAE += "," + strField + "=''";
@@ -4833,7 +4847,8 @@ namespace REORGCHART.Controllers
                                   strField == "NOR_COUNT" || strField == "SOC_COUNT" || strField == "COUNTRY" ||
                                   strField == "NEXT_LEVEL_FLAG" || strField == "GRAY_COLORED_FLAG" || strField == "DOTTED_LINE_FLAG" ||
                                   strField == "SHOW_FULL_BOX" || strField == "LANGUAGE_SELECTED" || strField == "SORTNO" ||
-                                  strField == "POSITIONFLAG" || strField == "FLAG" || strField == "MFLAG" || 
+                                  strField == "POSITIONFLAG" || strField == "FLAG" || strField == "MFLAG" ||
+                                  strField == "REPORTING_TO_FM" || strField == "SHOW_REPORTING_TO_FM" ||
                                   strField == "NODE_LOCATION_COL" || strField == "NODE_LOCATION_ROW" || strField == "NODE_LOCATION"))
                             {
                                 try
@@ -4982,6 +4997,7 @@ namespace REORGCHART.Controllers
                               strField == "NEXT_LEVEL_FLAG" || strField == "GRAY_COLORED_FLAG" || strField == "DOTTED_LINE_FLAG" ||
                               strField == "SHOW_FULL_BOX" || strField == "LANGUAGE_SELECTED" || strField == "SORTNO" ||
                               strField == "POSITIONFLAG" || strField == "FLAG" || strField == "MFLAG" ||
+                              strField == "REPORTING_TO_FM" || strField == "SHOW_REPORTING_TO_FM" ||
                               strField == "NODE_LOCATION_COL" || strField == "NODE_LOCATION_ROW" || strField == "NODE_LOCATION"))
                         {
                             SourceTable.Columns.Add(strField, typeof(string));
@@ -5008,6 +5024,7 @@ namespace REORGCHART.Controllers
                                       strField == "NEXT_LEVEL_FLAG" || strField == "GRAY_COLORED_FLAG" || strField == "DOTTED_LINE_FLAG" ||
                                       strField == "SHOW_FULL_BOX" || strField == "LANGUAGE_SELECTED" || strField == "SORTNO" ||
                                       strField == "POSITIONFLAG" || strField == "FLAG" || strField == "MFLAG" ||
+                                      strField == "REPORTING_TO_FM" || strField == "SHOW_REPORTING_TO_FM" ||
                                       strField == "NODE_LOCATION_COL" || strField == "NODE_LOCATION_ROW" || strField == "NODE_LOCATION"))
                                 {
                                     try
