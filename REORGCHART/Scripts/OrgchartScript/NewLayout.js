@@ -4112,12 +4112,14 @@ function SetSelectedValues(Obj, sType) {
             data: JsonData,
             async: true,
             dateType: "json",
-            success: function (jsonStr) {
+            success: function (Json) {
                 if ($("#hdnOrgType").val() == "OV") {
                     $("#divRightOrgChart").show();
                     $("#divShowMap").hide();
 
-                    $("#hdnOrgChartData").val(jsonStr);
+                    $("#hdnOrgChartData").val(Json.ChartData);
+                    $("#hdnOrgTreeData").val(Json.TreeData);
+
                     CancelOperation();
                 }
                 else if ($("#hdnOrgType").val() == "LV") {

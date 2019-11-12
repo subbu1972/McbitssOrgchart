@@ -313,6 +313,10 @@ namespace REORGCHART.Controllers
                     MyModel.OrgChartType = OrgChartType;
                     MyModel.Levels = Levels;
                 }
+                else if (Type == "View")
+                {
+                    MyModel.View = UsedView;
+                }
                 else if (Type == "")
                 {
                     MyModel.KeyDate = KeyDate;
