@@ -4297,6 +4297,9 @@ namespace REORGCHART
                                     int CurrentCol, int CurrentRow, int Width, int Height, int BottomHeight, 
                                     Page MyPage, string ConnectorLineType)
         {
+            if (OI.Id == "20000005")
+                OI.Id = OI.Id;
+
             int Idx = 0, Idy=0, StartCol=0, CurrentA0PageRow=CurrentRow+A0StartHeight;
             string[] LabelInfo = Info.Replace("&amp;", "&").Split(';');
             string FontName = "", FontSize = "", FontColor = "", FontStyle = "", FontFloat = "", FontWidth = "", Adjustment = "";
@@ -4420,11 +4423,11 @@ namespace REORGCHART
                         LabelInfo = OI.Title.Replace("&amp;", "&").Split(';');
                         if (LabelInfo != null)
                         {
-                            MyRect = new ceTe.DynamicPDF.PageElements.Rectangle(AssistanceCol, AssistanceRow, Width, Height);
+                            MyRect = new ceTe.DynamicPDF.PageElements.Rectangle(AssistanceCol-150, AssistanceRow, Width, Height);
                             MyRect.BorderColor = ShowPDFBoxColor(BoxColor);
                             MyRect.BorderWidth = 2;
                             MyPage.Elements.Add(MyRect);
-                            MyLine = new ceTe.DynamicPDF.PageElements.Line((Type=="V"?AssistanceCol - 280: AssistanceCol - 200), AssistanceRow + 10, AssistanceCol, AssistanceRow + 10, ShowPDFLineColor(LineColor));
+                            MyLine = new ceTe.DynamicPDF.PageElements.Line((Type=="V"?AssistanceCol - 280: AssistanceCol - 200), AssistanceRow + 10, AssistanceCol-150, AssistanceRow + 10, ShowPDFLineColor(LineColor));
                             MyLine.Width = 2;
                             MyPage.Elements.Add(MyLine);
 
@@ -4451,7 +4454,7 @@ namespace REORGCHART
                                         FontWidth = drFI["FIELD_WIDTH"].ToString();
                                         Adjustment = drFI["ADJUSTMENT"].ToString();
 
-                                        MyLabel = new ceTe.DynamicPDF.PageElements.Label(LabelText[0].ToString(), AssistanceCol, AssistanceRow + ((Idy - 1) * 18)+10, Width, Height,
+                                        MyLabel = new ceTe.DynamicPDF.PageElements.Label(LabelText[0].ToString(), AssistanceCol-150, AssistanceRow + ((Idy - 1) * 18)+10, Width, Height,
                                                                                          ceTe.DynamicPDF.Font.HelveticaBold, 8,
                                                                                          ceTe.DynamicPDF.TextAlign.Center);
                                         MyPage.Elements.Add(MyLabel);
@@ -4721,7 +4724,7 @@ namespace REORGCHART
                     {
                         if (NodePDF.BreadGram == CheckBreadGram)
                         {
-                            CurrentRow += 130;
+                            CurrentRow += 130 + NodePDF.Height;
                             break;
                         }
                     }
@@ -4772,6 +4775,10 @@ namespace REORGCHART
         // Get All Level Assistance Information
         private int[] GetAllLevelAssistance(int LevelId)
         {
+
+            if (LevelId == 30155561)
+                LevelId = 30155561;
+
             int Idy = 0, AssistanceCol = 300, AssistanceRow = 50;
             int[] retValue = { 0, 0 };
             DataRow[] drObj = dtLevel2.Select("POSITIONID='" + LevelId + "'");
@@ -4909,8 +4916,8 @@ namespace REORGCHART
             {
                 if (OI.Flag == "N")
                 {
-                    if (LevelId == "20000000")
-                        LevelId = "20000000";
+                    if (OI.Id == "20000005")
+                        OI.Id = "20000005";
 
                     string DoOperation = "Y";
                     List<ObjectIWPDF> lstCheckWHPDF = (from SO in lstObjectWHPDF
@@ -4964,7 +4971,7 @@ namespace REORGCHART
                             {
                                 RetValue = A0PageSizeBottomUpApproachWH(OI.Id, ShowLevel, UpdateFlag);
                                 OI.Owidth = (OI.Width >= RetValue[0] ? OI.Width : RetValue[0]);
-                                OI.Oheight = RetValue[1] + 130;
+                                OI.Oheight = RetValue[1] + 130 + OI.Height;
                                 OI.Cwidth = (OI.Width >= RetValue[0] ? OI.Width : RetValue[0]);
                                 OI.Cheight = OI.Height + 130;
 
@@ -4989,8 +4996,8 @@ namespace REORGCHART
                 }
             }
 
-            if (LevelId == "20000000")
-                LevelId = "20000000";
+            if (LevelId == "20000005")
+                LevelId = "20000005";
 
             // Summation of width
             int SWidth = 0;
@@ -5125,7 +5132,7 @@ namespace REORGCHART
                         {
                             RetValue = BottomUpApproachWH(OI.Id);
                             OI.Owidth = (OI.Width >= RetValue[0] ? OI.Width : RetValue[0]);
-                            OI.Oheight = RetValue[1] + 130;
+                            OI.Oheight = RetValue[1] + 130 + OI.Height;
                             OI.Cwidth = (OI.Width >= RetValue[0] ? OI.Width : RetValue[0]);
                             OI.Cheight = OI.Height + 130;
 
@@ -5655,7 +5662,7 @@ namespace REORGCHART
             {
                 if (OI.PId != "-1" && OI.Flag == "N" && ShowFitInAssociates(OI.Id)=="Yes")
                 {
-                    if (OI.Id == "10027875")
+                    if (OI.Id == "20000005")
                         OI.Flag = OI.Flag;
 
                     RetValue = GetHorizantalNodeRowColumn(theSelectedObjectInf, OI.SortNo, OI.PId);
@@ -5692,7 +5699,7 @@ namespace REORGCHART
                 }
             }
 
-            if (LevelId == "10027875")
+            if (LevelId == "20000005")
                 LevelId = LevelId;
 
             MyLine = new ceTe.DynamicPDF.PageElements.Line(StartCol, StartRow - 30, Column, StartRow - 30, ShowPDFLineColor(LineColor));

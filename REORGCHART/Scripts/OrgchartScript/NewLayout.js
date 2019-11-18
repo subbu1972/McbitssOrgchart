@@ -307,10 +307,10 @@ function ShowSelectFields(Obj) {
             "       <input type=\"radio\" id=\"rdoPDFA0PageSizeHorizontal\" name=\"PDFView\" value=\"Horizontal(A0 Page Size)\" />" +
             "       <label for=\"rdoPDFA0PageSizeHorizontal\">Horizontal(A0 Page Size)<label/>" +
             "    </div>" +
-            "    <div class=\"col-md-2\">" +
-            "       <input type=\"radio\" id=\"rdoPDFVertical\" name=\"PDFView\" value=\"Vertical\" />" +
-            "       <label for=\"rdoPDFVertical\">Vertical<label/>" +
-            "    </div>" +
+            //"    <div class=\"col-md-2\">" +
+            //"       <input type=\"radio\" id=\"rdoPDFVertical\" name=\"PDFView\" value=\"Vertical\" />" +
+            //"       <label for=\"rdoPDFVertical\">Vertical<label/>" +
+            //"    </div>" +
             "    <div class=\"col-md-4\">" +
             "       <input type=\"radio\" id=\"rdoPDFVerticalSL\" name=\"PDFView\" value=\"Multiple Pages\" />" +
             "       <label for=\"rdoPDFVerticalSL\">Multiple Pages<label/>" +
@@ -942,8 +942,11 @@ $(document).ready(function () {
 
         DivRow += "<div>";
         DivRow += "<ul id=\"nav\">";
+        if ($("#hdnOrgRole").val() == "EndUser")
+            DivRow += "<li><a data-html=\"Home\" href=\"" + (HOST_ENV == "" ? "/Version/EndUser/?Search=Refresh" : HOST_ENV + "/Version/EndUser/?Search=Refresh") + "\"><i class=\"fas fa-home menu-icon\"></i> <span class=\"sidemenu-label\">Home</span></a></li>";
+        else if ($("#hdnOrgRole").val() == "Finalyzer")
+            DivRow += "<li><a data-html=\"Home\" href=\"" + (HOST_ENV == "" ? "/Version/UploadData/?Search=Refresh" : HOST_ENV + "/Version/UploadData/?Search=Refresh") + "\"><i class=\"fas fa-home menu-icon\"></i> <span class=\"sidemenu-label\">Home</span></a></li>";
         if ($("#hdnOrgRole").val() != "EndUser") {
-            DivRow += "<li><a data-html=\"Home\" href=\"" + (HOST_ENV == "" ? "/?Search=Refresh" : HOST_ENV + "/?Search=Refresh") + "\"><i class=\"fas fa-home menu-icon\"></i> <span class=\"sidemenu-label\">Home</span></a></li>";
             DivRow += "<li>";
             DivRow += "<a href=\"#\"><i class=\"fas fa-users-cog menu-icon\"></i><span class=\"sidemenu-label\">Roles</span> <i class=\"fas fa-angle-down control-btns\"></i><i class=\"fas fa-angle-up control-btns\"></i></a>";
             DivRow += "<ul>";
@@ -981,7 +984,7 @@ $(document).ready(function () {
         var Options = "";
         DivRow += "<li>";
         DivRow += "  <a data-html=\"Views\" href=\"#\"><img src=\"" + HOST_ENV + "/Content/NewTemplateUI/Images/views.svg\" width=\"25px\" alt=\"logo\"/><span class=\"sidemenu-label\">Views</span><i class=\"fas fa-angle-up control-btns\"></i><i class=\"fas fa-angle-down control-btns\"></i></a>";
-        DivRow += "<ul>"
+        DivRow += "<ul>";
         for (var Idx = 0; Idx <= MENU_TABLE.length - 1; Idx++) {
             DivRow += "<li><a href='javascript: void (0);' data-url=\"" + MENU_TABLE[Idx].URL + "\" onclick=\"return " + MENU_TABLE[Idx].JSMethod + "(this, " + GetParameter(MENU_TABLE[Idx].Parameter) + ");\"><img src=\"" + HOST_ENV + "/Content/NewTemplateUI/Images/" + MENU_TABLE[Idx].ImageURL + "\" width=\"25px\" alt=\"logo\" /><span class=\"sidemenu-label\">" + MENU_TABLE[Idx].DisplayName + "</span></a></li>";
             DivRow += "</a></li>";
