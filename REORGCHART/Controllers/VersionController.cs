@@ -823,12 +823,21 @@ namespace REORGCHART.Controllers
         public ActionResult EndUser(string Search)
         {
             LoginUsers UserData = LI.GetLoginUserInfo("EndUser");
+            if (Search != null)
+            {
+                if (Search == "Refresh")
+                {
+                    Session.Contents[UserData.UserName + "_MyModel"] = null;
+                    Search = null;
+                }
+            }
             if (UserData.ValidUser == "No")
             {
                 var UserRole = (from usr in db.UserRoles
                                 where usr.UserId == UserData.UserName
                                 select usr).FirstOrDefault();
-                if (UserRole.Role.IndexOf("EndUser") >= 0)
+                if (UserRole.Role.IndexOf("User") >= 0 || UserRole.Role.IndexOf("Player") >= 0 || 
+                    UserRole.Role.IndexOf("Finalyzer") >= 0 || UserRole.Role.IndexOf("EndUser") >= 0)
                 {
                     HttpContext.Session["LoginUserInf"] = null;
                     UserData = LI.GetLoginUserInfo("EndUser");

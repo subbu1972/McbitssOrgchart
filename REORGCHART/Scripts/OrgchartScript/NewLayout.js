@@ -946,7 +946,7 @@ $(document).ready(function () {
             DivRow += "<li><a data-html=\"Home\" href=\"" + (HOST_ENV == "" ? "/Version/EndUser/?Search=Refresh" : HOST_ENV + "/Version/EndUser/?Search=Refresh") + "\"><i class=\"fas fa-home menu-icon\"></i> <span class=\"sidemenu-label\">Home</span></a></li>";
         else if ($("#hdnOrgRole").val() == "Finalyzer")
             DivRow += "<li><a data-html=\"Home\" href=\"" + (HOST_ENV == "" ? "/Version/UploadData/?Search=Refresh" : HOST_ENV + "/Version/UploadData/?Search=Refresh") + "\"><i class=\"fas fa-home menu-icon\"></i> <span class=\"sidemenu-label\">Home</span></a></li>";
-        if ($("#hdnOrgRole").val() != "EndUser") {
+        //if ($("#hdnOrgRole").val() != "EndUser") {
             DivRow += "<li>";
             DivRow += "<a href=\"#\"><i class=\"fas fa-users-cog menu-icon\"></i><span class=\"sidemenu-label\">Roles</span> <i class=\"fas fa-angle-down control-btns\"></i><i class=\"fas fa-angle-up control-btns\"></i></a>";
             DivRow += "<ul>";
@@ -954,7 +954,8 @@ $(document).ready(function () {
             if (MENU_TABLE.length >= 1) {
 
                 for (var Idx = 0; Idx <= MENU_TABLE.length - 1; Idx++) {
-                    if (MENU_TABLE[Idx].GroupName != "Views" && $("#hdnOrgRole").val() != "EndUser") {
+                    //if (MENU_TABLE[Idx].GroupName != "Views" && $("#hdnOrgRole").val() != "EndUser") {
+                    if (MENU_TABLE[Idx].GroupName != "Views") {
                         if (MENU_TABLE[Idx].GroupName == "Role" && $("#hdnOrgAssignedRole").val().indexOf(MENU_TABLE[Idx].Role) != -1) {
                             if (GroupName != MENU_TABLE[Idx].GroupName) {
                                 if (GroupName != "") DivRow += "</li>";
@@ -965,7 +966,6 @@ $(document).ready(function () {
                             else if (MENU_TABLE[Idx].JSMethod != "" && MENU_TABLE[Idx].ModelDailog == "")
                                 DivRow += "<li><a href = 'javascript: void (0);' data-url=\"" + MENU_TABLE[Idx].URL + "\" onclick=\"return " + MENU_TABLE[Idx].JSMethod + "(this," + GetParameter(MENU_TABLE[Idx].Parameter) + " );\">";
                             else if (MENU_TABLE[Idx].ModelDailog != "")
-
                                 DivRow += "<a href = 'javascript: void (0);' data-url=\" " + MENU_TABLE[Idx].URL + "\" data-toggle='modal' data-target='#" + MENU_TABLE[Idx].ModelDailog + "' onclick=\"return " + MENU_TABLE[Idx].JSMethod + " (this, " + GetParameter(MENU_TABLE[Idx].Parameter) + " );\">";
                             if (MENU_TABLE[Idx].DisplayName == "User") { DivRow += "<i class=\"fas fa-user-tie\"></i>"; }
                             else if (MENU_TABLE[Idx].DisplayName == "OrgPlanner") { DivRow += "<i class=\"fas fa-chart-line\"></i>"; }
@@ -978,7 +978,7 @@ $(document).ready(function () {
                 DivRow += "</ul>";
                 DivRow += "</li>";
             }
-        }
+        //}
 
         var MENU_TABLE = TABLES.VT;
         var Options = "";

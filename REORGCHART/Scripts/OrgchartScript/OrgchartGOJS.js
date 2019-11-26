@@ -2016,7 +2016,6 @@ function loadPortrait() {
 
 // Show the diagram's model in JSON format
 function loadJSON(SaveJson, JsonString) {
-
     if (SaveJson) {
         document.getElementById("mySavedModel").value = SaveJson;
     }
@@ -2024,10 +2023,14 @@ function loadJSON(SaveJson, JsonString) {
 
     var InitialValues = JSON.parse(document.getElementById("hdnInitialValues").value);
     if (InitialValues.FuntionalManagerDottedLines == "Yes") {
-        var nodeDataArray = JSON.parse(JsonString);
-        var OrgChartType = document.getElementById("hdnOrgChartType").value;
+        try {
+            var nodeDataArray = JSON.parse(JsonString);
+            var OrgChartType = document.getElementById("hdnOrgChartType").value;
 
-        ShowNodesInCanvas(InitialValues, nodeDataArray, OrgChartType);
+            ShowNodesInCanvas(InitialValues, nodeDataArray, OrgChartType);
+        }
+        catch (ex) {
+        }
     }
     else {
         myDiagram.model = go.Model.fromJson(document.getElementById("mySavedModel").value);
