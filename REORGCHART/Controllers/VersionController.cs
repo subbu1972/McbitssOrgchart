@@ -774,22 +774,6 @@ namespace REORGCHART.Controllers
                                                           myla.Role == "User" ||
                                                           myla.Role == "EndUser")
                                                    select new { vd.UserName, vd.CompanyName, vd.UserRole, vd.OperType, vd.Country, vd.Initiative, vd.Population, vd.Version }).Distinct().ToList()),
-                OVDDL = JsonConvert.SerializeObject((from vd in db.VersionDetails
-                                                     where vd.CompanyName == UserData.CompanyName && vd.ActiveVersion == "Y" && vd.OperType == "OV" &&
-                                                           (myla.Role == "SuperAdmin" ||
-                                                            myla.Role == "Player" ||
-                                                            myla.Role == "Finalyzer" ||
-                                                            myla.Role == "User" ||
-                                                            myla.Role == "EndUser")
-                                                     select new { vd.UserName, vd.CompanyName, vd.UserRole, vd.OperType, vd.Country, vd.Initiative, vd.Population, vd.Version }).Distinct().ToList()),
-                LVDDL = JsonConvert.SerializeObject((from vd in db.VersionDetails
-                                                     where vd.CompanyName == UserData.CompanyName && vd.ActiveVersion == "Y" && vd.OperType == "LV" &&
-                                                           ((vd.UserRole == "SuperAdmin" && myla.Role == "SuperAdmin") ||
-                                                            (vd.UserRole == "Player" && myla.Role == "Player") ||
-                                                             myla.Role == "Finalyzer" ||
-                                                             myla.Role == "User" ||
-                                                             myla.Role == "EndUser")
-                                                     select new { vd.UserName, vd.CompanyName, vd.UserRole, vd.OperType, vd.Country, vd.Initiative, vd.Population, vd.Version }).Distinct().ToList()),
                 SelectFields = (myla.Oper == "OV" ? JsonConvert.SerializeObject((from sf in db.LEVEL_CONFIG_INFO
                                                                                  where sf.DOWNLOAD_TYPE == "PDF" &&
                                                                                        sf.COMPANY_NAME == UserData.CompanyName

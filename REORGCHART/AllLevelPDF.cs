@@ -5737,7 +5737,7 @@ namespace REORGCHART
                         MyPage.Elements.Add(MyLine);
 
 
-                        if (TopNode.PId != "999999")
+                        if (TopNode.PId != "999999" && TopNode.PId != "-1")
                         {
                             OneLevelUpNode = (from SO in lstObjectPDF where SO.Id == TopNode.PId select SO).FirstOrDefault();
                             PutFieldInfoPDF(OneLevelUpNode, OneLevelUpNode.Title, TopNode.RealCol, TopNode.RealRow - 120, 200, 80, TopNode.Height, MyPage, "B");
