@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -12,6 +13,7 @@ namespace REORGCHART
             ceTe.DynamicPDF.Document.AddLicense("GEN80NPSAOKGNLa2QVYhum3BNkocrDErhYTcxogGMCxGtGQPKVKxHcymXP2ZBU19ym1wLavPCEdQX/3wKDuZq9eLd87LChuSSyMg");
 
             AreaRegistration.RegisterAllAreas();
+            GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);

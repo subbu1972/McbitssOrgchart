@@ -407,12 +407,12 @@ function ShowSelectFields(Obj) {
 }
 
 function SaveSelectedFields() {
+    var SelectedFields = "";
     if (DownLoadId != "divDownloadAllPDF") {
         if (DownLoadId != "") {
             $(".overlay").show();
             $("#hdnTemplatePPT").val($('input[name=TemplatePPTX]:checked').val());
-
-            var SelectedFields = "";
+            
             $("input[name='FieldSet']").each(function () {
                 if ($(this).prop("checked") == true) {
                     SelectedFields += ",\'" + $(this).val() + "\'";
@@ -450,12 +450,42 @@ function SaveSelectedFields() {
         else alert("Please select download PPT/PDF");
     }
     else if (DownLoadId == "divDownloadAllPDF") {
-        var SelectedFields = "";
         $("input[name='PDFView']").each(function () {
             if ($(this).prop("checked") == true) {
                 SelectedFields = $(this).val();
             }
         });
+        var username = "AminAwad", password = "Test@123";
+        var JsonParameter = {
+            ViewFlag: SelectedFields,
+            LevelUp: ($("#chkPDFOneLevelUp").prop("checked") ? "Yes" : "No"),
+            CurrentLevel: ($("#chkPDFCurrentLevel").prop("checked") ? "Yes" : "No")
+        };
+
+        $.ajax({
+            type: "GET",
+            url: HOST_ENV + "/api/DownLoadPDF/DownloadOrgChartPDF",
+            contentType: "application/json; charset=utf-8",
+            data: { Info: JSON.stringify(JsonParameter) },
+            dataType: "json",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Basic " + btoa(username + ":" + password));
+            },
+            success: function (data) {
+                console.log("Success");
+                console.log(data);
+                window.location.href = HOST_ENV + '/Version/DownloadAllLevelPDF?FileName=' + data;
+            }, //End of AJAX Success function  
+            failure: function (data) {
+                console.log("Failure");
+                console.log(data);
+            }, //End of AJAX failure function  
+            error: function (data) {
+                console.log("Error");
+                console.log(data);
+            } //End of AJAX error function  
+
+        });         
         if ($("#rdoPDFHorizontal").prop("checked")) {
             window.location.href = HOST_ENV + '/Version/DownloadAllPDF?ViewFlag=' + SelectedFields +
                 '&LevelUp=' + ($("#chkPDFOneLevelUp").prop("checked") ? "Yes" : "No") +
@@ -500,7 +530,7 @@ var DragDrop = true;
 var QueryStringValue = "";
 var MenuSelected = "";
 $(document).ready(function () {
-
+    alert("SVB1");
     $("#spnUserName").html($("#hdnUserId").val());
     if ($("#hdnValidateSecurity").val() == "Yes") {
 
@@ -616,6 +646,7 @@ $(document).ready(function () {
             $("#hdnSelectedBorderColor").val('#92cddc');
         }
         Settings.BorderColor = $('#cpInline2').colorpicker("val");
+
         // Methods demo 2 (inline colorpicker Node Box)
         $('#cpInline2').on('click', function () {
             alert('Selected color = "' + $('#cpInline2').colorpicker("val") + '"');
@@ -631,6 +662,7 @@ $(document).ready(function () {
             $('#cpInline3').colorpicker({ color: '#92cddc', defaultPalette: 'web' });
         }
         Settings.LineColor = $('#cpInline3').colorpicker("val");
+
         // Methods demo 3 (inline colorpicker Node Line color)
         $('#cpInline3').on('click', function () {
             alert('Selected color = "' + $('#cpInline3').colorpicker("val") + '"');
@@ -1144,6 +1176,7 @@ $(document).ready(function () {
             $(".saveversion").show();
         }
     }
+    alert("SVB2");
 });
 
 function ShowHierarchy() {

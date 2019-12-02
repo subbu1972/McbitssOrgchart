@@ -14,6 +14,7 @@
 <input type="hidden" value="@Model.ShowLevel" id="hdnOrgPartitionShowLevel" name="hdnOrgPartitionShowLevel" />
 <input type="hidden" value="@Model.Version" id="hdnOrgVersion" name="hdnOrgVersion" />
 <input type="hidden" value="@Model.Version" id="hdnOrgPartitionVersion" name="hdnOrgPartitionVersion" />
+<input type="hidden" value="@Model.TreeData" id="hdnOrgTreeData" name="hdnOrgTreeData" />
 <input type="hidden" value="@Model.ChartData" id="hdnOrgChartData" name="hdnOrgChartData" />
 <input type="hidden" value="@Model.ChartData" id="hdnOrgChartHRCoreData" name="hdnOrgChartHRCoreData" />
 <input type="hidden" value="@Model.DDL" id="hdnOrgDDL" name="hdnOrgDDL" />
@@ -36,6 +37,10 @@
 <input type="hidden" value="@Model.SelectedBorderColor" id="hdnSelectedBorderColor" name="hdnSelectedBorderColor" />
 <input type="hidden" value="@Model.SelectedBorderWidth" id="hdnSelectedBorderWidth" name="hdnSelectedBorderWidth" />
 <input type="hidden" value="@Model.SelectedLineColor" id="hdnSelectedLineColor" name="hdnSelectedLineColor" />
+<input type="hidden" value="@Model.SelectedBoxWidth" id="hdnSelectedBoxWidth" name="hdnSelectedBoxWidth" />
+<input type="hidden" value="@Model.SelectedPortraitModeMultipleLevel" id="hdnSelectedPortraitModeMultipleLevel" name="hdnSelectedPortraitModeMultipleLevel" />
+<input type="hidden" value="@Model.SelectedFunctionalManagerType" id="hdnSelectedFunctionalManagerType" name="hdnSelectedFunctionalManagerType" />
+<input type="hidden" value="@Model.SelectedFMLine" id="hdnSelectedFMLine" name="hdnSelectedFMLine" />
 <input type="hidden" value="@Model.OrgChartType" id="hdnOrgChartType" name="hdnOrgChartType" />
 <input type="hidden" value="@Model.CopyPaste" id="hdnCopyPaste" name="hdnCopyPaste" />
 <input type="hidden" value="@Model.SerialNoFlag" id="hdnSerialNoFlag" name="hdnSerialNoFlag" />
@@ -119,7 +124,7 @@
                 var BREAD_GRAM_NAME = item.BREAD_GRAM_NAME.split("-->");
                 var BREAD_GRAM_INFO = "";
                 for (var Idx = 0; Idx <= BREAD_GRAM_NAME.length - 1; Idx++) {
-                    if (SetSplitScreen=="Y")
+                    if (SetSplitScreen == "Y")
                         BREAD_GRAM_INFO += " >> <a href=\"javascript:void(0);\" onclick=\"ShowRightOrgChartPosition('" + BREAD_GRAM[Idx] + "','" + BREAD_GRAM[Idx] + "')\">" + BREAD_GRAM_NAME[Idx] + "</a>";
                     else
                         BREAD_GRAM_INFO += " >> <a href=\"javascript:void(0);\" onclick=\"ShowOrgChartPosition('" + BREAD_GRAM[Idx] + "','" + BREAD_GRAM[Idx] + "')\">" + BREAD_GRAM_NAME[Idx] + "</a>";

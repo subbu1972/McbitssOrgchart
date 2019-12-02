@@ -135,7 +135,7 @@ function init(w, h, DragDrop) {
         var y = window.scrollY || window.pageYOffset;
         go.Diagram.prototype.doFocus.call(this);
         window.scrollTo(x, y);
-    }
+    };
 
     // when the document is modified, add a "*" to the title and enable the "Save" button
     myDiagram.addDiagramListener("Modified", function (e) {

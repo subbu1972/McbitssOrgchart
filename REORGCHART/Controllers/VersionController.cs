@@ -196,6 +196,19 @@ namespace REORGCHART.Controllers
             return "Success";
         }
 
+        public void DownloadAllLevelPDF(string FileName)
+        {
+            FileInfo myDoc = new FileInfo(FileName);
+
+            HttpContext.Response.Clear();
+            HttpContext.Response.ContentType = "application/pdf";
+            HttpContext.Response.AddHeader("content-disposition", "inline;filename=" + myDoc.Name);
+            HttpContext.Response.AddHeader("Content-Length", myDoc.Length.ToString());
+            HttpContext.Response.ContentType = "application/octet-stream";
+            HttpContext.Response.WriteFile(myDoc.FullName);
+            HttpContext.Response.End();
+        }
+
         public void DownloadAllPDF(string ViewFlag, string LevelUp, string CurrentLevel)
         {
             LoginUsers UserData = LI.GetLoginUserInfo("");
@@ -774,7 +787,7 @@ namespace REORGCHART.Controllers
                                                           myla.Role == "User" ||
                                                           myla.Role == "EndUser")
                                                    select new { vd.UserName, vd.CompanyName, vd.UserRole, vd.OperType, vd.Country, vd.Initiative, vd.Population, vd.Version }).Distinct().ToList()),
-                SelectFields = (myla.Oper == "OV" ? JsonConvert.SerializeObject((from sf in db.LEVEL_CONFIG_INFO
+                SelectFields = JsonConvert.SerializeObject((from sf in db.LEVEL_CONFIG_INFO
                                                                                  where sf.DOWNLOAD_TYPE == "PDF" &&
                                                                                        sf.COMPANY_NAME == UserData.CompanyName
                                                                                  select new
@@ -782,15 +795,7 @@ namespace REORGCHART.Controllers
                                                                                      FIELD_NAME = sf.FIELD_NAME,
                                                                                      FIELD_CAPTION = sf.FIELD_CAPTION,
                                                                                      ACTIVE_IND = sf.ACTIVE_IND
-                                                                                 }).ToList()) : JsonConvert.SerializeObject((from sf in db.LEGAL_CONFIG_INFO
-                                                                                                                             where sf.DOWNLOAD_TYPE == "PDF" &&
-                                                                                                                                   sf.COMPANY_NAME == UserData.CompanyName
-                                                                                                                             select new
-                                                                                                                             {
-                                                                                                                                 FIELD_NAME = sf.FIELD_NAME,
-                                                                                                                                 FIELD_CAPTION = sf.FIELD_CAPTION,
-                                                                                                                                 ACTIVE_IND = sf.ACTIVE_IND
-                                                                                                                             }).ToList())),
+                                                                                 }).ToList()),
                 SearchFields = GetSearchFields(VersionNumber),
                 InitialValues = JsonConvert.SerializeObject((from iv in db.InitializeTables where iv.CompanyName == UserData.CompanyName select iv).FirstOrDefault()),
                 FinalyzerVerion = LI.GetFinalyzerVerion(myla.Oper),

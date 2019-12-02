@@ -34,6 +34,21 @@ namespace REORGCHART.Helper
             return FinalyzerVersion;
         }
 
+        public string ChooseFinalyzerVersionWebAPI(string Version, string UserName)
+        {
+            LoginUsers UserData = GetLoginUserWebAPI("", UserName);
+            int VersionNo = Convert.ToInt32(Version);
+            string FinalyzerVersion = "0";
+
+            VersionDetails VD = (from vd in db.VersionDetails
+                                 where vd.CompanyName == UserData.CompanyName &&
+                                       vd.VersionNo == VersionNo
+                                 select vd).FirstOrDefault();
+            if (VD != null) FinalyzerVersion = VD.FinalyzeVersionNo.ToString();
+
+            return FinalyzerVersion;
+        }
+
         public string[] GetFinalyzerTable(string Version, string Oper)
         {
             LoginUsers UserData = GetLoginUserInfo("");
@@ -981,6 +996,73 @@ namespace REORGCHART.Helper
             }
 
             return GetUserResult;
+        }
+
+        public LoginUsers GetLoginUserWebAPI(string Role, string UN)
+        {
+            LoginUsers LoginUser = new LoginUsers();
+            using (Models.DBContext db = new Models.DBContext())
+            {
+                string wcCompanyName = ConfigurationManager.AppSettings["wcCompanyName"].ToString();
+                var INI = (from ini in db.InitializeTables
+                           where ini.Authentication.ToUpper() == "WINDOWS" && ini.CompanyName == wcCompanyName
+                           select ini).FirstOrDefault();
+                if (INI != null)
+                {
+                    string[] LogonUser = HttpContext.Current.Request.LogonUserIdentity.Name.ToString().Split('\\');
+                    string UserName = LogonUser[1];
+
+                    var UserData = (from usr in db.UserRoles
+                                    where usr.UserId == UserName
+                                    select usr).FirstOrDefault();
+                    if (UserData != null)
+                    {
+                        LoginUser.CompanyName = UserData.CompanyName;
+                        LoginUser.UserName = UserData.UserId;
+                        LoginUser.Email = UserData.Email;
+                        LoginUser.Roles = UserData.Role;
+                    }
+                    else
+                    {
+                        LoginUser.CompanyName = wcCompanyName;
+                        LoginUser.UserName = UserName;
+                        LoginUser.Email = UserName + "@gmail.com";
+                        LoginUser.Roles = "User,EndUser";
+
+                        UserRoles URoles = new UserRoles();
+                        URoles.CompanyName = LoginUser.CompanyName;
+                        URoles.UserId = LoginUser.UserName;
+                        URoles.Email = LoginUser.Email;
+                        URoles.Role = LoginUser.Roles;
+                        db.UserRoles.Add(URoles);
+
+                        db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    var AspNetUser = (from usr in db.AspNetUsers
+                                      where usr.UserName == UN
+                                      select usr).FirstOrDefault();
+                    if (AspNetUser != null)
+                    {
+                        var UserRoles = (from usr in db.UserRoles
+                                         where usr.UserId == UN
+                                         select usr).FirstOrDefault();
+
+                        LoginUser.CompanyName = UserRoles.CompanyName;
+                        LoginUser.UserName = UserRoles.UserId;
+                        LoginUser.Email = UserRoles.Email;
+                        LoginUser.Roles = UserRoles.Role;
+                    }
+                    else return null;
+                }
+            }
+
+            LoginUser.ValidUser = "No";
+            if (LoginUser.Roles.LastIndexOf(Role) != -1 || Role == "") LoginUser.ValidUser = "Yes";
+
+            return LoginUser;
         }
 
         public LoginUsers GetLoginUserInfo(string Role)

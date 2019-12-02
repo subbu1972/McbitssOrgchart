@@ -6306,9 +6306,10 @@ namespace REORGCHART
         int CurrentRow = 100;
         string A0PageSizeFlag = "Y", FMLineFlag="PN";
         DataTable dtLevel1 = null, dtLevel2 = null, OrgDataTable=null, OrgDataTableFM=null;
-        public void CreateAllLevelPDF(DataSet OrgDataSet, string DownloadType, string CompanyName, string UserName,
-                                      string View, string FMLine, string ViewFlag, string FP, string LevelUp, string ShowLevel)
+        public string CreateAllLevelPDF(DataSet OrgDataSet, string DownloadType, string CompanyName, string UserName,
+                                        string View, string FMLine, string ViewFlag, string FP, string LevelUp, string ShowLevel)
         {
+            string sSQL = "", strCVIEW = "VIEW_DEFAULT", DownLoadFile = "Error";
             FMLineFlag = FMLine;
             if (ViewFlag == "Horizontal(A0 Page Size)") A0PageSizeFlag = "Y"; else A0PageSizeFlag = "N";
             OrgDataTable = OrgDataSet.Tables[0];
@@ -6330,24 +6331,23 @@ namespace REORGCHART
             Page MyPage = new ceTe.DynamicPDF.Page(MyPageDimensions);
             FormattedTextAreaStyle style = new FormattedTextAreaStyle(ceTe.DynamicPDF.FontFamily.Helvetica, 14, true);
 
-            string sSQL = "", strCVIEW = "VIEW_DEFAULT";
             if (View == "OV")
             {
                 dtFieldInformation = csobj.SQLReturnDataTable("SELECT * FROM LEVEL_CONFIG_INFO " +
-                                                              " WHERE VIEW_ID='" + strCVIEW + "' AND " +
-                                                              "       DOWNLOAD_TYPE='" + DownloadType + "' AND COMPANY_NAME='" + CompanyName + "'");
+                                                                " WHERE VIEW_ID='" + strCVIEW + "' AND " +
+                                                                "       DOWNLOAD_TYPE='" + DownloadType + "' AND COMPANY_NAME='" + CompanyName + "'");
                 dtFieldActive = csobj.SQLReturnDataTable("SELECT * FROM LEVEL_CONFIG_INFO " +
-                                                         " WHERE VIEW_ID='" + strCVIEW + "' AND ALL_LEVEL_FLAG='Y' AND " +
-                                                         " DOWNLOAD_TYPE='" + DownloadType + "' AND COMPANY_NAME='" + CompanyName + "'");
+                                                            " WHERE VIEW_ID='" + strCVIEW + "' AND ALL_LEVEL_FLAG='Y' AND " +
+                                                            " DOWNLOAD_TYPE='" + DownloadType + "' AND COMPANY_NAME='" + CompanyName + "'");
             }
             else if (View == "LV")
             {
                 dtFieldInformation = csobj.SQLReturnDataTable("SELECT * FROM LEGAL_CONFIG_INFO " +
-                                                              " WHERE VIEW_ID='" + strCVIEW + "' AND " +
-                                                              "       DOWNLOAD_TYPE='" + DownloadType + "' AND COMPANY_NAME='" + CompanyName + "'");
+                                                                " WHERE VIEW_ID='" + strCVIEW + "' AND " +
+                                                                "       DOWNLOAD_TYPE='" + DownloadType + "' AND COMPANY_NAME='" + CompanyName + "'");
                 dtFieldActive = csobj.SQLReturnDataTable("SELECT * FROM LEGAL_CONFIG_INFO " +
-                                                         " WHERE VIEW_ID='" + strCVIEW + "' AND ALL_LEVEL_FLAG='Y' AND " +
-                                                         "       DOWNLOAD_TYPE='" + DownloadType + "' AND COMPANY_NAME='" + CompanyName + "'");
+                                                            " WHERE VIEW_ID='" + strCVIEW + "' AND ALL_LEVEL_FLAG='Y' AND " +
+                                                            "       DOWNLOAD_TYPE='" + DownloadType + "' AND COMPANY_NAME='" + CompanyName + "'");
             }
             if (View == "OV")
             {
@@ -6412,7 +6412,7 @@ namespace REORGCHART
                     {
                         RetValue1 = A0PageSizeBottomUpApproachWH("-1", drLevel2["LEVEL_ID"].ToString(), "N");
                     }
-                    
+
                     OrgDataRow = OrgDataTable.Select("LEVEL_NO='" + OrgFirstRow[0]["LEVEL_NO"].ToString() + "'");
                     foreach (DataRow drLevel2 in OrgDataRow)
                     {
@@ -6424,12 +6424,12 @@ namespace REORGCHART
 
                     // Left associates
                     int PageHeight = 0;
-                    A0StartHeight = (int)PageMaxHeight+200;
+                    A0StartHeight = (int)PageMaxHeight + 200;
                     List<ObjectIWPDF> lstMissedWHPDF = (from SO in lstObjectWHPDF
-                                                         where SO.UsedFlag=="N"
-                                                         orderby SO.Width descending
-                                                         select SO).ToList();
-                    foreach(ObjectIWPDF IWPDF in lstMissedWHPDF)
+                                                        where SO.UsedFlag == "N"
+                                                        orderby SO.Width descending
+                                                        select SO).ToList();
+                    foreach (ObjectIWPDF IWPDF in lstMissedWHPDF)
                     {
                         PageHeight += IWPDF.Height;
                         if (PageHeight >= 8500)
@@ -6449,7 +6449,7 @@ namespace REORGCHART
                     }
                     MyDocument.Pages.Add(MyPage);
                     MyDocument.Draw(FP);
-
+                    DownLoadFile = FP;
                     List<ObjectIWPDF> lstAddedWHPDF = (from SO in lstObjectWHPDF
                                                         where SO.UsedFlag == "Y"
                                                         orderby SO.Width descending
@@ -6481,10 +6481,10 @@ namespace REORGCHART
                     }
 
                     PageMaxWidth = 0; PageMaxHeight = 0;
-                    DataRow[] OrgDataRow = OrgDataTable.Select("LEVEL_NO='"+ OrgFirstRow[0]["LEVEL_NO"].ToString() + "'");
+                    DataRow[] OrgDataRow = OrgDataTable.Select("LEVEL_NO='" + OrgFirstRow[0]["LEVEL_NO"].ToString() + "'");
                     foreach (DataRow drLevel2 in OrgDataRow)
                     {
-                        if (LastLevel=="All")
+                        if (LastLevel == "All")
                             SetParentChildRelationship(drLevel2["LEVEL_ID"].ToString(), 6);
                         else
                             SetParentChildRelationship(drLevel2["LEVEL_ID"].ToString(), Convert.ToInt32(LastLevel));
@@ -6515,6 +6515,8 @@ namespace REORGCHART
                     MyPage.Dimensions.Height = PageMaxHeight + 500;
                     MyDocument.Pages.Add(MyPage);
                     MyDocument.Draw(FP);
+
+                    DownLoadFile = FP;
                 }
                 else if (ViewFlag == "Vertical")
                 {
@@ -6535,7 +6537,7 @@ namespace REORGCHART
                     {
                         if (Obj.Id == "10017628")
                             Obj.Flag = Obj.Flag;
-                        if (Convert.ToInt32(Obj.NOR) >= 1 && Obj.DottedLineFlag=="N")
+                        if (Convert.ToInt32(Obj.NOR) >= 1 && Obj.DottedLineFlag == "N")
                         {
                             if (Convert.ToInt32(Obj.NOR) == 1)
                             {
@@ -6558,12 +6560,13 @@ namespace REORGCHART
                     MyPage.Dimensions.Height = PageMaxHeight + 200;
                     MyDocument.Pages.Add(MyPage);
                     MyDocument.Draw(FP);
+
+                    DownLoadFile = FP;
                 }
 
                 string LogPDFFlag = ConfigurationManager.AppSettings["LogPDFFlag"].ToString();
                 if (LogPDFFlag == "Yes")
                 {
-                    
                     using (SqlConnection SqlDelCon = new SqlConnection(OrgConnection))
                     {
                         SqlDelCon.Open();
@@ -6577,7 +6580,7 @@ namespace REORGCHART
                     {
                         try
                         {
-                            if (Index % 100 == 0 && Index!=0)
+                            if (Index % 100 == 0 && Index != 0)
                             {
                                 using (SqlConnection SqlCon = new SqlConnection(OrgConnection))
                                 {
@@ -6623,18 +6626,9 @@ namespace REORGCHART
                         }
                     }
                 }
-
-                FileInfo myDoc = new FileInfo(FP);
-
-                HttpContext.Current.Response.Clear();
-                HttpContext.Current.Response.ContentType = "application/pdf";
-                HttpContext.Current.Response.AddHeader("content-disposition", "inline;filename=" + myDoc.Name);
-                HttpContext.Current.Response.AddHeader("Content-Length", myDoc.Length.ToString());
-                HttpContext.Current.Response.ContentType = "application/octet-stream";
-                HttpContext.Current.Response.WriteFile(myDoc.FullName);
-                HttpContext.Current.Response.End();
-
             }
+
+            return DownLoadFile;
         }
     }
 }
